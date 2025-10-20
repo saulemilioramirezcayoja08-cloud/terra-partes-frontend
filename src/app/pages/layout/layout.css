@@ -1,0 +1,18 @@
+.layout-component {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.row:nth-child(1) {
+  height: 6vh;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
+}
+
+.row:nth-child(2) {
+  height: 94vh;
+  overflow: auto;
+}
