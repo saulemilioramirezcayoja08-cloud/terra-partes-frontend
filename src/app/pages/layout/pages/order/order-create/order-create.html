@@ -1,1 +1,84 @@
-<p>order-create works!</p>
+<div class="orden-create-component">
+  <div class="row">
+    <div class="row">
+      <div class="title">Crear Órden</div>
+      <div class="subtitle">Completa los datos para generar una nueva órden</div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div>
+            <div class="title">Sin cliente</div>
+            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>C</kbd> para agregar cliente</div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Observaciones</label>
+            <input type="text" placeholder="Ej: urgente, entrega inmediata">
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="row">
+          <div>
+            <div class="title">Sin método de pago</div>
+            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>M</kbd> para seleccionar método</div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Total</label>
+            <input type="text" placeholder="Bs. 0.00" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="row">
+          <div>
+            <div class="title">Sin almacén</div>
+            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>A</kbd> para seleccionar almacén</div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Anticipo</label>
+            <input type="text" placeholder="Bs. 0.00">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <button>Generar órden <kbd>Ctrl</kbd> + <kbd>G</kbd></button>
+      <button>Vista previa <kbd>Ctrl</kbd> + <kbd>V</kbd></button>
+    </div>
+  </div>
+  <div class="row">
+    <table>
+      <thead>
+      <tr>
+        <th>ITEM</th>
+        <th>CODIGO</th>
+        <th>PRODUCTO</th>
+        <th>PRECIO</th>
+        <th>SUBTOTAL</th>
+        <th>NOTAS</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>01</td>
+        <td>PRD-001</td>
+        <td><input type="text" value="BISEL INF HALOG PARACHO DEL LH S-CROSS 16- CROMADO" class="table-input"></td>
+        <td><input type="number" value="150.00" step="0.01" class="table-input table-input-number"></td>
+        <td>150.00</td>
+        <td><input type="text" value="product" class="table-input"></td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

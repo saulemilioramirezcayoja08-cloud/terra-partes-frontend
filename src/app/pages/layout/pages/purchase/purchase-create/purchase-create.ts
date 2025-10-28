@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-purchase-create',
@@ -7,5 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './purchase-create.css'
 })
 export class PurchaseCreate {
-
 }

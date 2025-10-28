@@ -1,0 +1,259 @@
+.order-list-component {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row {
+  display: flex;
+}
+
+.order-list-component .row:nth-child(1) {
+  flex: 5;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-list-component .row:nth-child(1) .row {
+  display: flex;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(1) {
+  flex: 2;
+  background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(1) .title {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5d5d5d;
+  letter-spacing: 1px;
+  margin-left: 0.8rem;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(1) .subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(93, 93, 93, 0.7);
+  margin-left: 0.8rem;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) {
+  flex: 5;
+  flex-direction: row;
+  gap: 2px;
+  align-items: stretch;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row {
+  flex: 1;
+  background-color: #efefef;
+  flex-direction: row;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row label {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5d5d5d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row input {
+  width: 98%;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 16px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  color: #5d5d5d;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row input:focus {
+  outline: none;
+  border-color: #5d5d5d;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(2) .col .row input::placeholder {
+  color: #b0b0b0;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) {
+  flex: 2;
+  background-color: #efefef;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) button {
+  height: 1.7rem;
+  width: auto;
+  padding: 0 16px;
+  border: none;
+  border-radius: 1.7rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+  white-space: nowrap;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) button:first-child {
+  background-color: #5d5d5d;
+  color: white;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) button:first-child:hover {
+  background-color: #4a4a4a;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) button:last-child {
+  background-color: #e0e0e0;
+  color: #5d5d5d;
+}
+
+.order-list-component .row:nth-child(1) .row:nth-child(3) button:last-child:hover {
+  background-color: #d0d0d0;
+}
+
+.order-list-component .row:nth-child(2) {
+  flex: 6;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  background-color: white;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.order-list-component .row:nth-child(2)::-webkit-scrollbar {
+  width: 4px;
+}
+
+.order-list-component .row:nth-child(2)::-webkit-scrollbar-track {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.order-list-component .row:nth-child(2)::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.4);
+  border-radius: 16px;
+}
+
+.order-list-component .row:nth-child(2)::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.6);
+}
+
+.order-list-component .row:nth-child(2) table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.order-list-component .row:nth-child(2) table thead {
+  position: sticky;
+  top: 0;
+}
+
+.order-list-component .row:nth-child(2) table thead tr {
+  background-color: white;
+}
+
+.order-list-component .row:nth-child(2) table th {
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  color: rgba(93, 93, 93, 0.8);
+  letter-spacing: 1px;
+  background-color: white;
+  position: sticky;
+  top: 0;
+  height: 32px;
+  line-height: 32px;
+}
+
+.order-list-component .row:nth-child(2) table td {
+  text-align: center;
+  color: grey;
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  background-color: white;
+  height: 28px;
+  line-height: 28px;
+  transition: all 0.2s ease-in;
+}
+
+.order-list-component .row:nth-child(2) table tbody tr:hover td {
+  background-color: rgba(128, 128, 128, 0.04);
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(1),
+.order-list-component .row:nth-child(2) table td:nth-child(1) {
+  width: 4%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(2),
+.order-list-component .row:nth-child(2) table td:nth-child(2) {
+  width: 14%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(3),
+.order-list-component .row:nth-child(2) table td:nth-child(3) {
+  width: 14%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(4),
+.order-list-component .row:nth-child(2) table td:nth-child(4) {
+  width: 32%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(5),
+.order-list-component .row:nth-child(2) table td:nth-child(5) {
+  width: 14%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(6),
+.order-list-component .row:nth-child(2) table td:nth-child(6) {
+  width: 14%;
+}
+
+.order-list-component .row:nth-child(2) table th:nth-child(7),
+.order-list-component .row:nth-child(2) table td:nth-child(7) {
+  width: 4%;
+}

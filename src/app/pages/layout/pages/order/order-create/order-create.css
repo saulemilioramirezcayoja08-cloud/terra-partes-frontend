@@ -1,0 +1,378 @@
+.orden-create-component {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row {
+  display: flex;
+}
+
+.orden-create-component .row:nth-child(1) {
+  flex: 5;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.orden-create-component .row:nth-child(1) .row {
+  display: flex;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(1) {
+  flex: 2;
+  background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(1) .title {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5d5d5d;
+  letter-spacing: 1px;
+  margin-left: 0.8rem;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(1) .subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(93, 93, 93, 0.7);
+  margin-left: 0.8rem;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) {
+  flex: 5;
+  flex-direction: row;
+  gap: 2px;
+  align-items: stretch;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row {
+  flex: 1;
+  background-color: #efefef;
+  flex-direction: row;
+  gap: 2px;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row > div .title {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5d5d5d;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row > div .subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(93, 93, 93, 0.6);
+  margin: 0;
+}
+
+kbd {
+  background-color: rgba(93, 93, 93, 0.08);
+  border-radius: 8px;
+  color: #5d5d5d;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row label {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5d5d5d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row input {
+  width: 98%;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 16px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  color: #5d5d5d;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: white;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row input:focus {
+  outline: none;
+  border-color: #5d5d5d;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row input::placeholder {
+  color: #b0b0b0;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row input[readonly] {
+  background-color: rgba(255, 255, 255, 0.7);
+  cursor: default;
+  font-weight: 600;
+  color: #5d5d5d;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(2) .col .row input[readonly]:focus {
+  outline: none;
+  border-color: transparent;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) {
+  flex: 2;
+  background-color: #efefef;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button {
+  height: 1.8rem;
+  width: auto;
+  padding: 0 16px;
+  border: none;
+  border-radius: 1.8rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+  white-space: nowrap;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:first-child {
+  background-color: #5d5d5d;
+  color: white;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:first-child:hover {
+  background-color: #4a4a4a;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:first-child kbd {
+  padding: 0 4px;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:last-child {
+  background-color: #e0e0e0;
+  color: #5d5d5d;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:last-child:hover {
+  background-color: #d0d0d0;
+}
+
+.orden-create-component .row:nth-child(1) .row:nth-child(3) button:last-child kbd {
+  padding: 0 4px;
+  margin: 0;
+  background-color: rgba(93, 93, 93, 0.15);
+  color: #5d5d5d;
+}
+
+.orden-create-component .row:nth-child(2) {
+  flex: 6;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  background-color: white;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.orden-create-component .row:nth-child(2)::-webkit-scrollbar {
+  width: 4px;
+}
+
+.orden-create-component .row:nth-child(2)::-webkit-scrollbar-track {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.orden-create-component .row:nth-child(2)::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.4);
+  border-radius: 16px;
+}
+
+.orden-create-component .row:nth-child(2)::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.6);
+}
+
+.orden-create-component .row:nth-child(2) table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.orden-create-component .row:nth-child(2) table thead {
+  position: sticky;
+  top: 0;
+}
+
+.orden-create-component .row:nth-child(2) table thead tr {
+  background-color: white;
+}
+
+.orden-create-component .row:nth-child(2) table th {
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  color: rgba(93, 93, 93, 0.8);
+  letter-spacing: 1px;
+  background-color: white;
+  position: sticky;
+  top: 0;
+  height: 32px;
+  line-height: 32px;
+}
+
+.orden-create-component .row:nth-child(2) table td {
+  text-align: center;
+  color: grey;
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  background-color: white;
+  height: 36px;
+  line-height: 36px;
+  transition: all 0.2s ease-in;
+  vertical-align: middle;
+}
+
+.orden-create-component .row:nth-child(2) table tbody tr:hover td {
+  background-color: rgba(128, 128, 128, 0.04);
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(1),
+.orden-create-component .row:nth-child(2) table td:nth-child(1) {
+  width: 4%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(2),
+.orden-create-component .row:nth-child(2) table td:nth-child(2) {
+  width: 8%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(3),
+.orden-create-component .row:nth-child(2) table td:nth-child(3) {
+  width: 32%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(4),
+.orden-create-component .row:nth-child(2) table td:nth-child(4) {
+  width: 8%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(5),
+.orden-create-component .row:nth-child(2) table td:nth-child(5) {
+  width: 12%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(6),
+.orden-create-component .row:nth-child(2) table td:nth-child(6) {
+  width: 32%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(7),
+.orden-create-component .row:nth-child(2) table td:nth-child(7) {
+  width: 4%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(3),
+.orden-create-component .row:nth-child(2) table td:nth-child(3) {
+  text-align: left;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(6),
+.orden-create-component .row:nth-child(2) table td:nth-child(6) {
+  text-align: left;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(4),
+.orden-create-component .row:nth-child(2) table td:nth-child(4),
+.orden-create-component .row:nth-child(2) table th:nth-child(5),
+.orden-create-component .row:nth-child(2) table td:nth-child(5) {
+  text-align: right;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.orden-create-component .row:nth-child(2) table .table-input {
+  width: 100%;
+  height: 24px;
+  border: 2px solid transparent;
+  background-color: transparent;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  color: grey;
+  padding: 13px 10px;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.orden-create-component .row:nth-child(2) table .table-input:hover {
+  background-color: rgba(93, 93, 93, 0.03);
+  border-color: rgba(93, 93, 93, 0.1);
+}
+
+.orden-create-component .row:nth-child(2) table .table-input:focus {
+  background-color: white;
+  border-color: rgba(93, 93, 93, 0.3);
+  box-shadow: 0 0 0 2px rgba(93, 93, 93, 0.05);
+  transform: scale(1.01);
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(3) .table-input {
+  text-align: left;
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(4) .table-input {
+  text-align: right;
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(6) .table-input {
+  text-align: left;
+}
