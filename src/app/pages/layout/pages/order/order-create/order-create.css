@@ -376,3 +376,37 @@ kbd {
 .orden-create-component .row:nth-child(2) table td:nth-child(6) .table-input {
   text-align: left;
 }
+
+.orden-create-component .row:nth-child(2) table td:nth-child(7) {
+  padding: 3px;
+  vertical-align: middle;
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(7) svg {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: rgba(239, 68, 68, 0.6);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  margin: 0 auto;
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(7) svg:hover {
+  color: rgba(239, 68, 68, 1);
+  background-color: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(7) svg:active {
+  transform: scale(0.95);
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+.orden-create-component .row:nth-child(2) table tbody tr:hover td:nth-child(7) svg {
+  color: rgba(239, 68, 68, 0.8);
+  background-color: rgba(239, 68, 68, 0.05);
+}
