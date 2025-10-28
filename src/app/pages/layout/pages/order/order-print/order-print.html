@@ -1,0 +1,156 @@
+<div class="order-print-component">
+  <div class="orders" *ngIf="orderData">
+
+    <div class="document-header">
+      <div class="header-row">
+        <div class="header-column contact-info">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+
+        <div class="header-column order-info">
+          <h2>ORDEN</h2>
+          <p>Nro.: {{ orderData.orderNumber }}</p>
+          <p>Fecha: {{ orderData.date }}</p>
+          <p class="order-status">Estado: {{ orderData.status }}</p>
+        </div>
+
+        <div class="header-column logo-info">
+          <div class="logo"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+
+      <div class="customer-row">
+        <div class="customer-column left">
+          <div class="customer-field">
+            <span class="label">Cliente:</span>
+            <span class="value">{{ orderData.customer.name }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Dirección:</span>
+            <span class="value">{{ orderData.customer.address }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Almacén:</span>
+            <span class="value">{{ orderData.warehouse }}</span>
+          </div>
+        </div>
+        <div class="customer-column right">
+          <div class="customer-field">
+            <span class="label">Teléfono:</span>
+            <span class="value">{{ orderData.customer.phone }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Vendedor:</span>
+            <span class="value">{{ orderData.seller }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Método Pago:</span>
+            <span class="value">{{ orderData.paymentMethod }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-section">
+      <table class="products-table">
+        <thead>
+        <tr>
+          <th class="center">ITEM</th>
+          <th class="center">ARTICULO</th>
+          <th class="right">DESCRIPCION</th>
+          <th class="right">PROC.</th>
+          <th class="right">CANTIDAD</th>
+          <th class="right">PRECIO</th>
+          <th class="right">SUBTOTAL</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let product of orderData.products">
+          <td class="center">{{ product.itemNumber }}</td>
+          <td class="center">{{ product.sku }}</td>
+          <td class="right">{{ product.name }}</td>
+          <td class="right">{{ product.origin }}</td>
+          <td class="right">{{ formatQuantity(product.quantity) }}</td>
+          <td class="right">{{ formatNumber(product.price) }}</td>
+          <td class="right">{{ formatNumber(product.total) }}</td>
+        </tr>
+        </tbody>
+
+        <tfoot>
+        <tr class="totals-row">
+          <td colspan="3"></td>
+          <td class="left totals-label">TOTALES:</td>
+          <td class="right total-quantity">{{ formatQuantity(orderData.totals.totalQuantity) }}</td>
+          <td></td>
+          <td class="right total-amount">{{ formatCurrency(orderData.totals.grandTotal) }}</td>
+        </tr>
+        <tr class="payment-row" *ngIf="orderData.totals.totalPayments > 0">
+          <td colspan="3"></td>
+          <td class="left payment-label">ANTICIPO:</td>
+          <td></td>
+          <td></td>
+          <td class="right payment-amount">{{ formatCurrency(orderData.totals.totalPayments) }}</td>
+        </tr>
+        <tr class="balance-row" *ngIf="orderData.totals.pendingAmount > 0">
+          <td colspan="3"></td>
+          <td class="left balance-label">SALDO:</td>
+          <td></td>
+          <td></td>
+          <td class="right balance-amount">{{ formatCurrency(orderData.totals.pendingAmount) }}</td>
+        </tr>
+        </tfoot>
+
+      </table>
+    </div>
+
+    <div class="document-footer">
+
+      <div class="amount-section">
+        <span class="label">Son:</span>
+        <span class="value">{{ orderData.totals.amountInWords }}</span>
+      </div>
+
+      <div class="observations-section">
+        <span class="label">Obs.:</span>
+        <span class="value">{{ orderData.notes || 'N/A' }}</span>
+      </div>
+
+      <div class="signatures-section">
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">Entregue Conforme</div>
+        </div>
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">Recibí Conforme</div>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-right">
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha Reg:</span>
+            <span>{{ orderData.registrationDateTime }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Usuario:</span>
+            <span>{{ orderData.username }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="print-button-container">
+    <button class="btn-print" (click)="printDocument()">Imprimir documento</button>
+  </div>
+
+</div>

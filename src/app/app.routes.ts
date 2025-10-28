@@ -52,5 +52,12 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'order/print',
+    loadComponent: () =>
+      import('./pages/layout/pages/order/order-print/order-print').then(
+        m => m.OrderPrint
+      ),
+  },
   {path: '**', redirectTo: ''},
 ];
