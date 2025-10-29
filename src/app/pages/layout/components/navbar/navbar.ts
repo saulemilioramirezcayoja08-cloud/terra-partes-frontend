@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {filter} from 'rxjs';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AuthService} from '../../../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-navbar',

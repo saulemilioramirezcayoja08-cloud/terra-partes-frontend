@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {environment} from '../../environments/environment';
 import {LoginResponse} from '../models/login-response.model';
-import {ApiResponse} from '../models/api-response.model';
 import {LoginRequest} from '../models/login-request.model';
+import {ApiResponse} from '../../../core/models/api-response.model';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,11 @@ export class AuthService {
     );
   }
 
-  logout() {
+  logout(): void {
     this._currentUser = null;
+  }
+
+  isAuthenticated(): boolean {
+    return this._currentUser !== null && this._currentUser.isActive;
   }
 }

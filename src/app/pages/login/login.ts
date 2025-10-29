@@ -1,10 +1,10 @@
 import {Component, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {AuthService} from '../../core/services/auth.service';
 import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import {ApiResponse} from '../../core/models/api-response.model';
-import {LoginResponse} from '../../core/models/login-response.model';
+import {AuthService} from '../../modules/auth/services/auth.service';
+import {LoginResponse} from '../../modules/auth/models/login-response.model';
 
 @Component({
   selector: 'app-login',
