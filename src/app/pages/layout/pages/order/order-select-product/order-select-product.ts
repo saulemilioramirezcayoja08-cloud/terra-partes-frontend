@@ -4,6 +4,7 @@ import {ProductService} from '../../../../../modules/catalog/services/product.se
 import {ProductListResponse} from '../../../../../modules/catalog/models/product-list-response.model';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {OrderCartService} from '../../../../../modules/orders/services/order-cart-service';
 
 type SearchMode = 'name' | 'description' | 'category' | 'code';
 
@@ -16,18 +17,16 @@ type SearchMode = 'name' | 'description' | 'category' | 'code';
 export class OrderSelectProduct implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductService);
+  private orderCartService = inject(OrderCartService);
 
-  // Estado reactivo
   searchQuery = signal('');
   searchMode = signal<SearchMode>('name');
   wildcardActive = signal(false);
 
-  // Datos de productos
   products = signal<ProductListResponse[]>([]);
   selectedProduct = signal<ProductListResponse | null>(null);
   selectedCodes = signal<any[]>([]);
 
-  // Paginación
   currentPage = signal(0);
   pageSize = signal(20);
   totalElements = signal(0);
@@ -35,7 +34,6 @@ export class OrderSelectProduct implements OnInit {
   hasNext = signal(false);
   hasPrevious = signal(false);
 
-  // Estado de carga
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
@@ -43,7 +41,6 @@ export class OrderSelectProduct implements OnInit {
     this.loadProducts();
   }
 
-  // Carga productos con los filtros actuales
   loadProducts() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
@@ -56,27 +53,20 @@ export class OrderSelectProduct implements OnInit {
     const query = this.searchQuery().trim();
 
     if (query) {
-      // MODO WILDCARD: Búsqueda multi-campo con asterisco como separador
       if (this.wildcardActive()) {
-        // Dividir por asterisco, limpiar espacios y eliminar vacíos
         const parts = query.split('*')
           .map(part => part.trim())
           .filter(part => part.length > 0);
 
-        // Asignar cada parte a los campos disponibles en orden
         if (parts.length > 0) params.name = parts[0];
         if (parts.length > 1) params.description = parts[1];
         if (parts.length > 2) params.categoryName = parts[2];
         if (parts.length > 3) {
           params.code = parts[3];
-          params.codeType = 'OEM';  // Tipo por defecto
+          params.codeType = 'OEM';
         }
 
-        // Si hay más de 4 términos, los adicionales se ignoran
-        // Orden: name, description, categoryName, code (OEM)
-
       } else {
-        // MODO NORMAL: Búsqueda en un solo campo según searchMode
         switch (this.searchMode()) {
           case 'name':
             params.name = query;
@@ -95,7 +85,6 @@ export class OrderSelectProduct implements OnInit {
       }
     }
 
-    // Llamar al servicio con los parámetros construidos
     this.productService.listProducts(params).subscribe({
       next: (response) => {
         if (response.success) {
@@ -118,9 +107,7 @@ export class OrderSelectProduct implements OnInit {
     });
   }
 
-  // Cambia el tipo de búsqueda activa
   setSearchMode(mode: SearchMode) {
-    // No permitir cambio si wildcard está activo
     if (this.wildcardActive()) {
       return;
     }
@@ -130,38 +117,38 @@ export class OrderSelectProduct implements OnInit {
     this.currentPage.set(0);
   }
 
-  // Alterna el modo de búsqueda con comodines
   toggleWildcard() {
     this.wildcardActive.update(v => !v);
   }
 
-  // Limpia el texto de búsqueda
   clearSearch() {
     this.searchQuery.set('');
     this.currentPage.set(0);
     this.loadProducts();
   }
 
-  // Actualiza el valor de búsqueda al escribir
   onSearchInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
   }
 
-  // Ejecuta la búsqueda al presionar Enter
   @HostListener('keydown.enter')
   onEnterKey() {
     this.currentPage.set(0);
     this.loadProducts();
   }
 
-  // Selecciona un producto
   selectProduct(product: ProductListResponse) {
     this.selectedProduct.set(product);
     this.selectedCodes.set(product.codes);
   }
 
-  // Navegación de paginación
+  addProductToCart(product: ProductListResponse): void {
+    this.orderCartService.addProduct(product);
+
+    this.router.navigate(['/order/create']);
+  }
+
   goToFirstPage() {
     this.currentPage.set(0);
     this.loadProducts();
@@ -186,7 +173,6 @@ export class OrderSelectProduct implements OnInit {
     this.loadProducts();
   }
 
-  // Devuelve el texto de placeholder dinámico
   getPlaceholder(): string {
     if (this.wildcardActive()) {
       return 'Ej: amortiguador * trasero * repuestos * 12345';
@@ -201,7 +187,6 @@ export class OrderSelectProduct implements OnInit {
     return placeholders[this.searchMode()];
   }
 
-  // Devuelve el texto de ayuda según el modo actual
   getHelpText(): string {
     if (this.wildcardActive()) {
       return 'Separa términos con asterisco (*) para búsquedas flexibles. Ejemplo: "brazo * biela * motor * 12345" buscará en nombre, descripción, categoría y código OEM respectivamente.';
@@ -216,7 +201,6 @@ export class OrderSelectProduct implements OnInit {
     return helpTexts[this.searchMode()];
   }
 
-  // Retorna a OrderCreate al presionar la tecla Escape
   @HostListener('document:keydown', ['$event'])
   onGlobalKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {

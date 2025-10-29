@@ -2,12 +2,12 @@ export interface DetailRequest {
   productId: number;
   quantity: number;
   price: number;
+  notes?: string;
 }
 
 export interface PaymentRequest {
-  paymentId: number;
   amount: number;
-  notes?: string;
+  userId?: number;
 }
 
 export interface CreateOrderRequest {

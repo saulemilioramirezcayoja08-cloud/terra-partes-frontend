@@ -1,5 +1,5 @@
 <div class="order-print-component">
-  <div class="orders" *ngIf="orderData">
+  <div class="orders" *ngIf="orderData()">
 
     <div class="document-header">
       <div class="header-row">
@@ -13,9 +13,9 @@
 
         <div class="header-column order-info">
           <h2>ORDEN</h2>
-          <p>Nro.: {{ orderData.orderNumber }}</p>
-          <p>Fecha: {{ orderData.date }}</p>
-          <p class="order-status">Estado: {{ orderData.status }}</p>
+          <p>Nro.: {{ orderData().orderNumber }}</p>
+          <p>Fecha: {{ orderData().date }}</p>
+          <p class="order-status">Estado: {{ orderData().status }}</p>
         </div>
 
         <div class="header-column logo-info">
@@ -28,29 +28,29 @@
         <div class="customer-column left">
           <div class="customer-field">
             <span class="label">Cliente:</span>
-            <span class="value">{{ orderData.customer.name }}</span>
+            <span class="value">{{ orderData().customer.name }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Dirección:</span>
-            <span class="value">{{ orderData.customer.address }}</span>
+            <span class="value">{{ orderData().customer.address }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Almacén:</span>
-            <span class="value">{{ orderData.warehouse }}</span>
+            <span class="value">{{ orderData().warehouse }}</span>
           </div>
         </div>
         <div class="customer-column right">
           <div class="customer-field">
             <span class="label">Teléfono:</span>
-            <span class="value">{{ orderData.customer.phone }}</span>
+            <span class="value">{{ orderData().customer.phone }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Vendedor:</span>
-            <span class="value">{{ orderData.seller }}</span>
+            <span class="value">{{ orderData().seller }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Método Pago:</span>
-            <span class="value">{{ orderData.paymentMethod }}</span>
+            <span class="value">{{ orderData().paymentMethod }}</span>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@
         </thead>
 
         <tbody>
-        <tr *ngFor="let product of orderData.products">
+        <tr *ngFor="let product of orderData().products">
           <td class="center">{{ product.itemNumber }}</td>
           <td class="center">{{ product.sku }}</td>
           <td class="right">{{ product.name }}</td>
@@ -86,23 +86,23 @@
         <tr class="totals-row">
           <td colspan="3"></td>
           <td class="left totals-label">TOTALES:</td>
-          <td class="right total-quantity">{{ formatQuantity(orderData.totals.totalQuantity) }}</td>
+          <td class="right total-quantity">{{ formatQuantity(orderData().totals.totalQuantity) }}</td>
           <td></td>
-          <td class="right total-amount">{{ formatCurrency(orderData.totals.grandTotal) }}</td>
+          <td class="right total-amount">{{ formatCurrency(orderData().totals.grandTotal) }}</td>
         </tr>
-        <tr class="payment-row" *ngIf="orderData.totals.totalPayments > 0">
+        <tr class="payment-row">
           <td colspan="3"></td>
           <td class="left payment-label">ANTICIPO:</td>
           <td></td>
           <td></td>
-          <td class="right payment-amount">{{ formatCurrency(orderData.totals.totalPayments) }}</td>
+          <td class="right payment-amount">{{ formatCurrency(orderData().totals.totalPayments) }}</td>
         </tr>
-        <tr class="balance-row" *ngIf="orderData.totals.pendingAmount > 0">
+        <tr class="balance-row">
           <td colspan="3"></td>
           <td class="left balance-label">SALDO:</td>
           <td></td>
           <td></td>
-          <td class="right balance-amount">{{ formatCurrency(orderData.totals.pendingAmount) }}</td>
+          <td class="right balance-amount">{{ formatCurrency(orderData().totals.pendingAmount) }}</td>
         </tr>
         </tfoot>
 
@@ -113,12 +113,12 @@
 
       <div class="amount-section">
         <span class="label">Son:</span>
-        <span class="value">{{ orderData.totals.amountInWords }}</span>
+        <span class="value">{{ orderData().totals.amountInWords }}</span>
       </div>
 
       <div class="observations-section">
         <span class="label">Obs.:</span>
-        <span class="value">{{ orderData.notes || 'N/A' }}</span>
+        <span class="value">{{ orderData().notes || 'N/A' }}</span>
       </div>
 
       <div class="signatures-section">
@@ -136,11 +136,11 @@
         <div class="metadata-right">
           <div class="metadata-item">
             <span class="metadata-label">Fecha Reg:</span>
-            <span>{{ orderData.registrationDateTime }}</span>
+            <span>{{ orderData().registrationDateTime }}</span>
           </div>
           <div class="metadata-item">
             <span class="metadata-label">Usuario:</span>
-            <span>{{ orderData.username }}</span>
+            <span>{{ orderData().username }}</span>
           </div>
         </div>
       </div>

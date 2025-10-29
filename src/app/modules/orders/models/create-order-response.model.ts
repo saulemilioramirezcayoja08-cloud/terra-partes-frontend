@@ -29,17 +29,16 @@ export interface DetailInfo {
   id: number;
   productId: number;
   productName: string;
+  productSku: string;
   quantity: number;
   price: number;
   subtotal: number;
+  notes?: string;
 }
 
 export interface OrderPaymentInfo {
   id: number;
-  paymentId: number;
-  paymentName: string;
   amount: number;
-  notes: string;
   createdAt: string;
   username: string;
 }

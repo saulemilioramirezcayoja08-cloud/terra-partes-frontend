@@ -280,36 +280,41 @@ kbd {
 
 .orden-create-component .row:nth-child(2) table th:nth-child(1),
 .orden-create-component .row:nth-child(2) table td:nth-child(1) {
-  width: 4%;
+  width: 5%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(2),
 .orden-create-component .row:nth-child(2) table td:nth-child(2) {
-  width: 8%;
+  width: 10%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(3),
 .orden-create-component .row:nth-child(2) table td:nth-child(3) {
-  width: 32%;
+  width: 23%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(4),
 .orden-create-component .row:nth-child(2) table td:nth-child(4) {
-  width: 8%;
+  width: 9%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(5),
 .orden-create-component .row:nth-child(2) table td:nth-child(5) {
-  width: 12%;
+  width: 11%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(6),
 .orden-create-component .row:nth-child(2) table td:nth-child(6) {
-  width: 32%;
+  width: 11%;
 }
 
 .orden-create-component .row:nth-child(2) table th:nth-child(7),
 .orden-create-component .row:nth-child(2) table td:nth-child(7) {
+  width: 27%;
+}
+
+.orden-create-component .row:nth-child(2) table th:nth-child(8),
+.orden-create-component .row:nth-child(2) table td:nth-child(8) {
   width: 4%;
 }
 
@@ -320,17 +325,21 @@ kbd {
   padding-right: 8px;
 }
 
+.orden-create-component .row:nth-child(2) table th:nth-child(3),
+.orden-create-component .row:nth-child(2) table td:nth-child(3),
+.orden-create-component .row:nth-child(2) table th:nth-child(4),
+.orden-create-component .row:nth-child(2) table td:nth-child(4),
+.orden-create-component .row:nth-child(2) table th:nth-child(5),
+.orden-create-component .row:nth-child(2) table td:nth-child(5),
 .orden-create-component .row:nth-child(2) table th:nth-child(6),
 .orden-create-component .row:nth-child(2) table td:nth-child(6) {
-  text-align: left;
+  text-align: right;
   padding-left: 8px;
   padding-right: 8px;
 }
 
-.orden-create-component .row:nth-child(2) table th:nth-child(4),
-.orden-create-component .row:nth-child(2) table td:nth-child(4),
-.orden-create-component .row:nth-child(2) table th:nth-child(5),
-.orden-create-component .row:nth-child(2) table td:nth-child(5) {
+.orden-create-component .row:nth-child(2) table th:nth-child(7),
+.orden-create-component .row:nth-child(2) table td:nth-child(7) {
   text-align: right;
   padding-left: 8px;
   padding-right: 8px;
@@ -365,24 +374,24 @@ kbd {
   transform: scale(1.01);
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(3) .table-input {
-  text-align: left;
-}
-
 .orden-create-component .row:nth-child(2) table td:nth-child(4) .table-input {
   text-align: right;
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(6) .table-input {
+.orden-create-component .row:nth-child(2) table td:nth-child(5) .table-input {
+  text-align: right;
+}
+
+.orden-create-component .row:nth-child(2) table td:nth-child(7) .table-input {
   text-align: left;
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(7) {
+.orden-create-component .row:nth-child(2) table td:nth-child(8) {
   padding: 3px;
   vertical-align: middle;
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(7) svg {
+.orden-create-component .row:nth-child(2) table td:nth-child(8) svg {
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -394,19 +403,19 @@ kbd {
   margin: 0 auto;
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(7) svg:hover {
+.orden-create-component .row:nth-child(2) table td:nth-child(8) svg:hover {
   color: rgba(239, 68, 68, 1);
   background-color: rgba(239, 68, 68, 0.1);
   transform: scale(1.1);
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
 }
 
-.orden-create-component .row:nth-child(2) table td:nth-child(7) svg:active {
+.orden-create-component .row:nth-child(2) table td:nth-child(8) svg:active {
   transform: scale(0.95);
   background-color: rgba(239, 68, 68, 0.15);
 }
 
-.orden-create-component .row:nth-child(2) table tbody tr:hover td:nth-child(7) svg {
+.orden-create-component .row:nth-child(2) table tbody tr:hover td:nth-child(8) svg {
   color: rgba(239, 68, 68, 0.8);
   background-color: rgba(239, 68, 68, 0.05);
 }

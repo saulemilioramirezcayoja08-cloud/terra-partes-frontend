@@ -1,4 +1,9 @@
-import { OrderPaymentInfo } from './create-order-response.model';
+export interface OrderPaymentInfo {
+  id: number;
+  amount: number;
+  createdAt: string;
+  username: string;
+}
 
 export interface TotalsInfo {
   total: number;
@@ -11,4 +16,6 @@ export interface AddOrderPaymentResponse {
   orderNumber: string;
   payment: OrderPaymentInfo;
   totals: TotalsInfo;
+  canConfirm: boolean;
+  message: string;
 }
