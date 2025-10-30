@@ -75,16 +75,16 @@ export class OrderPrint {
         month: '2-digit',
         year: 'numeric'
       }),
-      status: 'BORRADOR',
+      status: 'N/A',
       currency: 'BOB',
       customer: {
-        name: 'SIN CLIENTE ASIGNADO',
-        address: '-',
-        phone: '-'
+        name: 'N/A',
+        address: 'N/A',
+        phone: 'N/A'
       },
-      seller: 'SIN ASIGNAR',
-      warehouse: 'SIN ALMACÉN ASIGNADO',
-      paymentMethod: 'SIN MÉTODO DE PAGO',
+      seller: 'N/A',
+      warehouse: 'N/A',
+      paymentMethod: 'N/A',
       products: products,
       totals: {
         totalQuantity: totalQuantity,
@@ -103,7 +103,7 @@ export class OrderPrint {
         second: '2-digit',
         hour12: false
       }),
-      username: 'usuario.preview'
+      username: 'N/A'
     };
   });
 
