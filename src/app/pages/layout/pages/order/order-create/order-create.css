@@ -51,6 +51,7 @@
   flex-direction: row;
   gap: 2px;
   align-items: stretch;
+  overflow: hidden;
 }
 
 .orden-create-component .row:nth-child(1) .row:nth-child(2) .col {

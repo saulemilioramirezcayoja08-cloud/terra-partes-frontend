@@ -65,13 +65,12 @@ export class OrderPrint {
   orderData = computed<OrderData>(() => {
     if (!this.isPreviewMode()) {
       const savedOrder = this.loadOrderFromStorage();
-
       if (savedOrder) {
         return this.buildOrderFromAPI(savedOrder);
       }
     }
 
-    return this.buildOrderFromCart();
+    return this.buildOrderFromPreview();
   });
 
   private buildOrderFromAPI(apiOrder: CreateOrderResponse): OrderData {
@@ -127,14 +126,13 @@ export class OrderPrint {
     };
   }
 
-  private buildOrderFromCart(): OrderData {
-    const cartItems = this.orderCartService.cartItems();
+  private buildOrderFromPreview(): OrderData {
+    const preview = this.orderCartService.preview();
     const total = this.orderCartService.total();
     const advance = this.orderCartService.advance();
     const pending = this.orderCartService.pendingAmount();
-    const notes = this.orderCartService.notes();
 
-    const products: Product[] = cartItems.map((item, index) => ({
+    const products: Product[] = preview.details.map((item, index) => ({
       itemNumber: String(index + 1).padStart(2, '0'),
       sku: item.sku,
       name: item.name,
@@ -144,7 +142,7 @@ export class OrderPrint {
       total: item.subtotal
     }));
 
-    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalQuantity = preview.details.reduce((sum, item) => sum + item.quantity, 0);
 
     return {
       orderNumber: 'PREVIEW',
@@ -153,16 +151,16 @@ export class OrderPrint {
         month: '2-digit',
         year: 'numeric'
       }),
-      status: 'N/A',
-      currency: 'BOB',
+      status: 'PREVIEW',
+      currency: preview.currency,
       customer: {
-        name: 'N/A',
-        address: 'N/A',
-        phone: 'N/A'
+        name: preview.customer.name,
+        address: preview.customer.address,
+        phone: preview.customer.phone
       },
       seller: 'N/A',
-      warehouse: 'N/A',
-      paymentMethod: 'N/A',
+      warehouse: preview.warehouse.name,
+      paymentMethod: preview.paymentMethod.name,
       products: products,
       totals: {
         totalQuantity: totalQuantity,
@@ -171,7 +169,7 @@ export class OrderPrint {
         pendingAmount: pending,
         amountInWords: this.numberToWords(total)
       },
-      notes: notes || 'N/A',
+      notes: preview.notes || 'N/A',
       registrationDateTime: new Date().toLocaleString('es-BO', {
         day: '2-digit',
         month: '2-digit',

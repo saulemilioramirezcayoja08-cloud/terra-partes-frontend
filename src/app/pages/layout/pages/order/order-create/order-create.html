@@ -8,8 +8,8 @@
       <div class="col">
         <div class="row">
           <div>
-            <div class="title">Sin cliente</div>
-            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>C</kbd> para agregar cliente</div>
+            <div class="title">{{ customer().name }}</div>
+            <div class="subtitle">{{ customer().phone }} • {{ customer().address }}</div>
           </div>
         </div>
         <div class="row">
@@ -27,8 +27,8 @@
       <div class="col">
         <div class="row">
           <div>
-            <div class="title">Sin método de pago</div>
-            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>M</kbd> para seleccionar método</div>
+            <div class="title">{{ paymentMethod().name }}</div>
+            <div class="subtitle">Método de pago seleccionado</div>
           </div>
         </div>
         <div class="row">
@@ -42,8 +42,8 @@
       <div class="col">
         <div class="row">
           <div>
-            <div class="title">Sin almacén</div>
-            <div class="subtitle">Presiona <kbd>Ctrl</kbd> + <kbd>A</kbd> para seleccionar almacén</div>
+            <div class="title">{{ warehouse().name }}</div>
+            <div class="subtitle">Almacén de despacho</div>
           </div>
         </div>
         <div class="row">
@@ -84,14 +84,14 @@
       </tr>
       </thead>
       <tbody>
-        @if (cartItems().length === 0) {
+        @if (details().length === 0) {
           <tr>
             <td colspan="8" style="text-align: center; padding: 20px; color: rgba(93, 93, 93, 0.6);">
               No hay productos. Presiona Ctrl + P para agregar
             </td>
           </tr>
         } @else {
-          @for (item of cartItems(); track $index) {
+          @for (item of details(); track $index) {
             <tr>
               <td>{{ ($index + 1).toString().padStart(2, '0') }}</td>
               <td>{{ item.sku }}</td>

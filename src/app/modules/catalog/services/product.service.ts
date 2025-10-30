@@ -3,8 +3,8 @@ import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ApiResponse} from '../../../core/models/api-response.model';
-import {PageResponse} from '../models/page-response.model';
 import {ProductListResponse} from '../models/product-list-response.model';
+import {PageResponse} from '../../../core/models/page-response.model';
 
 export interface ProductListParams {
   name?: string;
@@ -14,6 +14,7 @@ export interface ProductListParams {
   code?: string;
   page?: number;
   size?: number;
+  sort?: string;
 }
 
 @Injectable({
@@ -48,6 +49,9 @@ export class ProductService {
     }
     if (params.size !== undefined) {
       httpParams = httpParams.set('size', params.size.toString());
+    }
+    if (params.sort) {
+      httpParams = httpParams.set('sort', params.sort);
     }
 
     return this.http.get<ApiResponse<PageResponse<ProductListResponse>>>(

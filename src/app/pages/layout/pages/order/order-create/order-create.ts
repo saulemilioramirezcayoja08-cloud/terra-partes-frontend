@@ -5,7 +5,6 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../../../../modules/auth/services/auth.service';
 import {OrderService} from '../../../../../modules/orders/services/order.service';
-import {CreateOrderRequest} from '../../../../../modules/orders/models/create-order-request.model';
 
 @Component({
   selector: 'app-order-create',
@@ -19,7 +18,11 @@ export class OrderCreate {
   private authService = inject(AuthService);
   private orderService = inject(OrderService);
 
-  cartItems = this.orderCartService.cartItems;
+  preview = this.orderCartService.preview;
+  customer = this.orderCartService.customer;
+  warehouse = this.orderCartService.warehouse;
+  paymentMethod = this.orderCartService.paymentMethod;
+  details = this.orderCartService.details;
   orderTotal = this.orderCartService.total;
   advanceAmount = this.orderCartService.advance;
   pendingAmount = this.orderCartService.pendingAmount;
@@ -45,7 +48,8 @@ export class OrderCreate {
       input.value = total.toString();
     }
 
-    this.orderCartService.setAdvance(amount);
+    const currentUser = this.authService.currentUser;
+    this.orderCartService.setAdvance(amount, currentUser?.id);
   }
 
   updateOrderNotes(event: Event): void {
@@ -66,7 +70,7 @@ export class OrderCreate {
     quantity = Math.round(quantity);
     input.value = quantity.toString();
 
-    this.orderCartService.updateItem(index, {quantity});
+    this.orderCartService.updateDetail(index, {quantity});
   }
 
   updatePrice(index: number, event: Event): void {
@@ -78,7 +82,7 @@ export class OrderCreate {
       input.value = '0';
     }
 
-    this.orderCartService.updateItem(index, {price});
+    this.orderCartService.updateDetail(index, {price});
   }
 
   updateName(index: number, event: Event): void {
@@ -86,18 +90,18 @@ export class OrderCreate {
     const name = input.value.trim();
 
     if (name) {
-      this.orderCartService.updateItem(index, {name});
+      this.orderCartService.updateDetail(index, {name});
     }
   }
 
   updateNotes(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     const notes = input.value.trim();
-    this.orderCartService.updateItem(index, {notes});
+    this.orderCartService.updateDetail(index, {notes});
   }
 
   removeProduct(index: number): void {
-    this.orderCartService.removeItem(index);
+    this.orderCartService.removeDetail(index);
   }
 
   private isTextLikeTarget(el: EventTarget | null): boolean {
@@ -154,14 +158,14 @@ export class OrderCreate {
   }
 
   private validateOrder(): string | null {
-    const cartItems = this.cartItems();
+    const details = this.details();
 
-    if (cartItems.length === 0) {
+    if (details.length === 0) {
       return 'El carrito está vacío. Agrega productos antes de generar la orden.';
     }
 
-    for (let i = 0; i < cartItems.length; i++) {
-      const item = cartItems[i];
+    for (let i = 0; i < details.length; i++) {
+      const item = details[i];
       const itemNumber = i + 1;
 
       if (!item.name || item.name.trim() === '') {
@@ -212,35 +216,7 @@ export class OrderCreate {
       return;
     }
 
-    const cartItems = this.cartItems();
-
-    const details = cartItems.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
-      notes: item.notes || undefined
-    }));
-
-    const payments = [];
-    const advanceAmount = this.advanceAmount();
-
-    if (advanceAmount > 0) {
-      payments.push({
-        amount: advanceAmount,
-        userId: currentUser.id
-      });
-    }
-
-    const orderRequest: CreateOrderRequest = {
-      customerId: 1,
-      warehouseId: 1,
-      currency: "BOB",
-      paymentId: 1,
-      notes: this.orderNotes() || undefined,
-      userId: currentUser.id,
-      details: details,
-      payments: payments.length > 0 ? payments : undefined
-    };
+    const orderRequest = this.orderCartService.toCreateOrderRequest(currentUser.id);
 
     this.orderService.createOrder(orderRequest).subscribe({
       next: (response) => {

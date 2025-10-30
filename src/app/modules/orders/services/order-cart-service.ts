@@ -1,138 +1,109 @@
 import {computed, effect, inject, Injectable, PLATFORM_ID, signal} from '@angular/core';
-import {ProductListResponse} from '../../catalog/models/product-list-response.model';
 import {isPlatformBrowser} from '@angular/common';
-
-export interface OrderCartItem {
-  productId: number;
-  sku: string;
-  name: string;
-  quantity: number;
-  price: number;
-  subtotal: number;
-  notes: string;
-}
+import {
+  CustomerPreview,
+  DEFAULT_CURRENCY,
+  DEFAULT_CUSTOMER,
+  DEFAULT_PAYMENT,
+  DEFAULT_WAREHOUSE, DetailPreview,
+  OrderPreview, PaymentMethodPreview, WarehousePreview
+} from '../models/order-preview.model';
+import {CreateOrderRequest, DetailRequest, PaymentRequest} from '../models/create-order-request.model';
+import {ProductListResponse} from '../../catalog/models/product-list-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderCartService {
-  private readonly ORDER_DETAILS_KEY = 'order_details';
-  private readonly ORDER_PAYMENTS_KEY = 'order_payments';
-  private readonly ORDER_NOTES_KEY = 'order_notes';
+  private readonly ORDER_PREVIEW_KEY = 'order_preview';
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  private items = signal<OrderCartItem[]>(this.loadFromStorage());
-  private advancePayment = signal<number>(this.loadAdvanceFromStorage());
-  private orderNotes = signal<string>(this.loadNotesFromStorage());
+  private orderPreview = signal<OrderPreview>(this.loadFromStorage());
 
-  public cartItems = this.items.asReadonly();
-  public advance = this.advancePayment.asReadonly();
-  public notes = this.orderNotes.asReadonly();
+  public preview = this.orderPreview.asReadonly();
+
+  public customer = computed(() => this.orderPreview().customer);
+  public warehouse = computed(() => this.orderPreview().warehouse);
+  public paymentMethod = computed(() => this.orderPreview().paymentMethod);
+  public currency = computed(() => this.orderPreview().currency);
+  public notes = computed(() => this.orderPreview().notes);
+  public details = computed(() => this.orderPreview().details);
+  public payments = computed(() => this.orderPreview().payments);
 
   public total = computed(() =>
-    this.items().reduce((sum, item) => sum + item.subtotal, 0)
+    this.orderPreview().details.reduce((sum, item) => sum + item.subtotal, 0)
   );
 
-  public pendingAmount = computed(() => {
-    const totalAmount = this.total();
-    const advanceAmount = this.advancePayment();
-    return totalAmount - advanceAmount;
-  });
+  public advance = computed(() =>
+    this.orderPreview().payments.reduce((sum, payment) => sum + payment.amount, 0)
+  );
 
-  public itemCount = computed(() => this.items().length);
+  public pendingAmount = computed(() => this.total() - this.advance());
+
+  public itemCount = computed(() => this.orderPreview().details.length);
 
   constructor() {
     effect(() => {
-      const currentItems = this.items();
-      this.saveToStorage(currentItems);
-    });
-
-    effect(() => {
-      const currentAdvance = this.advancePayment();
-      this.saveAdvanceToStorage(currentAdvance);
-    });
-
-    effect(() => {
-      const currentNotes = this.orderNotes();
-      this.saveNotesToStorage(currentNotes);
+      const currentPreview = this.orderPreview();
+      this.saveToStorage(currentPreview);
     });
   }
 
-  private loadFromStorage(): OrderCartItem[] {
-    if (!this.isBrowser) return [];
+  private loadFromStorage(): OrderPreview {
+    if (!this.isBrowser) return this.createDefaultPreview();
 
     try {
-      const saved = localStorage.getItem(this.ORDER_DETAILS_KEY);
+      const saved = localStorage.getItem(this.ORDER_PREVIEW_KEY);
       if (saved) {
         return JSON.parse(saved);
       }
     } catch (error) {
-      console.error('Error al cargar carrito:', error);
+      console.error('Error al cargar preview:', error);
     }
-    return [];
+    return this.createDefaultPreview();
   }
 
-  private saveToStorage(items: OrderCartItem[]): void {
+  private saveToStorage(preview: OrderPreview): void {
     if (!this.isBrowser) return;
 
     try {
-      localStorage.setItem(this.ORDER_DETAILS_KEY, JSON.stringify(items));
+      localStorage.setItem(this.ORDER_PREVIEW_KEY, JSON.stringify(preview));
     } catch (error) {
-      console.error('Error al guardar carrito:', error);
+      console.error('Error al guardar preview:', error);
     }
   }
 
-  private loadAdvanceFromStorage(): number {
-    if (!this.isBrowser) return 0;
-
-    try {
-      const saved = localStorage.getItem(this.ORDER_PAYMENTS_KEY);
-      if (saved) {
-        return parseFloat(saved);
-      }
-    } catch (error) {
-      console.error('Error al cargar anticipo:', error);
-    }
-    return 0;
+  private createDefaultPreview(): OrderPreview {
+    return {
+      customer: DEFAULT_CUSTOMER,
+      warehouse: DEFAULT_WAREHOUSE,
+      paymentMethod: DEFAULT_PAYMENT,
+      currency: DEFAULT_CURRENCY,
+      notes: '',
+      details: [],
+      payments: []
+    };
   }
 
-  private saveAdvanceToStorage(amount: number): void {
-    if (!this.isBrowser) return;
-
-    try {
-      localStorage.setItem(this.ORDER_PAYMENTS_KEY, amount.toString());
-    } catch (error) {
-      console.error('Error al guardar anticipo:', error);
-    }
+  setCustomer(customer: CustomerPreview): void {
+    this.orderPreview.update(prev => ({...prev, customer}));
   }
 
-  private loadNotesFromStorage(): string {
-    if (!this.isBrowser) return '';
-
-    try {
-      const saved = localStorage.getItem(this.ORDER_NOTES_KEY);
-      if (saved) {
-        return saved;
-      }
-    } catch (error) {
-      console.error('Error al cargar observaciones:', error);
-    }
-    return '';
+  setWarehouse(warehouse: WarehousePreview): void {
+    this.orderPreview.update(prev => ({...prev, warehouse}));
   }
 
-  private saveNotesToStorage(notes: string): void {
-    if (!this.isBrowser) return;
+  setPaymentMethod(paymentMethod: PaymentMethodPreview): void {
+    this.orderPreview.update(prev => ({...prev, paymentMethod}));
+  }
 
-    try {
-      localStorage.setItem(this.ORDER_NOTES_KEY, notes);
-    } catch (error) {
-      console.error('Error al guardar observaciones:', error);
-    }
+  setNotes(notes: string): void {
+    this.orderPreview.update(prev => ({...prev, notes}));
   }
 
   addProduct(product: ProductListResponse): void {
-    const newItem: OrderCartItem = {
+    const newDetail: DetailPreview = {
       productId: product.id,
       sku: product.sku,
       name: product.name,
@@ -142,60 +113,86 @@ export class OrderCartService {
       notes: ''
     };
 
-    this.items.update(currentItems => [...currentItems, newItem]);
+    this.orderPreview.update(prev => ({
+      ...prev,
+      details: [...prev.details, newDetail]
+    }));
   }
 
-  updateItem(index: number, changes: Partial<OrderCartItem>): void {
-    this.items.update(currentItems => {
-      const updated = [...currentItems];
-      updated[index] = {
-        ...updated[index],
+  updateDetail(index: number, changes: Partial<DetailPreview>): void {
+    this.orderPreview.update(prev => {
+      const updatedDetails = [...prev.details];
+      updatedDetails[index] = {
+        ...updatedDetails[index],
         ...changes
       };
 
       if (changes.quantity !== undefined || changes.price !== undefined) {
-        updated[index].subtotal = updated[index].quantity * updated[index].price;
+        updatedDetails[index].subtotal = updatedDetails[index].quantity * updatedDetails[index].price;
       }
 
-      return updated;
+      return {...prev, details: updatedDetails};
     });
   }
 
-  removeItem(index: number): void {
-    this.items.update(currentItems => currentItems.filter((_, i) => i !== index));
+  removeDetail(index: number): void {
+    this.orderPreview.update(prev => ({
+      ...prev,
+      details: prev.details.filter((_, i) => i !== index)
+    }));
   }
 
-  setAdvance(amount: number): void {
+  setAdvance(amount: number, userId?: number): void {
     const validAmount = Math.max(0, amount);
-    this.advancePayment.set(validAmount);
-  }
 
-  setNotes(notes: string): void {
-    this.orderNotes.set(notes);
+    if (validAmount === 0) {
+      this.orderPreview.update(prev => ({...prev, payments: []}));
+    } else {
+      this.orderPreview.update(prev => ({
+        ...prev,
+        payments: [{amount: validAmount, userId}]
+      }));
+    }
   }
 
   clear(): void {
-    this.items.set([]);
-    this.advancePayment.set(0);
-    this.orderNotes.set('');
+    this.orderPreview.set(this.createDefaultPreview());
 
     if (this.isBrowser) {
-      localStorage.removeItem(this.ORDER_DETAILS_KEY);
-      localStorage.removeItem(this.ORDER_PAYMENTS_KEY);
-      localStorage.removeItem(this.ORDER_NOTES_KEY);
+      localStorage.removeItem(this.ORDER_PREVIEW_KEY);
     }
   }
 
   isEmpty(): boolean {
-    return this.items().length === 0;
+    return this.orderPreview().details.length === 0;
   }
 
-  getOrderDetails(): { productId: number, quantity: number, price: number, notes?: string }[] {
-    return this.items().map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
-      notes: item.notes || undefined
+  toCreateOrderRequest(userId?: number): CreateOrderRequest {
+    const preview = this.orderPreview();
+
+    const details: DetailRequest[] = preview.details.map(detail => ({
+      productId: detail.productId,
+      quantity: detail.quantity,
+      price: detail.price,
+      notes: detail.notes || undefined
     }));
+
+    const payments: PaymentRequest[] | undefined = preview.payments.length > 0
+      ? preview.payments.map(p => ({
+        amount: p.amount,
+        userId: p.userId || userId
+      }))
+      : undefined;
+
+    return {
+      customerId: preview.customer.id,
+      warehouseId: preview.warehouse.id,
+      paymentId: preview.paymentMethod.id,
+      currency: preview.currency,
+      notes: preview.notes || undefined,
+      userId: userId,
+      details: details,
+      payments: payments
+    };
   }
 }

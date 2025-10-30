@@ -2,11 +2,11 @@ export interface OrderPaymentInfo {
   id: number;
   amount: number;
   createdAt: string;
-  username: string;
+  username: string | null;
 }
 
 export interface TotalsInfo {
-  total: number;
+  orderTotal: number;
   totalPayments: number;
   pendingAmount: number;
 }
@@ -14,6 +14,7 @@ export interface TotalsInfo {
 export interface AddOrderPaymentResponse {
   orderId: number;
   orderNumber: string;
+  orderStatus: string;
   payment: OrderPaymentInfo;
   totals: TotalsInfo;
   canConfirm: boolean;
