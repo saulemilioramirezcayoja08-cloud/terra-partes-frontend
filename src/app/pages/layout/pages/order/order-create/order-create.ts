@@ -3,6 +3,9 @@ import {Router} from '@angular/router';
 import {OrderCartService} from '../../../../../modules/orders/services/order-cart-service';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../../../../modules/auth/services/auth.service';
+import {OrderService} from '../../../../../modules/orders/services/order.service';
+import {CreateOrderRequest} from '../../../../../modules/orders/models/create-order-request.model';
 
 @Component({
   selector: 'app-order-create',
@@ -13,12 +16,19 @@ import {FormsModule} from '@angular/forms';
 export class OrderCreate {
   private router = inject(Router);
   private orderCartService = inject(OrderCartService);
+  private authService = inject(AuthService);
+  private orderService = inject(OrderService);
 
   cartItems = this.orderCartService.cartItems;
   orderTotal = this.orderCartService.total;
   advanceAmount = this.orderCartService.advance;
   pendingAmount = this.orderCartService.pendingAmount;
   orderNotes = this.orderCartService.notes;
+
+  hasLastOrder(): boolean {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('current_order') !== null;
+  }
 
   updateAdvance(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -33,7 +43,6 @@ export class OrderCreate {
     if (amount > total) {
       amount = total;
       input.value = total.toString();
-      console.warn('El anticipo no puede ser mayor que el total');
     }
 
     this.orderCartService.setAdvance(amount);
@@ -125,11 +134,142 @@ export class OrderCreate {
 
   openPreview(): void {
     const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/order/print'], {
+        queryParams: {mode: 'preview'}
+      })
+    );
+    window.open(url, '_blank');
+  }
+
+  openLastOrder(): void {
+    if (!this.hasLastOrder()) {
+      alert('No hay ninguna orden creada recientemente');
+      return;
+    }
+
+    const url = this.router.serializeUrl(
       this.router.createUrlTree(['/order/print'])
     );
     window.open(url, '_blank');
   }
 
+  private validateOrder(): string | null {
+    const cartItems = this.cartItems();
+
+    if (cartItems.length === 0) {
+      return 'El carrito está vacío. Agrega productos antes de generar la orden.';
+    }
+
+    for (let i = 0; i < cartItems.length; i++) {
+      const item = cartItems[i];
+      const itemNumber = i + 1;
+
+      if (!item.name || item.name.trim() === '') {
+        return `El producto #${itemNumber} no tiene nombre.`;
+      }
+
+      if (item.quantity <= 0) {
+        return `El producto #${itemNumber} (${item.name}) tiene cantidad inválida. Debe ser mayor a 0.`;
+      }
+
+      if (item.price <= 0) {
+        return `El producto #${itemNumber} (${item.name}) tiene precio inválido. El precio debe ser mayor a 0.`;
+      }
+
+      if (item.subtotal <= 0) {
+        return `El producto #${itemNumber} (${item.name}) tiene un subtotal inválido.`;
+      }
+    }
+
+    const total = this.orderTotal();
+    if (total <= 0) {
+      return 'El total de la orden debe ser mayor a 0.';
+    }
+
+    const advanceAmount = this.advanceAmount();
+    if (advanceAmount < 0) {
+      return 'El anticipo no puede ser negativo.';
+    }
+
+    if (advanceAmount > total) {
+      return 'El anticipo no puede ser mayor al total de la orden.';
+    }
+
+    return null;
+  }
+
   generateOrder(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser) {
+      alert('Error: No hay usuario autenticado');
+      return;
+    }
+
+    const validationError = this.validateOrder();
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    const cartItems = this.cartItems();
+
+    const details = cartItems.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+      notes: item.notes || undefined
+    }));
+
+    const payments = [];
+    const advanceAmount = this.advanceAmount();
+
+    if (advanceAmount > 0) {
+      payments.push({
+        amount: advanceAmount,
+        userId: currentUser.id
+      });
+    }
+
+    const orderRequest: CreateOrderRequest = {
+      customerId: 1,
+      warehouseId: 1,
+      currency: "BOB",
+      paymentId: 1,
+      notes: this.orderNotes() || undefined,
+      userId: currentUser.id,
+      details: details,
+      payments: payments.length > 0 ? payments : undefined
+    };
+
+    this.orderService.createOrder(orderRequest).subscribe({
+      next: (response) => {
+        if (response.success) {
+          localStorage.setItem('current_order', JSON.stringify(response.data));
+          this.orderCartService.clear();
+
+          const verOrden = confirm(
+            `${response.message}\n\n` +
+            `Número de orden: ${response.data.number}\n` +
+            `Total: Bs. ${response.data.totals.total.toFixed(2)}\n` +
+            `Anticipo: Bs. ${response.data.totals.totalPayments.toFixed(2)}\n` +
+            `Saldo: Bs. ${response.data.totals.pendingAmount.toFixed(2)}\n\n` +
+            `¿Deseas ver la orden generada?`
+          );
+
+          if (verOrden) {
+            const url = this.router.serializeUrl(
+              this.router.createUrlTree(['/order/print'])
+            );
+            window.open(url, '_blank');
+          }
+        } else {
+          alert(`Error: ${response.message}`);
+        }
+      },
+      error: (error) => {
+        alert(`Error al crear la orden: ${error.message || 'Error desconocido'}`);
+      }
+    });
   }
 }

@@ -1,6 +1,8 @@
-import {Component, computed, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {Component, computed, inject, PLATFORM_ID, signal} from '@angular/core';
+import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {OrderCartService} from '../../../../../modules/orders/services/order-cart-service';
+import {CreateOrderResponse} from '../../../../../modules/orders/models/create-order-response.model';
+import {ActivatedRoute} from '@angular/router';
 
 interface Product {
   itemNumber: string;
@@ -48,8 +50,84 @@ interface OrderData {
 })
 export class OrderPrint {
   private orderCartService = inject(OrderCartService);
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+  private isBrowser = isPlatformBrowser(this.platformId);
+
+  private isPreviewMode = signal<boolean>(false);
+
+  constructor() {
+    this.route.queryParams.subscribe(params => {
+      this.isPreviewMode.set(params['mode'] === 'preview');
+    });
+  }
 
   orderData = computed<OrderData>(() => {
+    if (!this.isPreviewMode()) {
+      const savedOrder = this.loadOrderFromStorage();
+
+      if (savedOrder) {
+        return this.buildOrderFromAPI(savedOrder);
+      }
+    }
+
+    return this.buildOrderFromCart();
+  });
+
+  private buildOrderFromAPI(apiOrder: CreateOrderResponse): OrderData {
+    const products: Product[] = apiOrder.details.map((detail, index) => ({
+      itemNumber: String(index + 1).padStart(2, '0'),
+      sku: detail.productSku,
+      name: detail.productName,
+      origin: 'OR',
+      quantity: detail.quantity,
+      price: detail.price,
+      total: detail.subtotal
+    }));
+
+    const totalQuantity = apiOrder.details.reduce((sum, detail) => sum + detail.quantity, 0);
+    const createdDate = new Date(apiOrder.createdAt);
+
+    return {
+      orderNumber: apiOrder.number,
+      date: createdDate.toLocaleDateString('es-BO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }),
+      status: apiOrder.status,
+      currency: apiOrder.currency,
+      customer: {
+        name: apiOrder.customer.name,
+        address: apiOrder.customer.address,
+        phone: apiOrder.customer.phone
+      },
+      seller: apiOrder.user?.username || 'N/A',
+      warehouse: apiOrder.warehouse.name,
+      paymentMethod: apiOrder.payment?.name || 'N/A',
+      products: products,
+      totals: {
+        totalQuantity: totalQuantity,
+        grandTotal: apiOrder.totals.total,
+        totalPayments: apiOrder.totals.totalPayments,
+        pendingAmount: apiOrder.totals.pendingAmount,
+        amountInWords: this.numberToWords(apiOrder.totals.total)
+      },
+      notes: apiOrder.notes || 'N/A',
+      registrationDateTime: createdDate.toLocaleString('es-BO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }),
+      username: apiOrder.user?.username || 'N/A'
+    };
+  }
+
+  private buildOrderFromCart(): OrderData {
     const cartItems = this.orderCartService.cartItems();
     const total = this.orderCartService.total();
     const advance = this.orderCartService.advance();
@@ -105,7 +183,21 @@ export class OrderPrint {
       }),
       username: 'N/A'
     };
-  });
+  }
+
+  private loadOrderFromStorage(): CreateOrderResponse | null {
+    if (!this.isBrowser) return null;
+
+    try {
+      const saved = localStorage.getItem('current_order');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      return null;
+    }
+    return null;
+  }
 
   formatNumber(value: number): string {
     return value.toFixed(2);
