@@ -38,8 +38,4 @@ export class ErrorHandlerService {
       error.message ||
       defaultMessage;
   }
-
-  getErrorMessage(code: string): string {
-    return this.errorMessages[code] || 'Error desconocido';
-  }
 }
