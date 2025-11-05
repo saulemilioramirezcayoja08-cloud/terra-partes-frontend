@@ -29,7 +29,6 @@
 
 .document-header {
   width: 100%;
-
   page-break-after: avoid;
   page-break-inside: avoid;
 }
@@ -110,7 +109,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3mm;
-
   page-break-inside: avoid;
   border-top: 1px dashed #E5E7EB;
   border-bottom: 1px dashed #E5E7EB;
@@ -274,7 +272,6 @@
 
 .document-footer {
   width: 100%;
-
   page-break-inside: avoid;
 }
 

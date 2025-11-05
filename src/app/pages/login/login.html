@@ -4,15 +4,42 @@
       <form class="form" (ngSubmit)="onSubmit()">
         <div class="group">
           <label for="username">Usuario</label>
-          <input id="username" name="username" type="text" [(ngModel)]="username" required autocomplete="username" placeholder="Ingrese su usuario"/>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            [(ngModel)]="username"
+            required
+            autocomplete="username"
+            placeholder="Ingrese su usuario"
+            [disabled]="isLoading()"
+          />
         </div>
 
         <div class="group">
           <label for="password">Contraseña</label>
-          <input id="password" name="password" type="password" [(ngModel)]="password" required autocomplete="current-password" placeholder="Ingrese su contraseña"/>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            [(ngModel)]="password"
+            required
+            autocomplete="current-password"
+            placeholder="Ingrese su contraseña"
+            [disabled]="isLoading()"
+          />
         </div>
 
-        <button type="submit" class="btn-login">Login</button>
+        <button
+          type="submit"
+          class="btn-login"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="spinner"></span>
+          }
+          <span>Iniciar sesión</span>
+        </button>
       </form>
     </div>
     <div class="col"></div>

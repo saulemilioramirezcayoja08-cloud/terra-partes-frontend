@@ -1,6 +1,5 @@
 <div class="order-print-component">
-  <div class="orders" *ngIf="orderData()">
-
+  <div class="orders">
     <div class="document-header">
       <div class="header-row">
         <div class="header-column contact-info">
@@ -13,9 +12,9 @@
 
         <div class="header-column order-info">
           <h2>ORDEN</h2>
-          <p>Nro.: {{ orderData().orderNumber }}</p>
-          <p>Fecha: {{ orderData().date }}</p>
-          <p class="order-status">Estado: {{ orderData().status }}</p>
+          <p>Nro.: {{ orderNumber() }}</p>
+          <p>Fecha: {{ formattedDate() }}</p>
+          <p class="order-status">Estado: {{ status() }}</p>
         </div>
 
         <div class="header-column logo-info">
@@ -28,29 +27,29 @@
         <div class="customer-column left">
           <div class="customer-field">
             <span class="label">Cliente:</span>
-            <span class="value">{{ orderData().customer.name }}</span>
+            <span class="value">{{ customerName() }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Dirección:</span>
-            <span class="value">{{ orderData().customer.address }}</span>
+            <span class="value">{{ customerAddress() }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Almacén:</span>
-            <span class="value">{{ orderData().warehouse }}</span>
+            <span class="value">{{ warehouseName() }}</span>
           </div>
         </div>
         <div class="customer-column right">
           <div class="customer-field">
             <span class="label">Teléfono:</span>
-            <span class="value">{{ orderData().customer.phone }}</span>
+            <span class="value">{{ customerPhone() }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Vendedor:</span>
-            <span class="value">{{ orderData().seller }}</span>
+            <span class="value">{{ username() }}</span>
           </div>
           <div class="customer-field">
             <span class="label">Método Pago:</span>
-            <span class="value">{{ orderData().paymentMethod }}</span>
+            <span class="value">{{ paymentName() }}</span>
           </div>
         </div>
       </div>
@@ -63,7 +62,7 @@
           <th class="center">ITEM</th>
           <th class="center">ARTICULO</th>
           <th class="right">DESCRIPCION</th>
-          <th class="right">PROC.</th>
+          <th class="right">UOM</th>
           <th class="right">CANTIDAD</th>
           <th class="right">PRECIO</th>
           <th class="right">SUBTOTAL</th>
@@ -71,54 +70,49 @@
         </thead>
 
         <tbody>
-        <tr *ngFor="let product of orderData().products">
-          <td class="center">{{ product.itemNumber }}</td>
-          <td class="center">{{ product.sku }}</td>
-          <td class="right">{{ product.name }}</td>
-          <td class="right">{{ product.origin }}</td>
-          <td class="right">{{ formatQuantity(product.quantity) }}</td>
-          <td class="right">{{ formatNumber(product.price) }}</td>
-          <td class="right">{{ formatNumber(product.total) }}</td>
-        </tr>
+          @for (detail of details(); track trackByItem($index, detail)) {
+            <tr>
+              <td class="center">{{ detail.item }}</td>
+              <td class="center">{{ detail.sku }}</td>
+              <td class="right">{{ detail.name }}</td>
+              <td class="right">{{ detail.uom || 'UND' }}</td>
+              <td class="right">{{ detail.quantity | number:'1.2-2' }}</td>
+              <td class="right">{{ detail.price | number:'1.2-2' }}</td>
+              <td class="right">{{ detail.subtotal | number:'1.2-2' }}</td>
+            </tr>
+          }
         </tbody>
 
         <tfoot>
         <tr class="totals-row">
-          <td colspan="3"></td>
+          <td colspan="4"></td>
           <td class="left totals-label">TOTALES:</td>
-          <td class="right total-quantity">{{ formatQuantity(orderData().totals.totalQuantity) }}</td>
-          <td></td>
-          <td class="right total-amount">{{ formatCurrency(orderData().totals.grandTotal) }}</td>
+          <td class="right total-quantity">{{ totalQuantity() | number:'1.2-2' }}</td>
+          <td class="right total-amount">Bs. {{ total() | number:'1.2-2' }}</td>
         </tr>
         <tr class="payment-row">
-          <td colspan="3"></td>
+          <td colspan="5"></td>
           <td class="left payment-label">ANTICIPO:</td>
-          <td></td>
-          <td></td>
-          <td class="right payment-amount">{{ formatCurrency(orderData().totals.totalPayments) }}</td>
+          <td class="right payment-amount">Bs. {{ paymentAmount() | number:'1.2-2' }}</td>
         </tr>
         <tr class="balance-row">
-          <td colspan="3"></td>
+          <td colspan="5"></td>
           <td class="left balance-label">SALDO:</td>
-          <td></td>
-          <td></td>
-          <td class="right balance-amount">{{ formatCurrency(orderData().totals.pendingAmount) }}</td>
+          <td class="right balance-amount">Bs. {{ pendingAmount() | number:'1.2-2' }}</td>
         </tr>
         </tfoot>
-
       </table>
     </div>
 
     <div class="document-footer">
-
       <div class="amount-section">
         <span class="label">Son:</span>
-        <span class="value">{{ orderData().totals.amountInWords }}</span>
+        <span class="value">{{ amountInWords() }}</span>
       </div>
 
       <div class="observations-section">
         <span class="label">Obs.:</span>
-        <span class="value">{{ orderData().notes || 'N/A' }}</span>
+        <span class="value">{{ notes() }}</span>
       </div>
 
       <div class="signatures-section">
@@ -136,21 +130,18 @@
         <div class="metadata-right">
           <div class="metadata-item">
             <span class="metadata-label">Fecha Reg:</span>
-            <span>{{ orderData().registrationDateTime }}</span>
+            <span>{{ formattedDateTime() }}</span>
           </div>
           <div class="metadata-item">
             <span class="metadata-label">Usuario:</span>
-            <span>{{ orderData().username }}</span>
+            <span>{{ username() }}</span>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 
   <div class="print-button-container">
-    <button class="btn-print" (click)="printDocument()">Imprimir documento</button>
+    <button class="btn-print" onclick="window.print()">Imprimir documento</button>
   </div>
-
 </div>

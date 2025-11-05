@@ -1,251 +1,414 @@
-import {Component, HostListener, inject} from '@angular/core';
-import {Router} from '@angular/router';
-import {OrderCartService} from '../../../../../modules/orders/services/order-cart-service';
-import {CommonModule} from '@angular/common';
+import {Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
+import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {AuthService} from '../../../../../modules/auth/services/auth.service';
-import {OrderService} from '../../../../../modules/orders/services/order.service';
+import {OrderCartService} from '../../../../../modules/order/services/order-cart-service';
+import {OrderService} from '../../../../../modules/order/services/order.service';
+import {CustomerService} from '../../../../../modules/customer/services/customer.service';
+import {PaymentService} from '../../../../../modules/payment/services/payment.service';
+import {Router} from '@angular/router';
+import {CustomerListResponse} from '../../../../../modules/customer/get/models/customer-list-response.model';
+import {WarehouseService} from '../../../../../modules/warehouse/services/warehouse.service';
+import {WarehouseListResponse} from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
+import {PaymentListResponse} from '../../../../../modules/payment/get/models/payment-list-response.model';
+import {ErrorResponse} from '../../../../../core/models/error-response.model';
+import {ErrorHandlerService} from '../../../../../core/services/error-handler.service';
+import {Detail} from '../../../../../modules/order/get/models/order-preview.model';
 
 @Component({
   selector: 'app-order-create',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DecimalPipe],
   templateUrl: './order-create.html',
   styleUrl: './order-create.css'
 })
-export class OrderCreate {
-  private router = inject(Router);
-  private orderCartService = inject(OrderCartService);
-  private authService = inject(AuthService);
-  private orderService = inject(OrderService);
+export class OrderCreate implements OnInit, OnDestroy {
+  private readonly orderCartService = inject(OrderCartService);
+  private readonly orderService = inject(OrderService);
+  private readonly customerService = inject(CustomerService);
+  private readonly warehouseService = inject(WarehouseService);
+  private readonly paymentService = inject(PaymentService);
+  private readonly errorHandler = inject(ErrorHandlerService);
+  private readonly platformId = inject(PLATFORM_ID);
+  readonly router = inject(Router);
 
-  preview = this.orderCartService.preview;
-  customer = this.orderCartService.customer;
-  warehouse = this.orderCartService.warehouse;
-  paymentMethod = this.orderCartService.paymentMethod;
-  details = this.orderCartService.details;
-  orderTotal = this.orderCartService.total;
-  advanceAmount = this.orderCartService.advance;
-  pendingAmount = this.orderCartService.pendingAmount;
-  orderNotes = this.orderCartService.notes;
+  readonly cart = this.orderCartService.cart;
+  readonly details = this.orderCartService.details;
+  readonly total = this.orderCartService.total;
+  readonly pending = this.orderCartService.pending;
+  readonly itemCount = this.orderCartService.itemCount;
+  readonly totalPayments = this.orderCartService.totalPayments;
 
-  hasLastOrder(): boolean {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('current_order') !== null;
+  readonly customers = signal<CustomerListResponse[]>([]);
+  readonly warehouses = signal<WarehouseListResponse[]>([]);
+  readonly payments = signal<PaymentListResponse[]>([]);
+
+  notesModel = signal('');
+  paymentModel = signal(0);
+
+  readonly missingData = computed(() => ({
+    customer: this.cart().customer.id === 0,
+    warehouse: this.cart().warehouse.id === 0,
+    payment: this.cart().payment.id === 0
+  }));
+
+  readonly hasWarnings = computed(() => {
+    const missing = this.missingData();
+    return missing.customer || missing.warehouse || missing.payment;
+  });
+
+  readonly warningMessage = computed(() => {
+    const missing = this.missingData();
+    const warnings: string[] = [];
+
+    if (missing.customer) warnings.push('cliente');
+    if (missing.warehouse) warnings.push('almacén');
+    if (missing.payment) warnings.push('método de pago');
+
+    if (warnings.length === 0) return '';
+
+    return `Falta seleccionar: ${warnings.join(', ')}. Puedes agregar productos y completar estos datos después.`;
+  });
+
+  readonly canSave = computed(() =>
+    this.itemCount() > 0 &&
+    this.cart().customer.id > 0 &&
+    this.cart().warehouse.id > 0 &&
+    this.cart().payment.id > 0
+  );
+
+  readonly saveBlockReason = computed(() => {
+    if (this.itemCount() === 0) return 'Agrega al menos un producto';
+    if (this.cart().customer.id === 0) return 'Selecciona un cliente';
+    if (this.cart().warehouse.id === 0) return 'Selecciona un almacén';
+    if (this.cart().payment.id === 0) return 'Selecciona un método de pago';
+    return '';
+  });
+
+  private keyboardListener?: (e: KeyboardEvent) => void;
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  constructor() {
+    effect(() => {
+      this.notesModel.set(this.cart().notes);
+      this.paymentModel.set(this.totalPayments());
+    }, {allowSignalWrites: true});
   }
 
-  updateAdvance(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let amount = parseFloat(input.value);
+  ngOnInit(): void {
+    this.ensureCartReady();
+    this.loadMasterData();
 
-    if (isNaN(amount) || amount < 0) {
-      amount = 0;
-      input.value = '0';
+    if (this.isBrowser) {
+      this.setupKeyboardShortcuts();
+      this.showWarningsIfNeeded();
     }
-
-    const total = this.orderTotal();
-    if (amount > total) {
-      amount = total;
-      input.value = total.toString();
-    }
-
-    const currentUser = this.authService.currentUser;
-    this.orderCartService.setAdvance(amount, currentUser?.id);
   }
 
-  updateOrderNotes(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const notes = input.value;
-    this.orderCartService.setNotes(notes);
-  }
-
-  updateQuantity(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let quantity = parseFloat(input.value);
-
-    if (isNaN(quantity) || quantity < 1) {
-      quantity = 1;
-      input.value = '1';
-    }
-
-    quantity = Math.round(quantity);
-    input.value = quantity.toString();
-
-    this.orderCartService.updateDetail(index, {quantity});
-  }
-
-  updatePrice(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let price = parseFloat(input.value);
-
-    if (isNaN(price) || price < 0) {
-      price = 0;
-      input.value = '0';
-    }
-
-    this.orderCartService.updateDetail(index, {price});
-  }
-
-  updateName(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const name = input.value.trim();
-
-    if (name) {
-      this.orderCartService.updateDetail(index, {name});
+  ngOnDestroy(): void {
+    if (this.isBrowser && this.keyboardListener) {
+      document.removeEventListener('keydown', this.keyboardListener);
     }
   }
 
-  updateNotes(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const notes = input.value.trim();
-    this.orderCartService.updateDetail(index, {notes});
-  }
+  private ensureCartReady(): void {
+    const cart = this.cart();
 
-  removeProduct(index: number): void {
-    this.orderCartService.removeDetail(index);
-  }
-
-  private isTextLikeTarget(el: EventTarget | null): boolean {
-    const t = el as HTMLElement | null;
-    if (!t) return false;
-    const tag = (t.tagName || '').toLowerCase();
-    if (tag === 'input' || tag === 'textarea') return true;
-    if ((t as any).isContentEditable) return true;
-    return false;
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  onGlobalKeydown(e: KeyboardEvent) {
-    const isMac = navigator.platform.toLowerCase().includes('mac');
-    const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
-
-    const isPrintShortcut = ctrlOrCmd && (e.key === 'p' || e.key === 'P');
-    const isPreviewShortcut = ctrlOrCmd && (e.key === 'v' || e.key === 'V');
-
-    if (isPrintShortcut) {
-      e.preventDefault();
-      this.router.navigate(['/order/select-product']);
+    if (!cart.currency) {
+      this.initializeCart();
       return;
     }
 
-    if (isPreviewShortcut) {
-      e.preventDefault();
-      this.openPreview();
-      return;
-    }
-
-    if (this.isTextLikeTarget(e.target)) return;
-  }
-
-  openPreview(): void {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/order/print'], {
-        queryParams: {mode: 'preview'}
-      })
-    );
-    window.open(url, '_blank');
-  }
-
-  openLastOrder(): void {
-    if (!this.hasLastOrder()) {
-      alert('No hay ninguna orden creada recientemente');
-      return;
-    }
-
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/order/print'])
-    );
-    window.open(url, '_blank');
-  }
-
-  private validateOrder(): string | null {
-    const details = this.details();
-
-    if (details.length === 0) {
-      return 'El carrito está vacío. Agrega productos antes de generar la orden.';
-    }
-
-    for (let i = 0; i < details.length; i++) {
-      const item = details[i];
-      const itemNumber = i + 1;
-
-      if (!item.name || item.name.trim() === '') {
-        return `El producto #${itemNumber} no tiene nombre.`;
+    if (this.itemCount() > 0) {
+      if (cart.customer.id === 0 || cart.warehouse.id === 0 || cart.payment.id === 0) {
+        console.warn('Hay productos pero faltan datos maestros');
       }
-
-      if (item.quantity <= 0) {
-        return `El producto #${itemNumber} (${item.name}) tiene cantidad inválida. Debe ser mayor a 0.`;
-      }
-
-      if (item.price <= 0) {
-        return `El producto #${itemNumber} (${item.name}) tiene precio inválido. El precio debe ser mayor a 0.`;
-      }
-
-      if (item.subtotal <= 0) {
-        return `El producto #${itemNumber} (${item.name}) tiene un subtotal inválido.`;
-      }
+      return;
     }
 
-    const total = this.orderTotal();
-    if (total <= 0) {
-      return 'El total de la orden debe ser mayor a 0.';
+    if (cart.customer.id === 0) {
+      this.initializeCart();
     }
-
-    const advanceAmount = this.advanceAmount();
-    if (advanceAmount < 0) {
-      return 'El anticipo no puede ser negativo.';
-    }
-
-    if (advanceAmount > total) {
-      return 'El anticipo no puede ser mayor al total de la orden.';
-    }
-
-    return null;
   }
 
-  generateOrder(): void {
-    const currentUser = this.authService.currentUser;
+  private showWarningsIfNeeded(): void {
+    setTimeout(() => {
+      if (this.itemCount() > 0 && this.hasWarnings()) {
+        console.info(this.warningMessage());
+      }
+    }, 500);
+  }
 
-    if (!currentUser) {
-      alert('Error: No hay usuario autenticado');
-      return;
-    }
+  private initializeCart(): void {
+    this.orderCartService.initialize({
+      customer: {id: 0, name: '', address: '', taxId: '', phone: ''},
+      warehouse: {id: 0, code: '', name: '', address: ''},
+      payment: {id: 0, code: '', name: ''},
+      currency: 'BOB'
+    });
+  }
 
-    const validationError = this.validateOrder();
-    if (validationError) {
-      alert(validationError);
-      return;
-    }
-
-    const orderRequest = this.orderCartService.toCreateOrderRequest(currentUser.id);
-
-    this.orderService.createOrder(orderRequest).subscribe({
+  private loadMasterData(): void {
+    this.customerService.getCustomers({size: 1000}).subscribe({
       next: (response) => {
-        if (response.success) {
-          localStorage.setItem('current_order', JSON.stringify(response.data));
-          this.orderCartService.clear();
-
-          const verOrden = confirm(
-            `${response.message}\n\n` +
-            `Número de orden: ${response.data.number}\n` +
-            `Total: Bs. ${response.data.totals.total.toFixed(2)}\n` +
-            `Anticipo: Bs. ${response.data.totals.totalPayments.toFixed(2)}\n` +
-            `Saldo: Bs. ${response.data.totals.pendingAmount.toFixed(2)}\n\n` +
-            `¿Deseas ver la orden generada?`
-          );
-
-          if (verOrden) {
-            const url = this.router.serializeUrl(
-              this.router.createUrlTree(['/order/print'])
-            );
-            window.open(url, '_blank');
-          }
-        } else {
-          alert(`Error: ${response.message}`);
+        if (response.success && response.data) {
+          this.customers.set(response.data.content);
         }
       },
-      error: (error) => {
-        alert(`Error al crear la orden: ${error.message || 'Error desconocido'}`);
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar clientes'));
       }
     });
+
+    this.warehouseService.getWarehouses({size: 1000}).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.warehouses.set(response.data.content);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar almacenes'));
+      }
+    });
+
+    this.paymentService.getPayments({size: 1000}).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.payments.set(response.data.content);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar métodos de pago'));
+      }
+    });
+  }
+
+  updateDetailQuantity(productId: number, value: number): void {
+    const quantity = Math.max(1, value);
+    this.orderCartService.updateDetail(productId, {quantity});
+  }
+
+  updateDetailPrice(productId: number, value: number): void {
+    const price = Math.max(0, value);
+    this.orderCartService.updateDetail(productId, {price});
+  }
+
+  updateDetailName(productId: number, value: string): void {
+    this.orderCartService.updateDetail(productId, {editableName: value});
+  }
+
+  updateDetailNotes(productId: number, value: string): void {
+    this.orderCartService.updateDetail(productId, {notes: value});
+  }
+
+  removeDetail(productId: number): void {
+    if (confirm('¿Eliminar este producto?')) {
+      this.orderCartService.removeDetail(productId);
+    }
+  }
+
+  updatePaymentAmount(amount: number): void {
+    this.orderCartService.updatePaymentAmount(Math.max(0, amount));
+  }
+
+  updateOrderNotes(notes: string): void {
+    this.orderCartService.updateNotes(notes);
+  }
+
+  clearAll(): void {
+    if (this.itemCount() === 0) {
+      alert('No hay nada que limpiar');
+      return;
+    }
+
+    const message = this.itemCount() > 0
+      ? `¿Seguro que deseas limpiar toda la orden? Se eliminarán ${this.itemCount()} producto(s).`
+      : '¿Seguro que deseas limpiar toda la orden?';
+
+    if (confirm(message)) {
+      this.orderCartService.clear();
+      this.initializeCart();
+      this.notesModel.set('');
+      this.paymentModel.set(0);
+      alert('Orden limpiada completamente');
+    }
+  }
+
+  createOrder(): void {
+    if (!this.canSave()) {
+      alert(this.saveBlockReason());
+      return;
+    }
+
+    const invalidDetails = this.details().filter(d => d.quantity <= 0 || d.price < 0);
+    if (invalidDetails.length > 0) {
+      alert('Todos los productos deben tener cantidad > 0 y precio >= 0');
+      return;
+    }
+
+    if (this.pending() < 0) {
+      alert('El anticipo no puede ser mayor al total de la orden');
+      return;
+    }
+
+    const request = this.orderCartService.toApiRequest();
+    console.log('Request:', request);
+
+    this.orderService.createOrder(request).subscribe({
+      next: (response) => {
+        console.log('Response:', response);
+        if (response.success && response.data) {
+          this.orderCartService.saveCurrentOrder(response.data);
+          alert(`Orden ${response.data.number} creada exitosamente`);
+          this.orderCartService.clear();
+          this.initializeCart();
+          this.notesModel.set('');
+          this.paymentModel.set(0);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error('Error:', err);
+        alert(this.errorHandler.handleError(err, 'Error al crear orden'));
+      }
+    });
+  }
+
+  previewOrder(): void {
+    if (this.itemCount() === 0) {
+      alert('Agrega al menos un producto para previsualizar');
+      return;
+    }
+
+    if (this.hasWarnings()) {
+      const proceed = confirm(
+        `${this.warningMessage()}\n\n¿Deseas continuar con la previsualización?`
+      );
+      if (!proceed) return;
+    }
+
+    window.open('/order/print?mode=preview', '_blank');
+  }
+
+  viewLastOrder(): void {
+    const lastOrder = this.orderCartService.getCurrentOrder();
+    if (!lastOrder) {
+      alert('No hay ninguna orden generada aún');
+      return;
+    }
+    window.open('/order/print?mode=current', '_blank');
+  }
+
+  private setupKeyboardShortcuts(): void {
+    if (this.keyboardListener) {
+      document.removeEventListener('keydown', this.keyboardListener);
+    }
+
+    this.keyboardListener = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey) {
+        switch (e.key.toUpperCase()) {
+          case 'P':
+            e.preventDefault();
+            this.router.navigate(['/order/select-product']);
+            break;
+          case 'S':
+            e.preventDefault();
+            if (this.canSave()) {
+              this.createOrder();
+            } else {
+              alert(this.saveBlockReason());
+            }
+            break;
+          case 'C':
+            e.preventDefault();
+            this.selectCustomer();
+            break;
+          case 'A':
+            e.preventDefault();
+            this.selectWarehouse();
+            break;
+          case 'M':
+            e.preventDefault();
+            this.selectPaymentMethod();
+            break;
+          case 'L':
+            e.preventDefault();
+            this.clearAll();
+            break;
+        }
+      }
+    };
+
+    document.addEventListener('keydown', this.keyboardListener);
+  }
+
+  private selectWarehouse(): void {
+    if (this.warehouses().length === 0) {
+      alert('Cargando almacenes... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del almacén:');
+    if (!id) return;
+
+    const warehouse = this.warehouses().find(w => w.id === parseInt(id));
+    if (warehouse) {
+      this.orderCartService.updateWarehouse({
+        id: warehouse.id,
+        code: warehouse.code,
+        name: warehouse.name,
+        address: warehouse.address
+      });
+      alert(`Almacén actualizado: ${warehouse.name}`);
+    } else {
+      alert('Almacén no encontrado. Verifica el ID.');
+    }
+  }
+
+  private selectCustomer(): void {
+    if (this.customers().length === 0) {
+      alert('Cargando clientes... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del cliente:');
+    if (!id) return;
+
+    const customer = this.customers().find(c => c.id === parseInt(id));
+    if (customer) {
+      this.orderCartService.updateCustomer({
+        id: customer.id,
+        name: customer.name,
+        address: customer.address,
+        taxId: customer.taxId,
+        phone: customer.phone
+      });
+      alert(`Cliente actualizado: ${customer.name}`);
+    } else {
+      alert('Cliente no encontrado. Verifica el ID.');
+    }
+  }
+
+  private selectPaymentMethod(): void {
+    if (this.payments().length === 0) {
+      alert('Cargando métodos de pago... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del método de pago:');
+    if (!id) return;
+
+    const payment = this.payments().find(p => p.id === parseInt(id));
+    if (payment) {
+      this.orderCartService.updatePaymentMethod({
+        id: payment.id,
+        code: payment.code,
+        name: payment.name
+      });
+      alert(`Método de pago actualizado: ${payment.name}`);
+    } else {
+      alert('Método de pago no encontrado. Verifica el ID.');
+    }
+  }
+
+  trackByProductId(_: number, detail: Detail): number {
+    return detail.productId;
   }
 }

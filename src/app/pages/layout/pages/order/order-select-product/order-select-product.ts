@@ -1,93 +1,76 @@
-import {Component, HostListener, inject, OnInit, signal} from '@angular/core';
-import {Router} from '@angular/router';
-import {ProductService} from '../../../../../modules/catalog/services/product.service';
-import {ProductListResponse} from '../../../../../modules/catalog/models/product-list-response.model';
-import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
+import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {OrderCartService} from '../../../../../modules/orders/services/order-cart-service';
-
-type SearchMode = 'name' | 'description' | 'category' | 'code';
+import {ProductService} from '../../../../../modules/catalog/services/product.service';
+import {Router} from '@angular/router';
+import {OrderCartService} from '../../../../../modules/order/services/order-cart-service';
+import {ProductListResponse} from '../../../../../modules/catalog/get/models/product-list-response.model';
 
 @Component({
   selector: 'app-order-select-product',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DecimalPipe],
   templateUrl: './order-select-product.html',
   styleUrl: './order-select-product.css'
 })
-export class OrderSelectProduct implements OnInit {
-  private router = inject(Router);
-  private productService = inject(ProductService);
-  private orderCartService = inject(OrderCartService);
+export class OrderSelectProduct implements OnInit, OnDestroy {
+  private readonly productService = inject(ProductService);
+  private readonly router = inject(Router);
+  private readonly orderCartService = inject(OrderCartService);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  searchQuery = signal('');
-  searchMode = signal<SearchMode>('name');
-  wildcardActive = signal(false);
+  readonly products = signal<ProductListResponse[]>([]);
+  readonly selectedProduct = signal<ProductListResponse | null>(null);
+  readonly searchTerm = signal('');
+  readonly searchMode = signal<'name' | 'code'>('name');
+  readonly wildcardActive = signal(false);
+  readonly isLoading = signal(false);
 
-  products = signal<ProductListResponse[]>([]);
-  selectedProduct = signal<ProductListResponse | null>(null);
-  selectedCodes = signal<any[]>([]);
+  readonly currentPage = signal(0);
+  readonly pageSize = signal(20);
+  readonly totalElements = signal(0);
+  readonly totalPages = signal(0);
+  readonly hasNext = signal(false);
+  readonly hasPrevious = signal(false);
 
-  currentPage = signal(0);
-  pageSize = signal(20);
-  totalElements = signal(0);
-  totalPages = signal(0);
-  hasNext = signal(false);
-  hasPrevious = signal(false);
+  readonly inCartIds = this.orderCartService.productIds;
 
-  isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
+  readonly paginationInfo = computed(() =>
+    `Mostrando ${this.products().length} de ${this.totalElements()} productos`
+  );
 
-  ngOnInit() {
+  readonly pageInfo = computed(() =>
+    `Página ${this.currentPage() + 1} de ${this.totalPages()}`
+  );
+
+  private activeFilters: { name?: string; code?: string } = {};
+  private keyboardListener?: (e: KeyboardEvent) => void;
+
+  ngOnInit(): void {
     this.loadProducts();
+    if (this.isBrowser) {
+      this.setupKeyboardShortcuts();
+    }
   }
 
-  loadProducts() {
+  ngOnDestroy(): void {
+    if (this.isBrowser && this.keyboardListener) {
+      document.removeEventListener('keydown', this.keyboardListener);
+    }
+  }
+
+  loadProducts(): void {
     this.isLoading.set(true);
-    this.errorMessage.set(null);
 
     const params: any = {
       page: this.currentPage(),
-      size: this.pageSize()
+      size: this.pageSize(),
+      ...this.activeFilters
     };
 
-    const query = this.searchQuery().trim();
-
-    if (query) {
-      if (this.wildcardActive()) {
-        const parts = query.split('*')
-          .map(part => part.trim())
-          .filter(part => part.length > 0);
-
-        if (parts.length > 0) params.name = parts[0];
-        if (parts.length > 1) params.description = parts[1];
-        if (parts.length > 2) params.categoryName = parts[2];
-        if (parts.length > 3) {
-          params.code = parts[3];
-          params.codeType = 'OEM';
-        }
-
-      } else {
-        switch (this.searchMode()) {
-          case 'name':
-            params.name = query;
-            break;
-          case 'description':
-            params.description = query;
-            break;
-          case 'category':
-            params.categoryName = query;
-            break;
-          case 'code':
-            params.code = query;
-            params.codeType = 'OEM';
-            break;
-        }
-      }
-    }
-
-    this.productService.listProducts(params).subscribe({
+    this.productService.getProducts(params).subscribe({
       next: (response) => {
-        if (response.success) {
+        if (response.success && response.data) {
           const data = response.data;
           this.products.set(data.content);
           this.currentPage.set(data.page);
@@ -95,117 +78,120 @@ export class OrderSelectProduct implements OnInit {
           this.totalPages.set(data.totalPages);
           this.hasNext.set(data.hasNext);
           this.hasPrevious.set(data.hasPrevious);
-        } else {
-          this.errorMessage.set(response.message);
+
+          if (data.content.length > 0 && !this.selectedProduct()) {
+            this.selectProduct(data.content[0]);
+          }
         }
         this.isLoading.set(false);
       },
-      error: (error) => {
-        this.errorMessage.set('Error al cargar productos: ' + error.message);
-        this.isLoading.set(false);
-      }
+      error: () => this.isLoading.set(false)
     });
   }
 
-  setSearchMode(mode: SearchMode) {
-    if (this.wildcardActive()) {
-      return;
-    }
-
-    this.searchMode.set(mode);
-    this.searchQuery.set('');
-    this.currentPage.set(0);
+  onEnter(): void {
+    this.wildcardActive() ? this.onWildcardSearch() : this.onSearch();
   }
 
-  toggleWildcard() {
+  onSearch(): void {
+    const term = this.searchTerm().trim();
+    this.activeFilters = {};
+
+    if (term) {
+      this.activeFilters[this.searchMode()] = term;
+    }
+
+    this.currentPage.set(0);
+    this.loadProducts();
+  }
+
+  onWildcardSearch(): void {
+    const term = this.searchTerm().trim();
+    this.activeFilters = {};
+
+    if (term && term.includes('*')) {
+      const [namePart, codePart] = term.split('*').map(s => s.trim());
+      if (namePart) this.activeFilters.name = namePart;
+      if (codePart) this.activeFilters.code = codePart;
+    } else if (term) {
+      this.activeFilters[this.searchMode()] = term;
+    }
+
+    this.currentPage.set(0);
+    this.loadProducts();
+  }
+
+  toggleSearchMode(mode: 'name' | 'code'): void {
+    this.searchMode.set(mode);
+  }
+
+  toggleWildcard(): void {
     this.wildcardActive.update(v => !v);
   }
 
-  clearSearch() {
-    this.searchQuery.set('');
-    this.currentPage.set(0);
-    this.loadProducts();
-  }
-
-  onSearchInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
-  }
-
-  @HostListener('keydown.enter')
-  onEnterKey() {
-    this.currentPage.set(0);
-    this.loadProducts();
-  }
-
-  selectProduct(product: ProductListResponse) {
+  selectProduct(product: ProductListResponse): void {
     this.selectedProduct.set(product);
-    this.selectedCodes.set(product.codes);
   }
 
-  addProductToCart(product: ProductListResponse): void {
-    this.orderCartService.addProduct(product);
-
-    this.router.navigate(['/order/create']);
-  }
-
-  goToFirstPage() {
-    this.currentPage.set(0);
-    this.loadProducts();
-  }
-
-  goToPreviousPage() {
-    if (this.hasPrevious()) {
-      this.currentPage.update(p => p - 1);
-      this.loadProducts();
-    }
-  }
-
-  goToNextPage() {
+  nextPage(): void {
     if (this.hasNext()) {
       this.currentPage.update(p => p + 1);
       this.loadProducts();
     }
   }
 
-  goToLastPage() {
-    this.currentPage.set(this.totalPages() - 1);
-    this.loadProducts();
+  previousPage(): void {
+    if (this.hasPrevious()) {
+      this.currentPage.update(p => p - 1);
+      this.loadProducts();
+    }
   }
 
-  getPlaceholder(): string {
-    if (this.wildcardActive()) {
-      return 'Ej: amortiguador * trasero * repuestos * 12345';
+  isInCart(productId: number): boolean {
+    return this.inCartIds().has(productId);
+  }
+
+  addProductToOrder(product: ProductListResponse): void {
+    if (this.isInCart(product.id)) return;
+
+    this.orderCartService.addDetail({
+      productId: product.id,
+      sku: product.sku,
+      name: product.name,
+      uom: product.uom,
+      quantity: 1,
+      price: product.price,
+      subtotal: product.price,
+      notes: ''
+    });
+  }
+
+  getOemCode(product: ProductListResponse): string {
+    const oemCode = product.codes.find(c => c.type === 'OEM');
+    return oemCode?.code || '-';
+  }
+
+  getStockClass(available: number): string {
+    if (available === 0) return 'stock-critical';
+    if (available < 5) return 'stock-low';
+    return '';
+  }
+
+  private setupKeyboardShortcuts(): void {
+    if (this.keyboardListener) {
+      document.removeEventListener('keydown', this.keyboardListener);
     }
 
-    const placeholders: Record<SearchMode, string> = {
-      name: 'Buscar por nombre del producto...',
-      description: 'Buscar por descripción del producto...',
-      category: 'Buscar por categoría...',
-      code: 'Buscar por código OEM...'
+    this.keyboardListener = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.router.navigate(['/order/create']);
+      }
     };
-    return placeholders[this.searchMode()];
+
+    document.addEventListener('keydown', this.keyboardListener);
   }
 
-  getHelpText(): string {
-    if (this.wildcardActive()) {
-      return 'Separa términos con asterisco (*) para búsquedas flexibles. Ejemplo: "brazo * biela * motor * 12345" buscará en nombre, descripción, categoría y código OEM respectivamente.';
-    }
-
-    const helpTexts: Record<SearchMode, string> = {
-      name: 'Escribe parte del nombre del producto y presiona Enter. Ejemplo: "brazo biela" encontrará "BRAZO BIELA K10B K14B CELERIO/BALENO".',
-      description: 'Busca en las descripciones detalladas de productos. Ejemplo: "compatible K10B".',
-      category: 'Filtra productos por su categoría. Ejemplo: "Repuestos Motor".',
-      code: 'Busca productos por su código OEM específico.'
-    };
-    return helpTexts[this.searchMode()];
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  onGlobalKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      this.router.navigate(['/order/create']);
-    }
+  trackByProductId(_: number, product: ProductListResponse): number {
+    return product.id;
   }
 }

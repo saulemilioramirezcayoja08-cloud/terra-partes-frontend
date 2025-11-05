@@ -19,8 +19,7 @@
             <a routerLink="/quotation/list" routerLinkActive="active-item" class="menu-item">Listado</a>
             <a routerLink="/quotation/create" routerLinkActive="active-item" class="menu-item">Crear</a>
             <a routerLink="/quotation/pending" routerLinkActive="active-item" class="menu-item">Pendientes</a>
-            <a routerLink="/quotation/approved" routerLinkActive="active-item" class="menu-item">Aprobadas</a>
-            <a routerLink="/quotation/cancelled" routerLinkActive="active-item" class="menu-item">Anuladas</a>
+            <a routerLink="/quotation/confirmed" routerLinkActive="active-item" class="menu-item">Confirmadas</a>
           </div>
 
           <div class="menu-column">
@@ -29,28 +28,13 @@
             <a routerLink="/order/create" routerLinkActive="active-item" class="menu-item">Crear</a>
             <a routerLink="/order/pending" routerLinkActive="active-item" class="menu-item">Pendientes</a>
             <a routerLink="/order/confirmed" routerLinkActive="active-item" class="menu-item">Confirmadas</a>
-            <a routerLink="/order/cancelled" routerLinkActive="active-item" class="menu-item">Anuladas</a>
-            <a routerLink="/order/method/cash" routerLinkActive="active-item" class="menu-item">Solo contado</a>
-            <a routerLink="/order/method/credit" routerLinkActive="active-item" class="menu-item">Solo crédito</a>
           </div>
 
           <div class="menu-column">
             <div class="menu-title">Ventas</div>
             <a routerLink="/sale/list" routerLinkActive="active-item" class="menu-item">Listado</a>
             <a routerLink="/sale/pending" routerLinkActive="active-item" class="menu-item">Pendientes</a>
-            <a routerLink="/sale/completed" routerLinkActive="active-item" class="menu-item">Confirmadas</a>
-            <a routerLink="/sale/cancelled" routerLinkActive="active-item" class="menu-item">Anuladas</a>
-          </div>
-
-          <div class="menu-column">
-            <div class="menu-title">Crédito</div>
-            <a routerLink="/credit/assign-plan" routerLinkActive="active-item" class="menu-item">Asignar plan a
-              orden</a>
-            <a routerLink="/credit/orders-with-plan" routerLinkActive="active-item" class="menu-item">Órdenes con
-              plan</a>
-            <a routerLink="/payments/orders" routerLinkActive="active-item" class="menu-item">Registrar abonos</a>
-            <a routerLink="/credit/portfolio" routerLinkActive="active-item" class="menu-item">Cartera (saldos
-              abiertos)</a>
+            <a routerLink="/sale/confirmed" routerLinkActive="active-item" class="menu-item">Confirmadas</a>
           </div>
 
           <div class="menu-column">
@@ -70,15 +54,10 @@
             <div class="menu-title">Stock</div>
             <a routerLink="/inventory/stock" routerLinkActive="active-item" class="menu-item">Existencias por
               almacén</a>
-            <a routerLink="/inventory/availability" routerLinkActive="active-item" class="menu-item">Disponibilidad
-              (ATP)</a>
-            <a routerLink="/inventory/alerts/low" routerLinkActive="active-item" class="menu-item">Alertas de stock
-              bajo</a>
           </div>
           <div class="menu-column">
             <div class="menu-title">Análisis</div>
-            <a routerLink="/inventory/rotation" routerLinkActive="active-item" class="menu-item">Rotación / Stock
-              muerto</a>
+            <a routerLink="/inventory/rotation" routerLinkActive="active-item" class="menu-item">Rotación</a>
           </div>
         </div>
       </div>
@@ -93,12 +72,10 @@
             <a routerLink="/purchase/list" routerLinkActive="active-item" class="menu-item">Listado</a>
             <a routerLink="/purchase/create" routerLinkActive="active-item" class="menu-item">Crear</a>
             <a routerLink="/purchase/pending" routerLinkActive="active-item" class="menu-item">Pendientes</a>
-            <a routerLink="/purchase/received" routerLinkActive="active-item" class="menu-item">Recibidas</a>
-            <a routerLink="/purchase/cancelled" routerLinkActive="active-item" class="menu-item">Anuladas</a>
+            <a routerLink="/purchase/confirmed" routerLinkActive="active-item" class="menu-item">Confirmadas</a>
           </div>
           <div class="menu-column">
-            <div class="menu-title">Proveedores & Análisis</div>
-            <a routerLink="/suppliers" routerLinkActive="active-item" class="menu-item">Proveedores</a>
+            <div class="menu-title">Análisis</div>
             <a routerLink="/purchase/valuation" routerLinkActive="active-item" class="menu-item">Valorización de
               inventario</a>
           </div>
@@ -112,14 +89,16 @@
         <div class="mega-menu grid">
           <div class="menu-column">
             <div class="menu-title">Productos</div>
-            <a routerLink="/catalog/products" routerLinkActive="active-item" class="menu-item">Listado de productos</a>
-            <a routerLink="/catalog/products/create" routerLinkActive="active-item" class="menu-item">Crear producto</a>
-            <a routerLink="/catalog/codes" routerLinkActive="active-item" class="menu-item">Códigos asociados</a>
-            <a routerLink="/catalog/categories" routerLinkActive="active-item" class="menu-item">Categorías</a>
+            <a routerLink="/product/list" routerLinkActive="active-item" class="menu-item">Listado</a>
+            <a routerLink="/product/create" routerLinkActive="active-item" class="menu-item">Crear</a>
           </div>
           <div class="menu-column">
-            <div class="menu-title">Calidad de datos</div>
-            <a routerLink="/catalog/audit" routerLinkActive="active-item" class="menu-item">Auditoría de catálogo</a>
+            <div class="menu-title">Códigos</div>
+            <a routerLink="/code/list" routerLinkActive="active-item" class="menu-item">Listado</a>
+          </div>
+          <div class="menu-column">
+            <div class="menu-title">Categorías</div>
+            <a routerLink="/category/list" routerLinkActive="active-item" class="menu-item">Listado</a>
           </div>
         </div>
       </div>
@@ -132,8 +111,6 @@
           <div class="menu-column">
             <div class="menu-title">Ventas</div>
             <a routerLink="/report/sales" routerLinkActive="active-item" class="menu-item">Libro de ventas</a>
-            <a routerLink="/report/sales/top-customers" routerLinkActive="active-item" class="menu-item">Top
-              clientes</a>
           </div>
           <div class="menu-column">
             <div class="menu-title">Compras</div>
@@ -154,11 +131,11 @@
           Clientes
         </span>
         <div class="mega-menu simple">
-          <a routerLink="/customers/list" routerLinkActive="active-item" class="menu-item">Listado de clientes</a>
-          <a routerLink="/customers/quotes" routerLinkActive="active-item" class="menu-item">Cotizaciones por
+          <a routerLink="/customer/list" routerLinkActive="active-item" class="menu-item">Listado</a>
+          <a routerLink="/customer/quotes" routerLinkActive="active-item" class="menu-item">Cotizaciones por
             cliente</a>
-          <a routerLink="/customers/frequency" routerLinkActive="active-item" class="menu-item">Frecuencia de compra</a>
-          <a routerLink="/customers/open-balances" routerLinkActive="active-item" class="menu-item">Saldos /
+          <a routerLink="/customer/frequency" routerLinkActive="active-item" class="menu-item">Frecuencia de compra</a>
+          <a routerLink="/customer/open-balances" routerLinkActive="active-item" class="menu-item">Saldos /
             anticipos</a>
         </div>
       </div>
@@ -168,10 +145,10 @@
           Documentos
         </span>
         <div class="mega-menu simple">
-          <a routerLink="/documents/quotation" routerLinkActive="active-item" class="menu-item">Cotizaciones</a>
-          <a routerLink="/documents/order" routerLinkActive="active-item" class="menu-item">Órdenes</a>
-          <a routerLink="/documents/sale" routerLinkActive="active-item" class="menu-item">Ventas</a>
-          <a routerLink="/documents/purchase" routerLinkActive="active-item" class="menu-item">Compras</a>
+          <a routerLink="/document/quotation" routerLinkActive="active-item" class="menu-item">Cotizaciones</a>
+          <a routerLink="/document/order" routerLinkActive="active-item" class="menu-item">Órdenes</a>
+          <a routerLink="/document/sale" routerLinkActive="active-item" class="menu-item">Ventas</a>
+          <a routerLink="/document/purchase" routerLinkActive="active-item" class="menu-item">Compras</a>
         </div>
       </div>
 
