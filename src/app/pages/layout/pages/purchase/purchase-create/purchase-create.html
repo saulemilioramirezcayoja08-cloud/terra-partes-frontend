@@ -1,9 +1,9 @@
-<div class="quotation-create-component">
+<div class="purchase-create-component">
   <div class="row">
-    <div class="title">Crear Cotización</div>
+    <div class="title">Crear Compra</div>
     <div class="subtitle">
-      completa los datos para generar una cotización • <kbd>ESC</kbd> volver • <kbd>Ctrl+Shift+P</kbd> agregar producto •
-      <kbd>Ctrl+Shift+S</kbd> guardar
+      completa los datos para generar una compra • <kbd>ESC</kbd> volver •
+      <kbd>Ctrl+Shift+P</kbd> agregar producto •
     </div>
   </div>
 
@@ -12,15 +12,15 @@
       <div class="row">
         <div class="col">
           <label>
-            <span class="label-text">Cliente</span>
-            <kbd>Ctrl+Shift+C</kbd>
+            <span class="label-text">Proveedor</span>
+            <kbd>Ctrl+Shift+U</kbd>
           </label>
           <input
             type="text"
             class="data-input"
-            [value]="cart().customer.id ? cart().customer.name : 'Sin seleccionar'"
+            [value]="cart().supplier.id ? cart().supplier.name : 'Sin seleccionar'"
             disabled
-            [class.empty]="cart().customer.id === 0">
+            [class.empty]="cart().supplier.id === 0">
 
           <label>
             <span class="label-text">Almacén</span>
@@ -35,6 +35,17 @@
         </div>
 
         <div class="col">
+          <label>
+            <span class="label-text">Forma de pago</span>
+            <kbd>Ctrl+Shift+M</kbd>
+          </label>
+          <input
+            type="text"
+            class="data-input"
+            [value]="cart().payment.id ? cart().payment.name : 'Sin seleccionar'"
+            disabled
+            [class.empty]="cart().payment.id === 0">
+
           <label>
             <span class="label-text">Moneda</span>
           </label>
@@ -129,7 +140,7 @@
           </table>
         } @else {
           <div class="empty-state">
-            <p>No hay productos en la cotización</p>
+            <p>No hay productos en la compra</p>
             <p>Presiona <kbd>Ctrl+Shift+P</kbd> para agregar productos</p>
           </div>
         }
@@ -137,24 +148,25 @@
 
       <div class="row pagination">
         <div class="col">
-          <button (click)="router.navigate(['/quotation/select-product'])">
+          <button (click)="router.navigate(['/purchase/select-product'])">
             Agregar producto
           </button>
         </div>
 
         <div class="col">
-          <button (click)="previewQuotation()">Previsualizar</button>
+          <button (click)="previewPurchase()">Previsualizar</button>
           <span class="separator">|</span>
-          <button (click)="viewLastQuotation()">Ver última</button>
+          <button (click)="viewLastPurchase()">Ver última</button>
           <span class="separator">|</span>
           <button (click)="clearAll()">Limpiar</button>
           <span class="separator">|</span>
           <button
-            (click)="createQuotation()"
+            (click)="createPurchase()
+"
             class="primary"
             [disabled]="!canSave()"
             [title]="saveBlockReason()">
-            Guardar cotización
+            Guardar compra
           </button>
         </div>
       </div>
@@ -194,7 +206,7 @@
           <textarea
             rows="3"
             [ngModel]="notesModel()"
-            (ngModelChange)="updateQuotationNotes($event)"
+            (ngModelChange)="updatePurchaseNotes($event)"
             placeholder="Observaciones..."
             class="notes-input"></textarea>
         </div>
