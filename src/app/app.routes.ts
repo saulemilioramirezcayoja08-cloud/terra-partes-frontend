@@ -29,6 +29,19 @@ export const routes: Routes = [
           import('./pages/layout/pages/order/order-select-product/order-select-product')
             .then(m => m.OrderSelectProduct),
       },
+      {
+        path: 'quotation/create',
+        loadComponent: () =>
+          import('./pages/layout/pages/quotation/quotation-create/quotation-create').then(
+            m => m.QuotationCreate,
+          ),
+      },
+      {
+        path: 'quotation/select-product',
+        loadComponent: () =>
+          import('./pages/layout/pages/quotation/quotation-select-product/quotation-select-product')
+            .then(m => m.QuotationSelectProduct),
+      },
     ],
   },
   {
@@ -36,6 +49,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/layout/pages/order/order-print/order-print').then(
         m => m.OrderPrint
+      ),
+  },
+  {
+    path: 'quotation/print',
+    loadComponent: () =>
+      import('./pages/layout/pages/quotation/quotation-print/quotation-print').then(
+        m => m.QuotationPrint
       ),
   },
   {path: '**', redirectTo: ''},

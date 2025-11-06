@@ -1,85 +1,70 @@
 import {Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
 import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {OrderCartService} from '../../../../../modules/order/services/order-cart-service';
-import {OrderService} from '../../../../../modules/order/services/order.service';
+import {QuotationCartService} from '../../../../../modules/quotation/services/quotation-cart-service';
+import {QuotationService} from '../../../../../modules/quotation/services/quotation.service';
 import {CustomerService} from '../../../../../modules/customer/services/customer.service';
-import {PaymentService} from '../../../../../modules/payment/services/payment.service';
+import {WarehouseService} from '../../../../../modules/warehouse/services/warehouse.service';
+import {ErrorHandlerService} from '../../../../../core/services/error-handler.service';
 import {Router} from '@angular/router';
 import {CustomerListResponse} from '../../../../../modules/customer/get/models/customer-list-response.model';
-import {WarehouseService} from '../../../../../modules/warehouse/services/warehouse.service';
 import {WarehouseListResponse} from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
-import {PaymentListResponse} from '../../../../../modules/payment/get/models/payment-list-response.model';
 import {ErrorResponse} from '../../../../../core/models/error-response.model';
-import {ErrorHandlerService} from '../../../../../core/services/error-handler.service';
-import {Detail} from '../../../../../modules/order/get/models/order-preview.model';
+import {Detail} from '../../../../../modules/quotation/get/models/quotation-preview.model';
 
 @Component({
-  selector: 'app-order-create',
+  selector: 'app-quotation-create',
   imports: [CommonModule, FormsModule, DecimalPipe],
-  templateUrl: './order-create.html',
-  styleUrl: './order-create.css'
+  templateUrl: './quotation-create.html',
+  styleUrl: './quotation-create.css'
 })
-export class OrderCreate implements OnInit, OnDestroy {
-  private readonly orderCartService = inject(OrderCartService);
-  private readonly orderService = inject(OrderService);
+export class QuotationCreate implements OnInit, OnDestroy {
+  private readonly quotationCartService = inject(QuotationCartService);
+  private readonly quotationService = inject(QuotationService);
   private readonly customerService = inject(CustomerService);
   private readonly warehouseService = inject(WarehouseService);
-  private readonly paymentService = inject(PaymentService);
   private readonly errorHandler = inject(ErrorHandlerService);
   private readonly platformId = inject(PLATFORM_ID);
   readonly router = inject(Router);
 
-  readonly cart = this.orderCartService.cart;
-  readonly details = this.orderCartService.details;
-  readonly total = this.orderCartService.total;
-  readonly pending = this.orderCartService.pending;
-  readonly itemCount = this.orderCartService.itemCount;
-  readonly totalPayments = this.orderCartService.totalPayments;
+  readonly cart = this.quotationCartService.cart;
+  readonly details = this.quotationCartService.details;
+  readonly total = this.quotationCartService.total;
+  readonly itemCount = this.quotationCartService.itemCount;
 
   readonly customers = signal<CustomerListResponse[]>([]);
   readonly warehouses = signal<WarehouseListResponse[]>([]);
-  readonly payments = signal<PaymentListResponse[]>([]);
 
   notesModel = signal('');
-  paymentModel = signal(0);
 
   readonly missingData = computed(() => ({
     customer: this.cart().customer.id === 0,
-    warehouse: this.cart().warehouse.id === 0,
-    payment: this.cart().payment.id === 0
+    warehouse: this.cart().warehouse.id === 0
   }));
 
   readonly hasWarnings = computed(() => {
-    const missing = this.missingData();
-    return missing.customer || missing.warehouse || missing.payment;
+    const m = this.missingData();
+    return m.customer || m.warehouse;
   });
 
   readonly warningMessage = computed(() => {
-    const missing = this.missingData();
-    const warnings: string[] = [];
-
-    if (missing.customer) warnings.push('cliente');
-    if (missing.warehouse) warnings.push('almacén');
-    if (missing.payment) warnings.push('método de pago');
-
-    if (warnings.length === 0) return '';
-
-    return `Falta seleccionar: ${warnings.join(', ')}. Puedes agregar productos y completar estos datos después.`;
+    const m = this.missingData();
+    const warns: string[] = [];
+    if (m.customer) warns.push('cliente');
+    if (m.warehouse) warns.push('almacén');
+    return warns.length ? `Falta seleccionar: ${warns.join(', ')}. Puedes agregar productos y completar estos datos después.` : '';
   });
 
   readonly canSave = computed(() =>
     this.itemCount() > 0 &&
     this.cart().customer.id > 0 &&
-    this.cart().warehouse.id > 0 &&
-    this.cart().payment.id > 0
+    this.cart().warehouse.id > 0
   );
 
   readonly saveBlockReason = computed(() => {
     if (this.itemCount() === 0) return 'Agrega al menos un producto';
     if (this.cart().customer.id === 0) return 'Selecciona un cliente';
     if (this.cart().warehouse.id === 0) return 'Selecciona un almacén';
-    if (this.cart().payment.id === 0) return 'Selecciona un método de pago';
     return '';
   });
 
@@ -89,14 +74,12 @@ export class OrderCreate implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       this.notesModel.set(this.cart().notes);
-      this.paymentModel.set(this.totalPayments());
-    }, {allowSignalWrites: true});
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
     this.ensureCartReady();
     this.loadMasterData();
-
     if (this.isBrowser) {
       this.setupKeyboardShortcuts();
       this.showWarningsIfNeeded();
@@ -118,7 +101,7 @@ export class OrderCreate implements OnInit, OnDestroy {
     }
 
     if (this.itemCount() > 0) {
-      if (cart.customer.id === 0 || cart.warehouse.id === 0 || cart.payment.id === 0) {
+      if (cart.customer.id === 0 || cart.warehouse.id === 0) {
         console.warn('Hay productos pero faltan datos maestros');
       }
       return;
@@ -138,16 +121,15 @@ export class OrderCreate implements OnInit, OnDestroy {
   }
 
   private initializeCart(): void {
-    this.orderCartService.initialize({
-      customer: {id: 0, name: '', address: '', taxId: '', phone: ''},
-      warehouse: {id: 0, code: '', name: '', address: ''},
-      payment: {id: 0, code: '', name: ''},
+    this.quotationCartService.initialize({
+      customer: { id: 0, name: '', address: '', taxId: '', phone: '' },
+      warehouse: { id: 0, code: '', name: '', address: '' },
       currency: 'BOB'
     });
   }
 
   private loadMasterData(): void {
-    this.customerService.getCustomers({size: 1000}).subscribe({
+    this.customerService.getCustomers({ size: 1000 }).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.customers.set(response.data.content);
@@ -158,7 +140,7 @@ export class OrderCreate implements OnInit, OnDestroy {
       }
     });
 
-    this.warehouseService.getWarehouses({size: 1000}).subscribe({
+    this.warehouseService.getWarehouses({ size: 1000 }).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.warehouses.set(response.data.content);
@@ -168,49 +150,34 @@ export class OrderCreate implements OnInit, OnDestroy {
         console.error(this.errorHandler.handleError(err, 'Error al cargar almacenes'));
       }
     });
-
-    this.paymentService.getPayments({size: 1000}).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          this.payments.set(response.data.content);
-        }
-      },
-      error: (err: ErrorResponse) => {
-        console.error(this.errorHandler.handleError(err, 'Error al cargar métodos de pago'));
-      }
-    });
   }
 
   updateDetailQuantity(productId: number, value: number): void {
     const quantity = Math.max(1, value);
-    this.orderCartService.updateDetail(productId, {quantity});
+    this.quotationCartService.updateDetail(productId, { quantity });
   }
 
   updateDetailPrice(productId: number, value: number): void {
     const price = Math.max(0, value);
-    this.orderCartService.updateDetail(productId, {price});
+    this.quotationCartService.updateDetail(productId, { price });
   }
 
   updateDetailName(productId: number, value: string): void {
-    this.orderCartService.updateDetail(productId, {editableName: value});
+    this.quotationCartService.updateDetail(productId, { editableName: value });
   }
 
   updateDetailNotes(productId: number, value: string): void {
-    this.orderCartService.updateDetail(productId, {notes: value});
+    this.quotationCartService.updateDetail(productId, { notes: value });
   }
 
   removeDetail(productId: number): void {
     if (confirm('¿Eliminar este producto?')) {
-      this.orderCartService.removeDetail(productId);
+      this.quotationCartService.removeDetail(productId);
     }
   }
 
-  updatePaymentAmount(amount: number): void {
-    this.orderCartService.updatePaymentAmount(Math.max(0, amount));
-  }
-
-  updateOrderNotes(notes: string): void {
-    this.orderCartService.updateNotes(notes);
+  updateQuotationNotes(notes: string): void {
+    this.quotationCartService.updateNotes(notes);
   }
 
   clearAll(): void {
@@ -220,19 +187,18 @@ export class OrderCreate implements OnInit, OnDestroy {
     }
 
     const message = this.itemCount() > 0
-      ? `¿Seguro que deseas limpiar toda la orden? Se eliminarán ${this.itemCount()} producto(s).`
-      : '¿Seguro que deseas limpiar toda la orden?';
+      ? `¿Seguro que deseas limpiar toda la cotización? Se eliminarán ${this.itemCount()} producto(s).`
+      : '¿Seguro que deseas limpiar toda la cotización?';
 
     if (confirm(message)) {
-      this.orderCartService.clear();
+      this.quotationCartService.clear();
       this.initializeCart();
       this.notesModel.set('');
-      this.paymentModel.set(0);
-      alert('Orden limpiada completamente');
+      alert('Cotización limpiada completamente');
     }
   }
 
-  createOrder(): void {
+  createQuotation(): void {
     if (!this.canSave()) {
       alert(this.saveBlockReason());
       return;
@@ -244,57 +210,49 @@ export class OrderCreate implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.pending() < 0) {
-      alert('El anticipo no puede ser mayor al total de la orden');
-      return;
-    }
-
-    const request = this.orderCartService.toApiRequest();
+    const request = this.quotationCartService.toApiRequest();
     console.log('Request:', JSON.stringify(request, null, 2));
 
-    this.orderService.createOrder(request).subscribe({
+    this.quotationService.createQuotation(request).subscribe({
       next: (response) => {
         console.log('Response:', JSON.stringify(response, null, 2));
 
         if (response.success && response.data) {
-          this.orderCartService.saveCurrentOrder(response.data);
-          alert(`Orden ${response.data.number} creada exitosamente`);
-          this.orderCartService.clear();
+          this.quotationCartService.saveCurrentQuotation(response.data);
+          alert(`Cotización ${response.data.number} creada exitosamente`);
+          this.quotationCartService.clear();
           this.initializeCart();
           this.notesModel.set('');
-          this.paymentModel.set(0);
         }
       },
       error: (err: ErrorResponse) => {
         console.error('Error:', err);
-        alert(this.errorHandler.handleError(err, 'Error al crear orden'));
+        alert(this.errorHandler.handleError(err, 'Error al crear cotización'));
       }
     });
   }
 
-  previewOrder(): void {
+  previewQuotation(): void {
     if (this.itemCount() === 0) {
       alert('Agrega al menos un producto para previsualizar');
       return;
     }
 
     if (this.hasWarnings()) {
-      const proceed = confirm(
-        `${this.warningMessage()}\n\n¿Deseas continuar con la previsualización?`
-      );
+      const proceed = confirm(`${this.warningMessage()}\n\n¿Deseas continuar con la previsualización?`);
       if (!proceed) return;
     }
 
-    window.open('/order/print?mode=preview', '_blank');
+    window.open('/quotation/print?mode=preview', '_blank');
   }
 
-  viewLastOrder(): void {
-    const lastOrder = this.orderCartService.getCurrentOrder();
-    if (!lastOrder) {
-      alert('No hay ninguna orden generada aún');
+  viewLastQuotation(): void {
+    const last = this.quotationCartService.getCurrentQuotation();
+    if (!last) {
+      alert('No hay ninguna cotización generada aún');
       return;
     }
-    window.open('/order/print?mode=current', '_blank');
+    window.open('/quotation/print?mode=current', '_blank');
   }
 
   private setupKeyboardShortcuts(): void {
@@ -307,12 +265,12 @@ export class OrderCreate implements OnInit, OnDestroy {
         switch (e.key.toUpperCase()) {
           case 'P':
             e.preventDefault();
-            this.router.navigate(['/order/select-product']);
+            this.router.navigate(['/quotation/select-product']);
             break;
           case 'S':
             e.preventDefault();
             if (this.canSave()) {
-              this.createOrder();
+              this.createQuotation();
             } else {
               alert(this.saveBlockReason());
             }
@@ -324,10 +282,6 @@ export class OrderCreate implements OnInit, OnDestroy {
           case 'A':
             e.preventDefault();
             this.selectWarehouse();
-            break;
-          case 'M':
-            e.preventDefault();
-            this.selectPaymentMethod();
             break;
           case 'L':
             e.preventDefault();
@@ -351,7 +305,7 @@ export class OrderCreate implements OnInit, OnDestroy {
 
     const warehouse = this.warehouses().find(w => w.id === parseInt(id));
     if (warehouse) {
-      this.orderCartService.updateWarehouse({
+      this.quotationCartService.updateWarehouse({
         id: warehouse.id,
         code: warehouse.code,
         name: warehouse.name,
@@ -374,7 +328,7 @@ export class OrderCreate implements OnInit, OnDestroy {
 
     const customer = this.customers().find(c => c.id === parseInt(id));
     if (customer) {
-      this.orderCartService.updateCustomer({
+      this.quotationCartService.updateCustomer({
         id: customer.id,
         name: customer.name,
         address: customer.address,
@@ -384,28 +338,6 @@ export class OrderCreate implements OnInit, OnDestroy {
       alert(`Cliente actualizado: ${customer.name}`);
     } else {
       alert('Cliente no encontrado. Verifica el ID.');
-    }
-  }
-
-  private selectPaymentMethod(): void {
-    if (this.payments().length === 0) {
-      alert('Cargando métodos de pago... Intenta nuevamente en un momento.');
-      return;
-    }
-
-    const id = prompt('Ingresa el ID del método de pago:');
-    if (!id) return;
-
-    const payment = this.payments().find(p => p.id === parseInt(id));
-    if (payment) {
-      this.orderCartService.updatePaymentMethod({
-        id: payment.id,
-        code: payment.code,
-        name: payment.name
-      });
-      alert(`Método de pago actualizado: ${payment.name}`);
-    } else {
-      alert('Método de pago no encontrado. Verifica el ID.');
     }
   }
 
