@@ -55,6 +55,12 @@ export const routes: Routes = [
           import('./pages/layout/pages/purchase/purchase-select-product/purchase-select-product')
             .then(m => m.PurchaseSelectProduct),
       },
+      {
+        path: 'product/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/catalog/product-list/product-list')
+            .then(m => m.ProductList),
+      },
     ],
   },
   {
