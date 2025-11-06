@@ -30,20 +30,12 @@
             <span class="value">{{ supplierName() }}</span>
           </div>
           <div class="customer-field">
-            <span class="label">Dirección:</span>
-            <span class="value">{{ supplierAddress() }}</span>
-          </div>
-          <div class="customer-field">
-            <span class="label">Almacén:</span>
-            <span class="value">{{ warehouseName() }}</span>
+            <span class="label">Teléfono:</span>
+            <span class="value">{{ supplierPhone() }}</span>
           </div>
         </div>
 
         <div class="customer-column right">
-          <div class="customer-field">
-            <span class="label">Teléfono:</span>
-            <span class="value">{{ supplierPhone() }}</span>
-          </div>
           <div class="customer-field">
             <span class="label">Vendedor:</span>
             <span class="value">{{ username() }}</span>
@@ -65,7 +57,7 @@
           <th class="center">ITEM</th>
           <th class="center">ARTICULO</th>
           <th class="right">DESCRIPCION</th>
-          <th class="right">UOM</th>
+          <th class="right"></th>
           <th class="right">CANTIDAD</th>
           <th class="right">PRECIO</th>
           <th class="right">SUBTOTAL</th>
@@ -78,7 +70,7 @@
               <td class="center">{{ detail.item }}</td>
               <td class="center">{{ detail.sku }}</td>
               <td class="right">{{ detail.name }}</td>
-              <td class="right">{{ detail.uom || 'UND' }}</td>
+              <td class="right"></td>
               <td class="right">{{ detail.quantity | number:'1.2-2' }}</td>
               <td class="right">{{ detail.price | number:'1.2-2' }}</td>
               <td class="right">{{ detail.subtotal | number:'1.2-2' }}</td>
