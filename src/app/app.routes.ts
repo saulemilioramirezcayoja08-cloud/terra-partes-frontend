@@ -66,8 +66,15 @@ export const routes: Routes = [
   {
     path: 'order/print',
     loadComponent: () =>
-      import('./pages/layout/pages/order/order-print/order-print').then(
-        m => m.OrderPrint
+      import('./pages/layout/pages/order/order-reprint/order-reprint').then(
+        m => m.OrderReprint
+      ),
+  },
+  {
+    path: 'order/reprint',
+    loadComponent: () =>
+      import('./pages/layout/pages/order/order-reprint/order-reprint').then(
+        m => m.OrderReprint
       ),
   },
   {
@@ -78,11 +85,23 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'quotation/reprint',
+    loadComponent: () =>
+      import('./pages/layout/pages/quotation/quotation-reprint/quotation-reprint')
+        .then(m => m.QuotationReprint),
+  },
+  {
     path: 'purchase/print',
     loadComponent: () =>
       import('./pages/layout/pages/purchase/purchase-print/purchase-print').then(
         m => m.PurchasePrint
       ),
+  },
+  {
+    path: 'purchase/reprint',
+    loadComponent: () =>
+      import('./pages/layout/pages/purchase/purchase-reprint/purchase-reprint')
+        .then(m => m.PurchaseReprint),
   },
   {path: '**', redirectTo: ''},
 ];

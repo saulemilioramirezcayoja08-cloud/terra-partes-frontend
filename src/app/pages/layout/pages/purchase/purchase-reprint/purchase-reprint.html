@@ -1,0 +1,132 @@
+<div class="purchase-reprint-component">
+  <div class="orders">
+    <div class="document-header">
+      <div class="header-row">
+        <div class="header-column contact-info">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+
+        <div class="header-column order-info">
+          <h2>COMPRA</h2>
+          <p>Nro.: {{ purchaseNumber() }}</p>
+          <p>Fecha: {{ formattedDate() }}</p>
+          <p class="order-status">Estado: {{ status() }}</p>
+        </div>
+
+        <div class="header-column logo-info">
+          <div class="logo"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+
+      <div class="customer-row">
+        <div class="customer-column left">
+          <div class="customer-field">
+            <span class="label">Proveedor:</span>
+            <span class="value">{{ supplierName() }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Teléfono:</span>
+            <span class="value">{{ supplierPhone() }}</span>
+          </div>
+        </div>
+
+        <div class="customer-column right">
+          <div class="customer-field">
+            <span class="label">Vendedor:</span>
+            <span class="value">{{ username() }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Método Pago:</span>
+            <span class="value">
+              <span class="value">{{ paymentName() }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-section">
+      <table class="products-table">
+        <thead>
+        <tr>
+          <th class="center">ITEM</th>
+          <th class="center">ARTICULO</th>
+          <th class="right">DESCRIPCION</th>
+          <th class="right"></th>
+          <th class="right">CANTIDAD</th>
+          <th class="right">PRECIO</th>
+          <th class="right">SUBTOTAL</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (detail of details(); track trackByItem($index, detail)) {
+            <tr>
+              <td class="center">{{ detail.item }}</td>
+              <td class="center">{{ detail.sku }}</td>
+              <td class="right">{{ detail.name }}</td>
+              <td class="right"></td>
+              <td class="right">{{ detail.quantity | number:'1.2-2' }}</td>
+              <td class="right">{{ detail.price | number:'1.2-2' }}</td>
+              <td class="right">{{ detail.subtotal | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+
+        <tfoot>
+        <tr class="totals-row">
+          <td colspan="4"></td>
+          <td class="left totals-label">TOTALES:</td>
+          <td class="right total-quantity">{{ totalQuantity() | number:'1.2-2' }}</td>
+          <td class="right total-amount">Bs. {{ total() | number:'1.2-2' }}</td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="document-footer">
+      <div class="amount-section">
+        <span class="label">Son:</span>
+        <span class="value">{{ amountInWords() }}</span>
+      </div>
+
+      <div class="observations-section">
+        <span class="label">Obs.:</span>
+        <span class="value">{{ notes() }}</span>
+      </div>
+
+      <div class="signatures-section">
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">Entregue Conforme</div>
+        </div>
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">Recibí Conforme</div>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-right">
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha Reg:</span>
+            <span>{{ formattedDateTime() }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Usuario:</span>
+            <span>{{ username() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-button-container">
+    <button class="btn-print" onclick="window.print()">Imprimir documento</button>
+  </div>
+</div>

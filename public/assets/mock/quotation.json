@@ -1,0 +1,58 @@
+{
+  "id": 1,
+  "number": "1",
+  "status": "BORRADOR",
+  "currency": "BOB",
+  "notes": null,
+  "createdAt": "2025-11-06T13:46:18",
+  "updatedAt": "2025-11-06T13:46:18",
+  "customer": {
+    "id": 1,
+    "name": "Cliente General",
+    "address": "Zona Central",
+    "taxId": "5555555555",
+    "phone": "555-1001"
+  },
+  "warehouse": {
+    "id": 1,
+    "code": "WH001",
+    "name": "Almacen Central",
+    "address": ""
+  },
+  "user": {
+    "id": 2,
+    "username": "john.mendoza",
+    "email": "john@empresa.com",
+    "name": "JOHN MENDOZA"
+  },
+  "details": [
+    {
+      "id": 2,
+      "quantity": 2,
+      "price": 43.0000,
+      "subtotal": 86.0000,
+      "notes": null,
+      "product": {
+        "id": 6976,
+        "sku": "7976",
+        "name": "FAROL DEL IZQ"
+      }
+    },
+    {
+      "id": 1,
+      "quantity": 3,
+      "price": 32.0000,
+      "subtotal": 96.0000,
+      "notes": null,
+      "product": {
+        "id": 6977,
+        "sku": "7977",
+        "name": "BANDEJA SUSPENSION DEL IZQ"
+      }
+    }
+  ],
+  "totals": {
+    "total": 182.0000,
+    "items": 2
+  }
+}

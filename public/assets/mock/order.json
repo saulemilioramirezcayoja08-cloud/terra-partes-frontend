@@ -1,0 +1,66 @@
+{
+  "id": 1,
+  "number": "1",
+  "status": "CONFIRMADA",
+  "currency": "BOB",
+  "notes": "confirm",
+  "createdAt": "2025-11-06T13:46:26",
+  "updatedAt": "2025-11-06T14:59:44",
+  "customer": {
+    "id": 1,
+    "name": "Cliente General",
+    "address": "Zona Central",
+    "taxId": "5555555555",
+    "phone": "555-1001"
+  },
+  "warehouse": {
+    "id": 1,
+    "code": "WH001",
+    "name": "Almacen Central",
+    "address": ""
+  },
+  "payment": {
+    "id": 1,
+    "code": "EFECTIVO",
+    "name": "Efectivo"
+  },
+  "quotation": null,
+  "user": {
+    "id": 2,
+    "username": "john.mendoza",
+    "email": "john@empresa.com",
+    "name": "JOHN MENDOZA"
+  },
+  "details": [
+    {
+      "id": 2,
+      "quantity": 15,
+      "price": 444.0000,
+      "subtotal": 6660.0000,
+      "notes": "sa",
+      "product": {
+        "id": 6969,
+        "sku": "7969",
+        "name": "MUÑON DELT IZQ"
+      }
+    },
+    {
+      "id": 1,
+      "quantity": 12,
+      "price": 22.0000,
+      "subtotal": 264.0000,
+      "notes": "sda",
+      "product": {
+        "id": 6970,
+        "sku": "7970",
+        "name": "PUERTA DELT IZQ CHANGAN CX70"
+      }
+    }
+  ],
+  "totals": {
+    "total": 6924.0000,
+    "payment": 6923.5000,
+    "pending": 0.5000,
+    "items": 2
+  }
+}
