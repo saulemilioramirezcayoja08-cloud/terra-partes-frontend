@@ -1,4 +1,4 @@
-<div class="product-list-component">
+<div class="order-list-component">
   <div class="row">
     <div class="title">Lista de Órdenes</div>
     <div class="subtitle">
@@ -14,19 +14,27 @@
             type="text"
             class="search-input"
             placeholder="Buscar órdenes..."
-            value=""
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+            (keyup.enter)="onEnter()"
             autocomplete="off">
           <div class="search-hint">
-            Busca por número • <kbd>Enter</kbd> buscar
+            Busca por {{ searchMode() === 'number' ? 'número' : 'usuario' }} • <kbd>Enter</kbd> buscar
           </div>
         </div>
 
         <div class="col">
           <div class="toggle-group">
-            <button class="toggle-btn active">
+            <button
+              class="toggle-btn"
+              [class.active]="searchMode() === 'number'"
+              (click)="toggleSearchMode('number')">
               Número
             </button>
-            <button class="toggle-btn">
+            <button
+              class="toggle-btn"
+              [class.active]="searchMode() === 'username'"
+              (click)="toggleSearchMode('username')">
               Usuario
             </button>
           </div>
@@ -46,189 +54,205 @@
           </tr>
           </thead>
           <tbody>
-          <tr class="selected">
-            <td>2</td>
-            <td>2</td>
-            <td>BORRADOR</td>
-            <td>Cliente General</td>
-            <td>631.00</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>CONFIRMADA</td>
-            <td>Cliente General</td>
-            <td>474.00</td>
-            <td></td>
-          </tr>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">
+                  <em>Cargando...</em>
+                </td>
+              </tr>
+            } @else if (orders().length === 0) {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">
+                  <em>No se encontraron órdenes</em>
+                </td>
+              </tr>
+            } @else {
+              @for (order of orders(); track trackByOrderId($index, order)) {
+                <tr
+                  (click)="selectOrder(order)"
+                  [class.selected]="selectedOrder()?.id === order.id">
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.number }}</td>
+                  <td>{{ order.status }}</td>
+                  <td>{{ order.customer.name }}</td>
+                  <td>{{ order.totals.total | number:'1.2-2' }}</td>
+                  <td></td>
+                </tr>
+              }
+            }
           </tbody>
         </table>
       </div>
 
       <div class="row pagination">
-        <div class="col">Mostrando 1 a 2 de 4 órdenes</div>
+        <div class="col">{{ paginationInfo() }}</div>
         <div class="col">
-          <button disabled>Anterior</button>
+          <button (click)="previousPage()" [disabled]="!hasPrevious()">Anterior</button>
           <span class="separator">•</span>
-          <span>Página 1 de 1</span>
+          <span>{{ pageInfo() }}</span>
           <span class="separator">•</span>
-          <button disabled>Siguiente</button>
+          <button (click)="nextPage()" [disabled]="!hasNext()">Siguiente</button>
         </div>
       </div>
     </div>
 
     <div class="col">
-      <div class="row">
-        <div class="col">
-          <div class="title">Información de la orden</div>
+      @if (selectedOrder(); as order) {
+        <div class="row">
+          <div class="col">
+            <div class="title">Información de la orden</div>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">ID</div>
-          <span>2</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">ID</div>
+            <span>{{ order.id }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Número</div>
+            <span>{{ order.number }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Número</div>
-          <span>2</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Estado</div>
-          <span>BORRADOR</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Estado</div>
+            <span>{{ order.status }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Moneda</div>
+            <span>{{ order.currency }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Moneda</div>
-          <span>BOB</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Creada</div>
-          <span>2025-11-08 14:13:37</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Creada</div>
+            <span>{{ order.createdAt }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Actualizada</div>
+            <span>{{ order.updatedAt }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Actualizada</div>
-          <span>2025-11-08 14:13:37</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="title">Cliente</div>
+        <div class="row">
+          <div class="col">
+            <div class="title">Cliente</div>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Nombre</div>
-          <span>Cliente General</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Nombre</div>
+            <span>{{ order.customer.name }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">NIT</div>
+            <span>{{ order.customer.taxId }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">NIT</div>
-          <span>5555555555</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Dirección</div>
-          <span>Zona Central</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Dirección</div>
+            <span>{{ order.customer.address }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Teléfono</div>
+            <span>{{ order.customer.phone }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Teléfono</div>
-          <span>555-1001</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="title">Detalles</div>
+        <div class="row">
+          <div class="col">
+            <div class="title">Detalles</div>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <table>
-            <thead>
-            <tr>
-              <th>SKU</th>
-              <th>Producto</th>
-              <th>Cant.</th>
-              <th>Precio</th>
-              <th>Subtotal</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>7988</td>
-              <td>MOLD. CROMADA RH DE BISEL HALOG KOLEOS</td>
-              <td>11</td>
-              <td>45.00</td>
-              <td>495.00</td>
-            </tr>
-            <tr>
-              <td>7987</td>
-              <td>MOLD. CROMADA LH DE BISEL HALOG KOLEOS</td>
-              <td>4</td>
-              <td>34.00</td>
-              <td>136.00</td>
-            </tr>
-            </tbody>
-          </table>
+        <div class="row">
+          <div class="col">
+            <table>
+              <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (detail of order.details; track detail.id) {
+                  <tr>
+                    <td>{{ detail.product.sku }}</td>
+                    <td>{{ detail.product.name }}</td>
+                    <td>{{ detail.quantity }}</td>
+                    <td>{{ detail.price | number:'1.2-2' }}</td>
+                    <td>{{ detail.subtotal | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="title">Totales</div>
+        <div class="row">
+          <div class="col">
+            <div class="title">Totales</div>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Total</div>
-          <strong>Bs. 631.00</strong>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Total</div>
+            <strong>Bs. {{ order.totals.total | number:'1.2-2' }}</strong>
+          </div>
+          <div class="col">
+            <div class="subtitle">Pagado</div>
+            <span>Bs. {{ order.totals.payment | number:'1.2-2' }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Pendiente</div>
+            <mark class="positive">Bs. {{ order.totals.pending | number:'1.2-2' }}</mark>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Pagado</div>
-          <span>Bs. 33.00</span>
-        </div>
-        <div class="col">
-          <div class="subtitle">Pendiente</div>
-          <mark class="positive">Bs. 598.00</mark>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Almacén</div>
-          <span>Almacen Central</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Almacén</div>
+            <span>{{ order.warehouse.name }}</span>
+          </div>
+          <div class="col">
+            <div class="subtitle">Método de pago</div>
+            <span>{{ order.payment.name }}</span>
+          </div>
         </div>
-        <div class="col">
-          <div class="subtitle">Método de pago</div>
-          <span>Efectivo</span>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Usuario</div>
-          <span>EMILIO RAMIREZ</span>
+        <div class="row">
+          <div class="col">
+            <div class="subtitle">Usuario</div>
+            <span>{{ order.user.name }}</span>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="subtitle">Notas</div>
-          <span>as</span>
+        @if (order.notes) {
+          <div class="row">
+            <div class="col">
+              <div class="subtitle">Notas</div>
+              <span>{{ order.notes }}</span>
+            </div>
+          </div>
+        }
+
+      } @else {
+        <div class="row">
+          <div class="col" style="padding: 40px; text-align: center;">
+            <em>Selecciona una orden para ver sus detalles</em>
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </div>
