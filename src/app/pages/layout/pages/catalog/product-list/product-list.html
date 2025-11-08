@@ -163,6 +163,37 @@
 
         <div class="row">
           <div class="col">
+            <div class="title">Códigos</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            @if (product.codes.length > 0) {
+              <table>
+                <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Código</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (code of product.codes; track code.id) {
+                    <tr>
+                      <td>{{ code.type }}</td>
+                      <td>{{ code.code }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            } @else {
+              <em>Sin códigos</em>
+            }
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
             <div class="title">Inventario</div>
           </div>
         </div>
@@ -184,7 +215,6 @@
           </div>
         </div>
 
-        <!-- Sección añadida: Últimos precios -->
         <div class="row">
           <div class="col">
             <div class="title">Últimos precios</div>
