@@ -24,6 +24,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'order/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/order/order-list/order-list').then(
+            m => m.OrderList,
+          ),
+      },
+      {
         path: 'order/select-product',
         loadComponent: () =>
           import('./pages/layout/pages/order/order-select-product/order-select-product')

@@ -1,0 +1,234 @@
+<div class="product-list-component">
+  <div class="row">
+    <div class="title">Lista de Órdenes</div>
+    <div class="subtitle">
+      Busca órdenes • Usa <kbd>Enter</kbd> para buscar
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar órdenes..."
+            value=""
+            autocomplete="off">
+          <div class="search-hint">
+            Busca por número • <kbd>Enter</kbd> buscar
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="toggle-group">
+            <button class="toggle-btn active">
+              Número
+            </button>
+            <button class="toggle-btn">
+              Usuario
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <table>
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>NÚMERO</th>
+            <th>ESTADO</th>
+            <th>CLIENTE</th>
+            <th>TOTAL</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="selected">
+            <td>2</td>
+            <td>2</td>
+            <td>BORRADOR</td>
+            <td>Cliente General</td>
+            <td>631.00</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>CONFIRMADA</td>
+            <td>Cliente General</td>
+            <td>474.00</td>
+            <td></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row pagination">
+        <div class="col">Mostrando 1 a 2 de 4 órdenes</div>
+        <div class="col">
+          <button disabled>Anterior</button>
+          <span class="separator">•</span>
+          <span>Página 1 de 1</span>
+          <span class="separator">•</span>
+          <button disabled>Siguiente</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <div class="title">Información de la orden</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>2</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Número</div>
+          <span>2</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Estado</div>
+          <span>BORRADOR</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Moneda</div>
+          <span>BOB</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Creada</div>
+          <span>2025-11-08 14:13:37</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Actualizada</div>
+          <span>2025-11-08 14:13:37</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Cliente</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>Cliente General</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">NIT</div>
+          <span>5555555555</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Dirección</div>
+          <span>Zona Central</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Teléfono</div>
+          <span>555-1001</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Detalles</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table>
+            <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>7988</td>
+              <td>MOLD. CROMADA RH DE BISEL HALOG KOLEOS</td>
+              <td>11</td>
+              <td>45.00</td>
+              <td>495.00</td>
+            </tr>
+            <tr>
+              <td>7987</td>
+              <td>MOLD. CROMADA LH DE BISEL HALOG KOLEOS</td>
+              <td>4</td>
+              <td>34.00</td>
+              <td>136.00</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Totales</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Total</div>
+          <strong>Bs. 631.00</strong>
+        </div>
+        <div class="col">
+          <div class="subtitle">Pagado</div>
+          <span>Bs. 33.00</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Pendiente</div>
+          <mark class="positive">Bs. 598.00</mark>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Almacén</div>
+          <span>Almacen Central</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Método de pago</div>
+          <span>Efectivo</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Usuario</div>
+          <span>EMILIO RAMIREZ</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Notas</div>
+          <span>as</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
