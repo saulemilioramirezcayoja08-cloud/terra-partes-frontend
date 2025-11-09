@@ -68,6 +68,20 @@ export const routes: Routes = [
           import('./pages/layout/pages/catalog/product-list/product-list')
             .then(m => m.ProductList),
       },
+      {
+        path: 'sale/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/sale/sale-list/sale-list').then(
+            m => m.SaleList,
+          ),
+      },
+      {
+        path: 'purchase/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/purchase/purchase-list/purchase-list').then(
+            m => m.PurchaseList,
+          ),
+      },
     ],
   },
   {

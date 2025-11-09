@@ -1,24 +1,22 @@
 import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
 import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {OrderService} from '../../../../../modules/order/services/order.service';
-import {OrderListResponse} from '../../../../../modules/order/get/models/order-list-response.model';
-import {AuthService} from '../../../../../modules/auth/services/auth.service';
+import {PurchaseService} from '../../../../../modules/purchase/services/purchase.service';
+import {PurchaseListResponse} from '../../../../../modules/purchase/get/models/purchase-list-response.model';
 
 @Component({
-  selector: 'app-order-list',
+  selector: 'app-purchase-list',
   imports: [CommonModule, FormsModule, DecimalPipe],
-  templateUrl: './order-list.html',
-  styleUrl: './order-list.css'
+  templateUrl: './purchase-list.html',
+  styleUrl: './purchase-list.css'
 })
-export class OrderList implements OnInit, OnDestroy {
-  private readonly orderService = inject(OrderService);
-  private readonly authService = inject(AuthService);
+export class PurchaseList implements OnInit, OnDestroy {
+  private readonly purchaseService = inject(PurchaseService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  readonly orders = signal<OrderListResponse[]>([]);
-  readonly selectedOrder = signal<OrderListResponse | null>(null);
+  readonly purchases = signal<PurchaseListResponse[]>([]);
+  readonly selectedPurchase = signal<PurchaseListResponse | null>(null);
   readonly searchTerm = signal('');
   readonly searchMode = signal<'number' | 'username'>('number');
   readonly isLoading = signal(false);
@@ -32,7 +30,7 @@ export class OrderList implements OnInit, OnDestroy {
   readonly hasPrevious = signal(false);
 
   readonly paginationInfo = computed(() =>
-    `Mostrando ${this.orders().length} de ${this.totalElements()} órdenes`
+    `Mostrando ${this.purchases().length} de ${this.totalElements()} compras`
   );
 
   readonly pageInfo = computed(() =>
@@ -43,7 +41,7 @@ export class OrderList implements OnInit, OnDestroy {
   private clickListener?: () => void;
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.loadPurchases();
     if (this.isBrowser) {
       this.clickListener = () => this.closeDropdown();
       document.addEventListener('click', this.clickListener);
@@ -56,7 +54,7 @@ export class OrderList implements OnInit, OnDestroy {
     }
   }
 
-  loadOrders(): void {
+  loadPurchases(): void {
     this.isLoading.set(true);
     const params: any = {
       page: this.currentPage(),
@@ -64,19 +62,19 @@ export class OrderList implements OnInit, OnDestroy {
       ...this.activeFilters
     };
 
-    this.orderService.getOrders(params).subscribe({
+    this.purchaseService.getPurchases(params).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const data = response.data;
-          this.orders.set(data.content);
+          this.purchases.set(data.content);
           this.currentPage.set(data.page);
           this.totalElements.set(data.totalElements);
           this.totalPages.set(data.totalPages);
           this.hasNext.set(data.hasNext);
           this.hasPrevious.set(data.hasPrevious);
 
-          if (data.content.length > 0 && !this.selectedOrder()) {
-            this.selectOrder(data.content[0]);
+          if (data.content.length > 0 && !this.selectedPurchase()) {
+            this.selectPurchase(data.content[0]);
           }
         }
         this.isLoading.set(false);
@@ -96,35 +94,35 @@ export class OrderList implements OnInit, OnDestroy {
     if (term) this.activeFilters[this.searchMode()] = term;
 
     this.currentPage.set(0);
-    this.loadOrders();
+    this.loadPurchases();
   }
 
   toggleSearchMode(mode: 'number' | 'username'): void {
     this.searchMode.set(mode);
   }
 
-  selectOrder(order: OrderListResponse): void {
-    this.selectedOrder.set(order);
+  selectPurchase(purchase: PurchaseListResponse): void {
+    this.selectedPurchase.set(purchase);
   }
 
   nextPage(): void {
     if (this.hasNext()) {
       this.currentPage.update(p => p + 1);
-      this.loadOrders();
+      this.loadPurchases();
     }
   }
 
   previousPage(): void {
     if (this.hasPrevious()) {
       this.currentPage.update(p => p - 1);
-      this.loadOrders();
+      this.loadPurchases();
     }
   }
 
-  toggleDropdown(orderId: number, event: Event): void {
+  toggleDropdown(purchaseId: number, event: Event): void {
     event.stopPropagation();
     this.activeDropdown.set(
-      this.activeDropdown() === orderId ? null : orderId
+      this.activeDropdown() === purchaseId ? null : purchaseId
     );
   }
 
@@ -132,16 +130,16 @@ export class OrderList implements OnInit, OnDestroy {
     this.activeDropdown.set(null);
   }
 
-  canShowActions(order: OrderListResponse): boolean {
-    return order.status === 'BORRADOR' || order.status === 'DRAFT';
+  canShowActions(purchase: PurchaseListResponse): boolean {
+    return purchase.status === 'BORRADOR' || purchase.status === 'DRAFT';
   }
 
-  onConfirmOrder(order: OrderListResponse): void {
+  onConfirmPurchase(purchase: PurchaseListResponse): void {
     this.activeDropdown.set(null);
 
     const notesInput = prompt(
-      'Confirmar orden ' + order.number + '\n\nNotas adicionales (opcional):',
-      order.notes || ''
+      'Confirmar compra ' + purchase.number + '\n\nNotas adicionales (opcional):',
+      purchase.notes || ''
     );
 
     if (notesInput === null) return;
@@ -150,68 +148,16 @@ export class OrderList implements OnInit, OnDestroy {
 
     const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
 
-    this.orderService.confirmOrder(order.id, payload).subscribe({
+    this.purchaseService.confirmPurchase(purchase.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert('Orden confirmada exitosamente');
-          this.loadOrders();
+          alert('Compra confirmada exitosamente');
+          this.loadPurchases();
         }
       },
       error: (error) => {
-        console.error('Error al confirmar orden:', error);
-        alert('Error al confirmar la orden: ' + (error.message || 'Error desconocido'));
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  onAddPayment(order: OrderListResponse): void {
-    this.activeDropdown.set(null);
-
-    const pending = order.totals.pending;
-    const amountInput = prompt(
-      `Registrar pago para orden ${order.number}\n\n` +
-      `Total: Bs. ${order.totals.total.toFixed(2)}\n` +
-      `Pagado: Bs. ${order.totals.payment.toFixed(2)}\n` +
-      `Pendiente: Bs. ${pending.toFixed(2)}\n\n` +
-      `Ingrese el monto a pagar:`
-    );
-
-    if (amountInput === null) return;
-
-    const amount = parseFloat(amountInput);
-
-    if (isNaN(amount) || amount <= 0) {
-      alert('El monto debe ser un número positivo');
-      return;
-    }
-
-    if (amount > pending) {
-      alert(`El monto no puede exceder el saldo pendiente de Bs. ${pending.toFixed(2)}`);
-      return;
-    }
-
-    const currentUser = this.authService.currentUser;
-    if (!currentUser) {
-      alert('Usuario no autenticado');
-      return;
-    }
-
-    this.isLoading.set(true);
-
-    this.orderService.createPayment(order.id, {
-      amount: amount,
-      userId: currentUser.id
-    }).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          alert(`Pago de Bs. ${amount.toFixed(2)} registrado exitosamente`);
-          this.loadOrders();
-        }
-      },
-      error: (error) => {
-        console.error('Error al registrar pago:', error);
-        alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
+        console.error('Error al confirmar compra:', error);
+        alert('Error al confirmar la compra: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
@@ -243,7 +189,7 @@ export class OrderList implements OnInit, OnDestroy {
     }
   }
 
-  trackByOrderId(_: number, order: OrderListResponse): number {
-    return order.id;
+  trackByPurchaseId(_: number, purchase: PurchaseListResponse): number {
+    return purchase.id;
   }
 }

@@ -1,24 +1,24 @@
 import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
 import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {OrderService} from '../../../../../modules/order/services/order.service';
-import {OrderListResponse} from '../../../../../modules/order/get/models/order-list-response.model';
+import {SaleService} from '../../../../../modules/sale/services/sale.service';
 import {AuthService} from '../../../../../modules/auth/services/auth.service';
+import {SaleListResponse} from '../../../../../modules/sale/get/models/sale-list-response.model';
 
 @Component({
-  selector: 'app-order-list',
+  selector: 'app-sale-list',
   imports: [CommonModule, FormsModule, DecimalPipe],
-  templateUrl: './order-list.html',
-  styleUrl: './order-list.css'
+  templateUrl: './sale-list.html',
+  styleUrl: './sale-list.css'
 })
-export class OrderList implements OnInit, OnDestroy {
-  private readonly orderService = inject(OrderService);
+export class SaleList implements OnInit, OnDestroy {
+  private readonly saleService = inject(SaleService);
   private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  readonly orders = signal<OrderListResponse[]>([]);
-  readonly selectedOrder = signal<OrderListResponse | null>(null);
+  readonly sales = signal<SaleListResponse[]>([]);
+  readonly selectedSale = signal<SaleListResponse | null>(null);
   readonly searchTerm = signal('');
   readonly searchMode = signal<'number' | 'username'>('number');
   readonly isLoading = signal(false);
@@ -32,7 +32,7 @@ export class OrderList implements OnInit, OnDestroy {
   readonly hasPrevious = signal(false);
 
   readonly paginationInfo = computed(() =>
-    `Mostrando ${this.orders().length} de ${this.totalElements()} órdenes`
+    `Mostrando ${this.sales().length} de ${this.totalElements()} ventas`
   );
 
   readonly pageInfo = computed(() =>
@@ -43,7 +43,7 @@ export class OrderList implements OnInit, OnDestroy {
   private clickListener?: () => void;
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.loadSales();
     if (this.isBrowser) {
       this.clickListener = () => this.closeDropdown();
       document.addEventListener('click', this.clickListener);
@@ -56,7 +56,7 @@ export class OrderList implements OnInit, OnDestroy {
     }
   }
 
-  loadOrders(): void {
+  loadSales(): void {
     this.isLoading.set(true);
     const params: any = {
       page: this.currentPage(),
@@ -64,19 +64,19 @@ export class OrderList implements OnInit, OnDestroy {
       ...this.activeFilters
     };
 
-    this.orderService.getOrders(params).subscribe({
+    this.saleService.getSales(params).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const data = response.data;
-          this.orders.set(data.content);
+          this.sales.set(data.content);
           this.currentPage.set(data.page);
           this.totalElements.set(data.totalElements);
           this.totalPages.set(data.totalPages);
           this.hasNext.set(data.hasNext);
           this.hasPrevious.set(data.hasPrevious);
 
-          if (data.content.length > 0 && !this.selectedOrder()) {
-            this.selectOrder(data.content[0]);
+          if (data.content.length > 0 && !this.selectedSale()) {
+            this.selectSale(data.content[0]);
           }
         }
         this.isLoading.set(false);
@@ -96,35 +96,35 @@ export class OrderList implements OnInit, OnDestroy {
     if (term) this.activeFilters[this.searchMode()] = term;
 
     this.currentPage.set(0);
-    this.loadOrders();
+    this.loadSales();
   }
 
   toggleSearchMode(mode: 'number' | 'username'): void {
     this.searchMode.set(mode);
   }
 
-  selectOrder(order: OrderListResponse): void {
-    this.selectedOrder.set(order);
+  selectSale(sale: SaleListResponse): void {
+    this.selectedSale.set(sale);
   }
 
   nextPage(): void {
     if (this.hasNext()) {
       this.currentPage.update(p => p + 1);
-      this.loadOrders();
+      this.loadSales();
     }
   }
 
   previousPage(): void {
     if (this.hasPrevious()) {
       this.currentPage.update(p => p - 1);
-      this.loadOrders();
+      this.loadSales();
     }
   }
 
-  toggleDropdown(orderId: number, event: Event): void {
+  toggleDropdown(saleId: number, event: Event): void {
     event.stopPropagation();
     this.activeDropdown.set(
-      this.activeDropdown() === orderId ? null : orderId
+      this.activeDropdown() === saleId ? null : saleId
     );
   }
 
@@ -132,16 +132,16 @@ export class OrderList implements OnInit, OnDestroy {
     this.activeDropdown.set(null);
   }
 
-  canShowActions(order: OrderListResponse): boolean {
-    return order.status === 'BORRADOR' || order.status === 'DRAFT';
+  canShowActions(sale: SaleListResponse): boolean {
+    return sale.status === 'BORRADOR' || sale.status === 'DRAFT';
   }
 
-  onConfirmOrder(order: OrderListResponse): void {
+  onConfirmSale(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
 
     const notesInput = prompt(
-      'Confirmar orden ' + order.number + '\n\nNotas adicionales (opcional):',
-      order.notes || ''
+      'Confirmar venta ' + sale.number + '\n\nNotas adicionales (opcional):',
+      sale.notes || ''
     );
 
     if (notesInput === null) return;
@@ -150,29 +150,29 @@ export class OrderList implements OnInit, OnDestroy {
 
     const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
 
-    this.orderService.confirmOrder(order.id, payload).subscribe({
+    this.saleService.confirmSale(sale.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert('Orden confirmada exitosamente');
-          this.loadOrders();
+          alert('Venta confirmada exitosamente');
+          this.loadSales();
         }
       },
       error: (error) => {
-        console.error('Error al confirmar orden:', error);
-        alert('Error al confirmar la orden: ' + (error.message || 'Error desconocido'));
+        console.error('Error al confirmar venta:', error);
+        alert('Error al confirmar la venta: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
   }
 
-  onAddPayment(order: OrderListResponse): void {
+  onAddPayment(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
 
-    const pending = order.totals.pending;
+    const pending = sale.totals.pending;
     const amountInput = prompt(
-      `Registrar pago para orden ${order.number}\n\n` +
-      `Total: Bs. ${order.totals.total.toFixed(2)}\n` +
-      `Pagado: Bs. ${order.totals.payment.toFixed(2)}\n` +
+      `Registrar pago para venta ${sale.number}\n\n` +
+      `Total: Bs. ${sale.totals.total.toFixed(2)}\n` +
+      `Pagado: Bs. ${sale.totals.payment.toFixed(2)}\n` +
       `Pendiente: Bs. ${pending.toFixed(2)}\n\n` +
       `Ingrese el monto a pagar:`
     );
@@ -199,14 +199,14 @@ export class OrderList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    this.orderService.createPayment(order.id, {
+    this.saleService.createPayment(sale.id, {
       amount: amount,
       userId: currentUser.id
     }).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           alert(`Pago de Bs. ${amount.toFixed(2)} registrado exitosamente`);
-          this.loadOrders();
+          this.loadSales();
         }
       },
       error: (error) => {
@@ -243,7 +243,7 @@ export class OrderList implements OnInit, OnDestroy {
     }
   }
 
-  trackByOrderId(_: number, order: OrderListResponse): number {
-    return order.id;
+  trackBySaleId(_: number, sale: SaleListResponse): number {
+    return sale.id;
   }
 }

@@ -1,8 +1,8 @@
-<div class="order-list-component">
+<div class="sale-list-component">
   <div class="row">
-    <div class="title">Lista de Órdenes</div>
+    <div class="title">Lista de Ventas</div>
     <div class="subtitle">
-      Busca órdenes • Usa <kbd>Enter</kbd> para buscar
+      Busca ventas • Usa <kbd>Enter</kbd> para buscar
     </div>
   </div>
 
@@ -13,7 +13,7 @@
           <input
             type="text"
             class="search-input"
-            placeholder="Buscar órdenes..."
+            placeholder="Buscar ventas..."
             [ngModel]="searchTerm()"
             (ngModelChange)="searchTerm.set($event)"
             (keyup.enter)="onEnter()"
@@ -60,27 +60,27 @@
                   <em>Cargando...</em>
                 </td>
               </tr>
-            } @else if (orders().length === 0) {
+            } @else if (sales().length === 0) {
               <tr>
                 <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron órdenes</em>
+                  <em>No se encontraron ventas</em>
                 </td>
               </tr>
             } @else {
-              @for (order of orders(); track trackByOrderId($index, order)) {
+              @for (sale of sales(); track trackBySaleId($index, sale)) {
                 <tr
-                  (click)="selectOrder(order)"
-                  [class.selected]="selectedOrder()?.id === order.id">
-                  <td>{{ order.id }}</td>
-                  <td>{{ order.number }}</td>
-                  <td>{{ order.status }}</td>
-                  <td>{{ order.customer.name }}</td>
-                  <td>{{ order.totals.total | number:'1.2-2' }}</td>
+                  (click)="selectSale(sale)"
+                  [class.selected]="selectedSale()?.id === sale.id">
+                  <td>{{ sale.id }}</td>
+                  <td>{{ sale.number }}</td>
+                  <td>{{ sale.status }}</td>
+                  <td>{{ sale.customer.name }}</td>
+                  <td>{{ sale.totals.total | number:'1.2-2' }}</td>
                   <td>
-                    @if (canShowActions(order)) {
+                    @if (canShowActions(sale)) {
                       <div class="actions-wrapper">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                             (click)="toggleDropdown(order.id, $event)">
+                             (click)="toggleDropdown(sale.id, $event)">
                           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                           <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                           <g id="SVGRepo_iconCarrier">
@@ -92,9 +92,9 @@
                           </g>
                         </svg>
 
-                        @if (activeDropdown() === order.id) {
+                        @if (activeDropdown() === sale.id) {
                           <div class="dropdown-menu" (click)="$event.stopPropagation()">
-                            <button class="dropdown-item confirm" (click)="onConfirmOrder(order)">
+                            <button class="dropdown-item confirm" (click)="onConfirmSale(sale)">
                               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -103,12 +103,12 @@
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </g>
                               </svg>
-                              <span>Confirmar orden</span>
+                              <span>Confirmar venta</span>
                             </button>
 
                             <div class="dropdown-divider"></div>
 
-                            <button class="dropdown-item payment" (click)="onAddPayment(order)">
+                            <button class="dropdown-item payment" (click)="onAddPayment(sale)">
                               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -151,43 +151,43 @@
     </div>
 
     <div class="col">
-      @if (selectedOrder(); as order) {
+      @if (selectedSale(); as sale) {
         <div class="row">
           <div class="col">
-            <div class="title">Información de la orden</div>
+            <div class="title">Información de la venta</div>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
             <div class="subtitle">ID</div>
-            <span>{{ order.id }}</span>
+            <span>{{ sale.id }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Número</div>
-            <span>{{ order.number }}</span>
+            <span>{{ sale.number }}</span>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
             <div class="subtitle">Estado</div>
-            <span>{{ order.status }}</span>
+            <span>{{ sale.status }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Moneda</div>
-            <span>{{ order.currency }}</span>
+            <span>{{ sale.currency }}</span>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
             <div class="subtitle">Creada</div>
-            <span>{{ formatBolivianDate(order.createdAt) }}</span>
+            <span>{{ formatBolivianDate(sale.createdAt) }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Actualizada</div>
-            <span>{{ formatBolivianDate(order.updatedAt) }}</span>
+            <span>{{ formatBolivianDate(sale.updatedAt) }}</span>
           </div>
         </div>
 
@@ -200,22 +200,22 @@
         <div class="row">
           <div class="col">
             <div class="subtitle">Nombre</div>
-            <span>{{ order.customer.name }}</span>
+            <span>{{ sale.customer.name }}</span>
           </div>
           <div class="col">
             <div class="subtitle">NIT</div>
-            <span>{{ order.customer.taxId }}</span>
+            <span>{{ sale.customer.taxId }}</span>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
             <div class="subtitle">Dirección</div>
-            <span>{{ order.customer.address }}</span>
+            <span>{{ sale.customer.address }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Teléfono</div>
-            <span>{{ order.customer.phone }}</span>
+            <span>{{ sale.customer.phone }}</span>
           </div>
         </div>
 
@@ -238,7 +238,7 @@
               </tr>
               </thead>
               <tbody>
-                @for (detail of order.details; track detail.id) {
+                @for (detail of sale.details; track detail.id) {
                   <tr>
                     <td>{{ detail.product.sku }}</td>
                     <td>{{ detail.product.name }}</td>
@@ -261,41 +261,45 @@
         <div class="row">
           <div class="col">
             <div class="subtitle">Total</div>
-            <strong>Bs. {{ order.totals.total | number:'1.2-2' }}</strong>
+            <strong>Bs. {{ sale.totals.total | number:'1.2-2' }}</strong>
           </div>
           <div class="col">
             <div class="subtitle">Pagado</div>
-            <span>Bs. {{ order.totals.payment | number:'1.2-2' }}</span>
+            <span>Bs. {{ sale.totals.payment | number:'1.2-2' }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Pendiente</div>
-            <mark class="positive">Bs. {{ order.totals.pending | number:'1.2-2' }}</mark>
+            <mark class="positive">Bs. {{ sale.totals.pending | number:'1.2-2' }}</mark>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
             <div class="subtitle">Almacén</div>
-            <span>{{ order.warehouse.name }}</span>
+            <span>{{ sale.warehouse.name }}</span>
           </div>
           <div class="col">
             <div class="subtitle">Método de pago</div>
-            <span>{{ order.payment.name }}</span>
+            <span>{{ sale.payment.name }}</span>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
+            <div class="subtitle">Orden</div>
+            <span>{{ sale.order.number }}</span>
+          </div>
+          <div class="col">
             <div class="subtitle">Usuario</div>
-            <span>{{ order.user.name }}</span>
+            <span>{{ sale.user.name }}</span>
           </div>
         </div>
 
-        @if (order.notes) {
+        @if (sale.notes) {
           <div class="row">
             <div class="col">
               <div class="subtitle">Notas</div>
-              <span>{{ order.notes }}</span>
+              <span>{{ sale.notes }}</span>
             </div>
           </div>
         }
@@ -303,7 +307,7 @@
       } @else {
         <div class="row">
           <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona una orden para ver sus detalles</em>
+            <em>Selecciona una venta para ver sus detalles</em>
           </div>
         </div>
       }
