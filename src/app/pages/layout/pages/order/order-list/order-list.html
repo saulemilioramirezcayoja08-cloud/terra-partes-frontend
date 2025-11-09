@@ -76,7 +76,61 @@
                   <td>{{ order.status }}</td>
                   <td>{{ order.customer.name }}</td>
                   <td>{{ order.totals.total | number:'1.2-2' }}</td>
-                  <td></td>
+                  <td>
+                    @if (canShowActions(order)) {
+                      <div class="actions-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                             (click)="toggleDropdown(order.id, $event)">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                          <g id="SVGRepo_iconCarrier">
+                            <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path
+                              d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
+                              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          </g>
+                        </svg>
+
+                        @if (activeDropdown() === order.id) {
+                          <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                            <button class="dropdown-item confirm" (click)="onConfirmOrder(order)">
+                              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                  <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </g>
+                              </svg>
+                              <span>Confirmar orden</span>
+                            </button>
+
+                            <div class="dropdown-divider"></div>
+
+                            <button class="dropdown-item payment" (click)="onAddPayment(order)">
+                              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                  <path d="M6 8H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round"></path>
+                                  <path
+                                    d="M22 10.5C22 10.4226 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.5774 22 13.5"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                  <circle cx="18" cy="12" r="1" fill="#1C274C"></circle>
+                                  <path
+                                    d="M13 4C16.7712 4 18.6569 4 19.8284 5.17157C20.6366 5.97975 20.8873 7.1277 20.965 9M10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15M9 4.00093C5.8857 4.01004 4.23467 4.10848 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C3.82475 19.4816 4.69989 19.7706 6 19.8985"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                </g>
+                              </svg>
+                              <span>Registrar pago</span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </td>
                 </tr>
               }
             }

@@ -1,8 +1,9 @@
-import {Component, computed, inject, OnInit, PLATFORM_ID, signal} from '@angular/core';
+import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
 import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {OrderService} from '../../../../../modules/order/services/order.service';
 import {OrderListResponse} from '../../../../../modules/order/get/models/order-list-response.model';
+import {AuthService} from '../../../../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-order-list',
@@ -10,8 +11,9 @@ import {OrderListResponse} from '../../../../../modules/order/get/models/order-l
   templateUrl: './order-list.html',
   styleUrl: './order-list.css'
 })
-export class OrderList implements OnInit {
+export class OrderList implements OnInit, OnDestroy {
   private readonly orderService = inject(OrderService);
+  private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -20,6 +22,7 @@ export class OrderList implements OnInit {
   readonly searchTerm = signal('');
   readonly searchMode = signal<'number' | 'username'>('number');
   readonly isLoading = signal(false);
+  readonly activeDropdown = signal<number | null>(null);
 
   readonly currentPage = signal(0);
   readonly pageSize = signal(20);
@@ -37,9 +40,20 @@ export class OrderList implements OnInit {
   );
 
   private activeFilters: { number?: string; username?: string } = {};
+  private clickListener?: () => void;
 
   ngOnInit(): void {
     this.loadOrders();
+    if (this.isBrowser) {
+      this.clickListener = () => this.closeDropdown();
+      document.addEventListener('click', this.clickListener);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.isBrowser && this.clickListener) {
+      document.removeEventListener('click', this.clickListener);
+    }
   }
 
   loadOrders(): void {
@@ -105,6 +119,102 @@ export class OrderList implements OnInit {
       this.currentPage.update(p => p - 1);
       this.loadOrders();
     }
+  }
+
+  toggleDropdown(orderId: number, event: Event): void {
+    event.stopPropagation();
+    this.activeDropdown.set(
+      this.activeDropdown() === orderId ? null : orderId
+    );
+  }
+
+  closeDropdown(): void {
+    this.activeDropdown.set(null);
+  }
+
+  canShowActions(order: OrderListResponse): boolean {
+    return order.status === 'BORRADOR' || order.status === 'DRAFT';
+  }
+
+  onConfirmOrder(order: OrderListResponse): void {
+    this.activeDropdown.set(null);
+
+    const notesInput = prompt(
+      'Confirmar orden #' + order.number + '\n\nNotas adicionales (opcional):',
+      order.notes || ''
+    );
+
+    if (notesInput === null) return;
+
+    this.isLoading.set(true);
+
+    const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
+
+    this.orderService.confirmOrder(order.id, payload).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert('Orden confirmada exitosamente');
+          this.loadOrders();
+        }
+      },
+      error: (error) => {
+        console.error('Error al confirmar orden:', error);
+        alert('Error al confirmar la orden: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  onAddPayment(order: OrderListResponse): void {
+    this.activeDropdown.set(null);
+
+    const pending = order.totals.pending;
+    const amountInput = prompt(
+      `Registrar pago para orden #${order.number}\n\n` +
+      `Total: Bs. ${order.totals.total.toFixed(2)}\n` +
+      `Pagado: Bs. ${order.totals.payment.toFixed(2)}\n` +
+      `Pendiente: Bs. ${pending.toFixed(2)}\n\n` +
+      `Ingrese el monto a pagar:`
+    );
+
+    if (amountInput === null) return;
+
+    const amount = parseFloat(amountInput);
+
+    if (isNaN(amount) || amount <= 0) {
+      alert('El monto debe ser un número positivo');
+      return;
+    }
+
+    if (amount > pending) {
+      alert(`El monto no puede exceder el saldo pendiente de Bs. ${pending.toFixed(2)}`);
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+    if (!currentUser) {
+      alert('Usuario no autenticado');
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.orderService.createPayment(order.id, {
+      amount: amount,
+      userId: currentUser.id
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert(`Pago de Bs. ${amount.toFixed(2)} registrado exitosamente`);
+          this.loadOrders();
+        }
+      },
+      error: (error) => {
+        console.error('Error al registrar pago:', error);
+        alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
+    });
   }
 
   trackByOrderId(_: number, order: OrderListResponse): number {

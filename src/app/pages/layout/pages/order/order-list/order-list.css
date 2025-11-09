@@ -180,7 +180,7 @@
   flex-direction: column;
   background-color: white;
   min-height: 0;
-  overflow: auto;
+  overflow: visible;
 }
 
 .order-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2)::-webkit-scrollbar {
@@ -255,6 +255,10 @@ th:nth-child(6) {
   width: 50px;
 }
 
+tbody {
+  overflow: visible;
+}
+
 tbody tr {
   cursor: pointer;
   transition: all 0.2s ease-in;
@@ -277,7 +281,7 @@ td {
   line-height: 30px;
   padding: 0 8px;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: ellipsis;
   vertical-align: middle;
 }
@@ -296,6 +300,7 @@ td:nth-child(3) {
 
 td:nth-child(4) {
   text-align: left;
+  overflow: hidden;
 }
 
 td:nth-child(5) {
@@ -304,6 +309,105 @@ td:nth-child(5) {
 
 td:nth-child(6) {
   text-align: center;
+  overflow: visible;
+}
+
+td:last-child svg {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: rgba(34, 197, 94, 0.6);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
+  display: inline-block;
+}
+
+td:last-child svg:hover {
+  color: rgba(34, 197, 94, 1);
+  background-color: rgba(34, 197, 94, 0.1);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.08);
+}
+
+td svg.disabled {
+  color: rgba(128, 128, 128, 0.3);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.actions-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 180px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  overflow: visible;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #5d5d5d;
+}
+
+.dropdown-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.dropdown-item.confirm svg {
+  color: #10b981;
+}
+
+.dropdown-item.payment svg {
+  color: #3b82f6;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(128, 128, 128, 0.06);
+}
+
+.dropdown-item:active {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: rgba(128, 128, 128, 0.15);
+  margin: 4px 0;
 }
 
 .order-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination {
