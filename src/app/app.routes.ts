@@ -1,10 +1,10 @@
-import {Routes} from '@angular/router';
-import {Login} from './pages/login/login';
-import {Layout} from './pages/layout/layout';
-import {authGuard} from './core/guards/auth-guard';
+import { Routes } from '@angular/router';
+import { Login } from './pages/login/login';
+import { Layout } from './pages/layout/layout';
+import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
-  {path: 'login', component: Login},
+  { path: 'login', component: Login },
   {
     path: '',
     component: Layout,
@@ -88,6 +88,34 @@ export const routes: Routes = [
             m => m.PurchaseList,
           ),
       },
+      {
+        path: 'customer/create',
+        loadComponent: () =>
+          import('./pages/layout/pages/customer/customer-create/customer-create').then(
+            m => m.CustomerCreate,
+          ),
+      },
+      {
+        path: 'customer/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/customer/customer-list/customer-list').then(
+            m => m.CustomerList,
+          ),
+      },
+      {
+        path: 'supplier/create',
+        loadComponent: () =>
+          import('./pages/layout/pages/supplier/supplier-create/supplier-create').then(
+            m => m.SupplierCreate,
+          ),
+      },
+      {
+        path: 'supplier/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/supplier/supplier-list/supplier-list').then(
+            m => m.SupplierList,
+          ),
+      },
     ],
   },
   {
@@ -130,5 +158,5 @@ export const routes: Routes = [
       import('./pages/layout/pages/purchase/purchase-reprint/purchase-reprint')
         .then(m => m.PurchaseReprint),
   },
-  {path: '**', redirectTo: ''},
+  { path: '**', redirectTo: '' },
 ];

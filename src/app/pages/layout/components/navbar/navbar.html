@@ -121,7 +121,7 @@
             <a routerLink="/report/inventory" routerLinkActive="active-item" class="menu-item">Reporte de inventario</a>
             <a routerLink="/report/inventory/rotation" routerLinkActive="active-item" class="menu-item">Rotación</a>
             <a routerLink="/report/inventory/valuation" routerLinkActive="active-item"
-               class="menu-item">Valorización</a>
+              class="menu-item">Valorización</a>
           </div>
         </div>
       </div>
@@ -132,11 +132,22 @@
         </span>
         <div class="mega-menu simple">
           <a routerLink="/customer/list" routerLinkActive="active-item" class="menu-item">Listado</a>
+          <a routerLink="/customer/create" routerLinkActive="active-item" class="menu-item">Crear</a>
           <a routerLink="/customer/quotes" routerLinkActive="active-item" class="menu-item">Cotizaciones por
             cliente</a>
           <a routerLink="/customer/frequency" routerLinkActive="active-item" class="menu-item">Frecuencia de compra</a>
           <a routerLink="/customer/open-balances" routerLinkActive="active-item" class="menu-item">Saldos /
             anticipos</a>
+        </div>
+      </div>
+
+      <div class="tab-item">
+        <span class="tab" [class.active]="isModuleActive('proveedores')">
+          Proveedores
+        </span>
+        <div class="mega-menu simple">
+          <a routerLink="/supplier/list" routerLinkActive="active-item" class="menu-item">Listado</a>
+          <a routerLink="/supplier/create" routerLinkActive="active-item" class="menu-item">Crear</a>
         </div>
       </div>
 

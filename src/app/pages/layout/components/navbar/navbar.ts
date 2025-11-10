@@ -18,7 +18,8 @@ export class Navbar {
   private readonly routeMap = {
     ventas: ['/quotation', '/order', '/sale', '/credit', '/payments', '/reservas'],
     inventario: ['/inventory'],
-    compras: ['/purchase', '/suppliers'],
+    compras: ['/purchase'],
+    proveedores: ['/supplier'],
     catalogo: ['/catalog'],
     reportes: ['/report'],
     clientes: ['/customers'],

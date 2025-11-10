@@ -1,0 +1,246 @@
+<div class="customer-list-component">
+    <div class="row">
+        <div class="title">Lista de Clientes</div>
+        <div class="subtitle">
+            Busca clientes por nombre o NIT/CI • Usa <kbd>Enter</kbd> para buscar
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="search-input" placeholder="Buscar clientes..." [ngModel]="searchTerm()"
+                        (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onSearch()" autocomplete="off">
+                    <div class="search-hint">
+                        Busca por {{ searchMode() === 'name' ? 'nombre' : 'NIT/CI' }} • <kbd>Enter</kbd> buscar
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="toggle-group">
+                        <button class="toggle-btn" [class.active]="searchMode() === 'name'"
+                            (click)="toggleSearchMode('name')">
+                            Nombre
+                        </button>
+                        <button class="toggle-btn" [class.active]="searchMode() === 'taxId'"
+                            (click)="toggleSearchMode('taxId')">
+                            NIT/CI
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NIT/CI</th>
+                            <th>NOMBRE</th>
+                            <th>TELÉFONO</th>
+                            <th>EMAIL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (customers().length === 0) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron clientes</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (customer of customers(); track trackByCustomerId($index, customer)) {
+                        <tr (click)="selectCustomer(customer)"
+                            [class.selected]="selectedCustomer()?.id === customer.id">
+                            <td>{{ customer.id }}</td>
+                            <td>{{ customer.taxId || '-' }}</td>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.phone || '-' }}</td>
+                            <td>{{ customer.email || '-' }}</td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row pagination">
+                <div class="col">{{ paginationInfo() }}</div>
+                <div class="col">
+                    <button (click)="previousPage()" [disabled]="!hasPrevious()">Anterior</button>
+                    <span class="separator">•</span>
+                    <span>{{ pageInfo() }}</span>
+                    <span class="separator">•</span>
+                    <button (click)="nextPage()" [disabled]="!hasNext()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            @if (selectedCustomer(); as customer) {
+            <div class="row">
+                <div class="col">
+                    <div class="title">Información del cliente</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">ID</div>
+                    <span>{{ customer.id }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">NIT / CI</div>
+                    @if (customer.taxId) {
+                    <span>{{ customer.taxId }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre / Razón Social</div>
+                    <span>{{ customer.name }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Teléfono</div>
+                    @if (customer.phone) {
+                    <span>{{ customer.phone }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+                <div class="col">
+                    <div class="subtitle">Email</div>
+                    @if (customer.email) {
+                    <span>{{ customer.email }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            @if (customer.address) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Dirección</div>
+                    <span>{{ customer.address }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Estado</div>
+                    @if (customer.isActive) {
+                    <mark class="status-active">Activo</mark>
+                    } @else {
+                    <mark class="status-inactive">Inactivo</mark>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Órdenes ({{ customer.orders.length }})</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    @if (customer.orders.length > 0) {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                                <th>Pagado</th>
+                                <th>Pendiente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (order of customer.orders; track trackByOrderId($index, order)) {
+                            <tr>
+                                <td>{{ order.number }}</td>
+                                <td>
+                                    <span [class]="getStatusClass(order.status)">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>{{ order.totals.total | number:'1.2-2' }}</td>
+                                <td>{{ order.totals.payment | number:'1.2-2' }}</td>
+                                <td>{{ order.totals.pending | number:'1.2-2' }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    } @else {
+                    <em>Sin órdenes registradas</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Ventas ({{ customer.sales.length }})</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    @if (customer.sales.length > 0) {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Estado</th>
+                                <th>Orden</th>
+                                <th>Total</th>
+                                <th>Pagado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (sale of customer.sales; track trackBySaleId($index, sale)) {
+                            <tr>
+                                <td>{{ sale.number }}</td>
+                                <td>
+                                    <span [class]="getStatusClass(sale.status)">
+                                        {{ sale.status }}
+                                    </span>
+                                </td>
+                                <td>{{ sale.orderNumber }}</td>
+                                <td>{{ sale.totals.total | number:'1.2-2' }}</td>
+                                <td>{{ sale.totals.payment | number:'1.2-2' }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    } @else {
+                    <em>Sin ventas registradas</em>
+                    }
+                </div>
+            </div>
+
+            } @else {
+            <div class="row">
+                <div class="col" style="padding: 40px; text-align: center;">
+                    <em>Selecciona un cliente para ver sus detalles</em>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

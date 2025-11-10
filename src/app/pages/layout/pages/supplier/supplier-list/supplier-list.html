@@ -1,0 +1,203 @@
+<div class="supplier-list-component">
+    <div class="row">
+        <div class="title">Lista de Proveedores</div>
+        <div class="subtitle">
+            Busca proveedores por nombre o NIT/CI • Usa <kbd>Enter</kbd> para buscar
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="search-input" placeholder="Buscar proveedores..." [ngModel]="searchTerm()"
+                        (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onSearch()" autocomplete="off">
+                    <div class="search-hint">
+                        Busca por {{ searchMode() === 'name' ? 'nombre' : 'NIT/CI' }} • <kbd>Enter</kbd> buscar
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="toggle-group">
+                        <button class="toggle-btn" [class.active]="searchMode() === 'name'"
+                            (click)="toggleSearchMode('name')">
+                            Nombre
+                        </button>
+                        <button class="toggle-btn" [class.active]="searchMode() === 'taxId'"
+                            (click)="toggleSearchMode('taxId')">
+                            NIT/CI
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NIT/CI</th>
+                            <th>NOMBRE</th>
+                            <th>TELÉFONO</th>
+                            <th>EMAIL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (suppliers().length === 0) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron proveedores</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (supplier of suppliers(); track trackBySupplierId($index, supplier)) {
+                        <tr (click)="selectSupplier(supplier)"
+                            [class.selected]="selectedSupplier()?.id === supplier.id">
+                            <td>{{ supplier.id }}</td>
+                            <td>{{ supplier.taxId || '-' }}</td>
+                            <td>{{ supplier.name }}</td>
+                            <td>{{ supplier.phone || '-' }}</td>
+                            <td>{{ supplier.email || '-' }}</td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row pagination">
+                <div class="col">{{ paginationInfo() }}</div>
+                <div class="col">
+                    <button (click)="previousPage()" [disabled]="!hasPrevious()">Anterior</button>
+                    <span class="separator">•</span>
+                    <span>{{ pageInfo() }}</span>
+                    <span class="separator">•</span>
+                    <button (click)="nextPage()" [disabled]="!hasNext()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            @if (selectedSupplier(); as supplier) {
+            <div class="row">
+                <div class="col">
+                    <div class="title">Información del proveedor</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">ID</div>
+                    <span>{{ supplier.id }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">NIT / CI</div>
+                    @if (supplier.taxId) {
+                    <span>{{ supplier.taxId }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre / Razón Social</div>
+                    <span>{{ supplier.name }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Teléfono</div>
+                    @if (supplier.phone) {
+                    <span>{{ supplier.phone }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+                <div class="col">
+                    <div class="subtitle">Email</div>
+                    @if (supplier.email) {
+                    <span>{{ supplier.email }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            @if (supplier.address) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Dirección</div>
+                    <span>{{ supplier.address }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Estado</div>
+                    @if (supplier.isActive) {
+                    <mark class="status-active">Activo</mark>
+                    } @else {
+                    <mark class="status-inactive">Inactivo</mark>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Compras ({{ supplier.purchases.length }})</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    @if (supplier.purchases.length > 0) {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                                <th>Items</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (purchase of supplier.purchases; track trackByPurchaseId($index, purchase)) {
+                            <tr>
+                                <td>{{ purchase.number }}</td>
+                                <td>
+                                    <span [class]="getStatusClass(purchase.status)">
+                                        {{ purchase.status }}
+                                    </span>
+                                </td>
+                                <td>{{ purchase.totals.total | number:'1.2-2' }}</td>
+                                <td>{{ purchase.totals.items }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    } @else {
+                    <em>Sin compras registradas</em>
+                    }
+                </div>
+            </div>
+
+            } @else {
+            <div class="row">
+                <div class="col" style="padding: 40px; text-align: center;">
+                    <em>Selecciona un proveedor para ver sus detalles</em>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

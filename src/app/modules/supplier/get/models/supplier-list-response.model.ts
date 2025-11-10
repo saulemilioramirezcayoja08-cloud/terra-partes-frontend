@@ -8,18 +8,19 @@ export interface SupplierListResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  user: User;
-  activity: Activity;
+  purchases: Purchase[];
 }
 
-export interface User {
+export interface Purchase {
   id: number;
-  username: string;
-  email: string;
-  name: string;
+  number: string;
+  status: string;
+  currency: string;
+  createdAt: string;
+  totals: Totals;
 }
 
-export interface Activity {
-  purchases: number;
+export interface Totals {
   total: number;
+  items: number;
 }

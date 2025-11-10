@@ -1,0 +1,142 @@
+<div class="supplier-create-component">
+    <div class="row">
+        <div class="title">Crear Proveedor</div>
+        <div class="subtitle">
+            completa los datos para crear un nuevo proveedor • <kbd>ESC</kbd> volver
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <label>
+                        <span class="label-text">NIT / CI</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="taxId" placeholder="Ejemplo: 1234567-1A"
+                        autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Nombre / Razón Social</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="name" placeholder="Nombre del proveedor"
+                        autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Teléfono</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="phone" placeholder="Ejemplo: +591 12345678"
+                        autocomplete="off" [disabled]="isLoading()">
+                </div>
+
+                <div class="col">
+                    <label>
+                        <span class="label-text">Email</span>
+                    </label>
+                    <input type="email" class="data-input" [(ngModel)]="email"
+                        placeholder="Ejemplo: proveedor@email.com" autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Dirección</span>
+                    </label>
+                    <textarea class="data-textarea" [(ngModel)]="address"
+                        placeholder="Dirección completa del proveedor..." rows="5" [disabled]="isLoading()"></textarea>
+                </div>
+            </div>
+
+            <div class="row actions">
+                <div class="col">
+                    <button (click)="clearForm()" [disabled]="isLoading()">
+                        Limpiar
+                    </button>
+                </div>
+                <div class="col">
+                    <button (click)="createSupplier()" class="primary" [disabled]="!canSave() || isLoading()"
+                        [title]="saveBlockReason()">
+                        @if (isLoading()) {
+                        Guardando...
+                        } @else {
+                        Guardar proveedor
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="title">Vista Previa</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">NIT / CI</div>
+                    @if (taxId()) {
+                    <span>{{ taxId() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre / Razón Social</div>
+                    @if (name()) {
+                    <span>{{ name() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Teléfono</div>
+                    @if (phone()) {
+                    <span>{{ phone() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+                <div class="col">
+                    <div class="subtitle">Email</div>
+                    @if (email()) {
+                    <span>{{ email() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            @if (address()) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Dirección</div>
+                    <span>{{ address() }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row summary">
+                <div class="col">
+                    <div class="summary-title">Resumen</div>
+                    <div class="summary-item">
+                        <span class="summary-label">Estado:</span>
+                        <span class="summary-value active">Activo</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Campos completados:</span>
+                        <span class="summary-value">
+                            {{ (taxId() ? 1 : 0) + (name() ? 1 : 0) + (phone() ? 1 : 0) + (email() ? 1 : 0) + (address()
+                            ? 1 : 0) }} / 5
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
