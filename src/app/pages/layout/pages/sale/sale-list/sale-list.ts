@@ -133,7 +133,7 @@ export class SaleList implements OnInit, OnDestroy {
   }
 
   canShowActions(sale: SaleListResponse): boolean {
-    return sale.status === 'BORRADOR' || sale.status === 'DRAFT';
+    return sale.status !== 'CANCELADA' && sale.status !== 'CANCELLED';
   }
 
   onConfirmSale(sale: SaleListResponse): void {
