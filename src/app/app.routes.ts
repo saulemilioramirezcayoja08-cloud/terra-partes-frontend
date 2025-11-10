@@ -44,6 +44,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'quotation/list',
+        loadComponent: () =>
+          import('./pages/layout/pages/quotation/quotation-list/quotation-list').then(
+            m => m.QuotationList,
+          ),
+      },
+      {
         path: 'quotation/select-product',
         loadComponent: () =>
           import('./pages/layout/pages/quotation/quotation-select-product/quotation-select-product')
