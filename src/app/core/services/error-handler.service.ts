@@ -13,6 +13,8 @@ export class ErrorHandlerService {
     'CUSTOMER_NOT_FOUND': 'Cliente no encontrado',
     'WAREHOUSE_NOT_FOUND': 'Almacén no encontrado',
     'PRODUCT_NOT_FOUND': 'Producto no encontrado',
+    'PRODUCT_SKU_DUPLICATE': 'El código SKU ya existe',
+    'CATEGORY_NOT_FOUND': 'Categoría no encontrada',
     'PAYMENT_NOT_FOUND': 'Método de pago no encontrado',
     'ORDER_NOT_FOUND': 'Orden no encontrada',
     'QUOTATION_NOT_FOUND': 'Cotización no encontrada',

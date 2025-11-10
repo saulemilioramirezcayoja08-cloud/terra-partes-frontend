@@ -1,0 +1,206 @@
+<div class="product-create-component">
+    <div class="row">
+        <div class="title">Crear Producto</div>
+        <div class="subtitle">
+            completa los datos para crear un nuevo producto • <kbd>ESC</kbd> volver
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <label>
+                        <span class="label-text">SKU (Código Interno)</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="sku" placeholder="Ejemplo: PROD-001"
+                        autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Nombre</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="name" placeholder="Nombre del producto"
+                        autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Descripción</span>
+                    </label>
+                    <textarea class="data-textarea" [(ngModel)]="description"
+                        placeholder="Descripción opcional del producto..." rows="3" [disabled]="isLoading()"></textarea>
+                </div>
+
+                <div class="col">
+                    <label>
+                        <span class="label-text">ID Categoría</span>
+                    </label>
+                    <input type="number" class="data-input" [(ngModel)]="categoryId" placeholder="ID opcional" min="1"
+                        [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Unidad de Medida</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="data-input" [(ngModel)]="uom" placeholder="Ejemplo: UNI, KG, MT"
+                        autocomplete="off" [disabled]="isLoading()">
+
+                    <label>
+                        <span class="label-text">Precio Unitario (Bs.)</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="number" class="data-input" [(ngModel)]="price" placeholder="0.00" step="0.01" min="0"
+                        [disabled]="isLoading()">
+                </div>
+            </div>
+
+            <div class="row codes-section">
+                <div class="col">
+                    <div class="section-title">Códigos Alternativos</div>
+                    <div class="codes-input-group">
+                        <input type="text" class="code-input" [(ngModel)]="newCodeType"
+                            placeholder="Tipo (OEM, BARRAS, etc.)" autocomplete="off" [disabled]="isLoading()">
+                        <input type="text" class="code-input" [(ngModel)]="newCodeValue" placeholder="Código"
+                            autocomplete="off" [disabled]="isLoading()">
+                        <button class="add-code-btn" (click)="addCode()" [disabled]="isLoading()">
+                            Agregar
+                        </button>
+                    </div>
+
+                    @if (codes().length > 0) {
+                    <table class="codes-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Código</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (code of codes(); track trackByTempId($index, code)) {
+                            <tr>
+                                <td>{{ code.type }}</td>
+                                <td>{{ code.code }}</td>
+                                <td>
+                                    <svg (click)="removeCode(code.tempId)" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <g id="SVGRepo_iconCarrier">
+                                            <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                            <path
+                                                d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                        </g>
+                                    </svg>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    } @else {
+                    <div class="empty-codes">
+                        <em>No hay códigos agregados</em>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="row actions">
+                <div class="col">
+                    <button (click)="clearForm()" [disabled]="isLoading()">
+                        Limpiar
+                    </button>
+                </div>
+                <div class="col">
+                    <button (click)="createProduct()" class="primary" [disabled]="!canSave() || isLoading()"
+                        [title]="saveBlockReason()">
+                        @if (isLoading()) {
+                        Guardando...
+                        } @else {
+                        Guardar producto
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="title">Vista Previa</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">SKU</div>
+                    @if (sku()) {
+                    <span>{{ sku() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre</div>
+                    @if (name()) {
+                    <span>{{ name() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            @if (description()) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Descripción</div>
+                    <span>{{ description() }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Categoría ID</div>
+                    @if (categoryId()) {
+                    <span>{{ categoryId() }}</span>
+                    } @else {
+                    <em>Sin categoría</em>
+                    }
+                </div>
+                <div class="col">
+                    <div class="subtitle">UOM</div>
+                    @if (uom()) {
+                    <span>{{ uom() }}</span>
+                    } @else {
+                    <em>Sin definir</em>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Precio</div>
+                    <strong>Bs. {{ price() | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+
+            @if (codes().length > 0) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Códigos ({{ codes().length }})</div>
+                    @for (code of codes(); track trackByTempId($index, code)) {
+                    <div class="code-badge">
+                        <span class="badge-type">{{ code.type }}</span>
+                        <span class="badge-code">{{ code.code }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
