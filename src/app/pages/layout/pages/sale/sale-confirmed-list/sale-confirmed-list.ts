@@ -62,8 +62,13 @@ export class SaleConfirmedList implements OnInit, OnDestroy {
     const end = this.endDate();
 
     if (start && end) {
-      params.startDate = new Date(start).toISOString();
-      params.endDate = new Date(end).toISOString();
+      params.startDate = `${start}T00:00:00`;
+      params.endDate = `${end}T23:59:59`;
+
+      console.log('Fecha inicio input:', start);
+      console.log('Fecha fin input:', end);
+      console.log('startDate enviado:', params.startDate);
+      console.log('endDate enviado:', params.endDate);
     }
 
     this.saleService.getConfirmedSales(params).subscribe({
@@ -84,7 +89,6 @@ export class SaleConfirmedList implements OnInit, OnDestroy {
       }
     });
   }
-
   onEnter(): void {
     this.loadSales();
   }

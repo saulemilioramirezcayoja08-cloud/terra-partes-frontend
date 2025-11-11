@@ -55,7 +55,7 @@
           <thead>
           <tr>
             <th>ID</th>
-            <th>NÚMERO</th>
+            <th>USUARIO</th>
             <th>CLIENTE</th>
             <th>TOTAL</th>
             <th>PENDIENTE</th>
@@ -81,7 +81,7 @@
                   (click)="selectSale(sale)"
                   [class.selected]="selectedSale()?.id === sale.id">
                   <td>{{ sale.id }}</td>
-                  <td>{{ sale.number }}</td>
+                  <td>{{ sale.user.username }}</td>
                   <td>{{ sale.customer.name }}</td>
                   <td>{{ sale.totals.total | number:'1.2-2' }}</td>
                   <td [class.pending-amount]="sale.totals.pending > 0">
