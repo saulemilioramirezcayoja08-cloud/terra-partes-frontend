@@ -1,14 +1,15 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {ApiResponse} from '../../../core/models/api-response.model';
-import {SaleListResponse} from '../get/models/sale-list-response.model';
-import {PageResponse} from '../../../core/models/page-response.model';
-import {Observable} from 'rxjs';
-import {ConfirmSaleRequest} from '../put/models/confirm-sale-request.model';
-import {ConfirmSaleResponse} from '../put/models/confirm-sale-response.model';
-import {CreateSalePaymentRequest} from '../post/models/create-sale-payment-request.model';
-import {CreateSalePaymentResponse} from '../post/models/create-sale-payment-response.model';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { ApiResponse } from '../../../core/models/api-response.model';
+import { SaleListResponse } from '../get/models/sale-list-response.model';
+import { PageResponse } from '../../../core/models/page-response.model';
+import { Observable } from 'rxjs';
+import { ConfirmSaleRequest } from '../put/models/confirm-sale-request.model';
+import { ConfirmSaleResponse } from '../put/models/confirm-sale-response.model';
+import { CreateSalePaymentRequest } from '../post/models/create-sale-payment-request.model';
+import { CreateSalePaymentResponse } from '../post/models/create-sale-payment-response.model';
+import { SaleConfirmedListResponse } from '../get/models/sale-confirmed-list-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ export class SaleService {
 
     return this.http.get<ApiResponse<PageResponse<SaleListResponse>>>(
       this.apiUrl,
-      {params: httpParams}
+      { params: httpParams }
     );
   }
 
@@ -63,6 +64,29 @@ export class SaleService {
     return this.http.put<ApiResponse<ConfirmSaleResponse>>(
       `${this.apiUrl}/${id}/confirm`,
       payload || {}
+    );
+  }
+
+  getConfirmedSales(
+    params?: {
+      username?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Observable<ApiResponse<SaleConfirmedListResponse>> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<SaleConfirmedListResponse>>(
+      `${this.apiUrl}/confirmed`,
+      { params: httpParams }
     );
   }
 }

@@ -55,12 +55,19 @@ export interface Detail {
   subtotal: number;
   notes?: string;
   product: Product;
+  inventory: Inventory;
 }
 
 export interface Product {
   id: number;
   sku: string;
   name: string;
+}
+
+export interface Inventory {
+  stock: number;
+  reserved: number;
+  available: number;
 }
 
 export interface Totals {

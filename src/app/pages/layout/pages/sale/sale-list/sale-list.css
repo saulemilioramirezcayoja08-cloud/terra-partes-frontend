@@ -59,7 +59,7 @@
 }
 
 .sale-list-component > .row:nth-child(2) > .col:nth-child(1) {
-  flex: 6;
+  flex: 4;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
@@ -600,4 +600,25 @@ td svg.disabled {
   width: 110px;
   text-align: right;
   white-space: nowrap;
+}
+
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(6),
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(6),
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(7),
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(7),
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(8),
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(8) {
+  width: 60px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td.sufficient {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td.insufficient {
+  color: #ef4444;
+  font-weight: 600;
 }

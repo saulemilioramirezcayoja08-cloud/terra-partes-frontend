@@ -235,6 +235,9 @@
                 <th>Cant.</th>
                 <th>Precio</th>
                 <th>Subtotal</th>
+                <th>Stock</th>
+                <th>Reserv.</th>
+                <th>Disp.</th>
               </tr>
               </thead>
               <tbody>
@@ -245,6 +248,12 @@
                     <td>{{ detail.quantity }}</td>
                     <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
                     <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+                    <td>{{ detail.inventory.stock }}</td>
+                    <td>{{ detail.inventory.reserved }}</td>
+                    <td [class.sufficient]="detail.inventory.available >= detail.quantity"
+                        [class.insufficient]="detail.inventory.available < detail.quantity">
+                      {{ detail.inventory.available }}
+                    </td>
                   </tr>
                 }
               </tbody>

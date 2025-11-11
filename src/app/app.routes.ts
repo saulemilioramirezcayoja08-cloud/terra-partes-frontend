@@ -89,6 +89,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sale/confirmed-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/sale/sale-confirmed-list/sale-confirmed-list').then(
+            m => m.SaleConfirmedList,
+          ),
+      },
+      {
         path: 'purchase/list',
         loadComponent: () =>
           import('./pages/layout/pages/purchase/purchase-list/purchase-list').then(
