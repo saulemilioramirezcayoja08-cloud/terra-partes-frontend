@@ -180,6 +180,14 @@
       </div>
     </nav>
 
+    <div class="user-info">
+      <div class="user-avatar">{{ userInitials }}</div>
+      <div class="user-details">
+        <div class="user-name">{{ currentUser?.name }}</div>
+        <div class="user-username">{{ currentUser?.username }}</div>
+      </div>
+    </div>
+
     <button class="btn-logout" type="button" (click)="logout()">Cerrar sesión</button>
   </div>
 </div>
