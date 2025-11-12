@@ -73,7 +73,7 @@
 }
 
 .purchase-select-product-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(1) > .col:nth-child(1) {
-  flex: 8;
+  flex: 5;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -157,6 +157,7 @@
   position: relative;
   height: 26px;
   padding: 0 16px;
+  min-width: 85px;
   border: none;
   background: transparent;
   font-family: "Poppins", sans-serif;

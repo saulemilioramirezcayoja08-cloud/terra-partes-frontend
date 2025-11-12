@@ -41,6 +41,12 @@
               (click)="toggleSearchMode('code')">
               Código
             </button>
+                                    <button
+              class="toggle-btn"
+              [class.active]="searchMode() === 'sku'"
+              (click)="toggleSearchMode('sku')">
+              Cod int.
+            </button>
           </div>
 
           <button

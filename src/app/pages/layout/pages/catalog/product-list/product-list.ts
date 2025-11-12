@@ -68,8 +68,7 @@ export class ProductList implements OnInit {
     `Página ${this.currentPage() + 1} de ${this.totalPages()}`
   );
 
-  private activeFilters: { name?: string; code?: string; sku?: string } = {};
-
+private activeFilters: { name?: string; code?: string; sku?: string } = {};
   ngOnInit(): void {
     this.loadProducts();
   }
@@ -136,7 +135,6 @@ export class ProductList implements OnInit {
   toggleSearchMode(mode: 'name' | 'code' | 'sku'): void {
     this.searchMode.set(mode);
   }
-
   toggleWildcard(): void {
     this.wildcardActive.update(v => !v);
   }
