@@ -133,7 +133,11 @@ export class SaleList implements OnInit, OnDestroy {
   }
 
   canShowActions(sale: SaleListResponse): boolean {
-    return sale.status !== 'CANCELADA' && sale.status !== 'CANCELLED';
+    return true;
+  }
+
+  canConfirm(sale: SaleListResponse): boolean {
+    return sale.status === 'BORRADOR' || sale.status === 'DRAFT';
   }
 
   onConfirmSale(sale: SaleListResponse): void {
@@ -158,7 +162,6 @@ export class SaleList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al confirmar venta:', error);
         alert('Error al confirmar la venta: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
@@ -210,11 +213,18 @@ export class SaleList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al registrar pago:', error);
         alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
+  }
+
+  onPrintSale(sale: SaleListResponse): void {
+    this.activeDropdown.set(null);
+    
+    sessionStorage.setItem('sale-print-data', JSON.stringify(sale));
+    
+    window.open('/sale/reprint', '_blank');
   }
 
   formatBolivianDate(isoDate: string): string {
@@ -238,7 +248,6 @@ export class SaleList implements OnInit, OnDestroy {
 
       return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
     } catch (error) {
-      console.error('Error formateando fecha:', error);
       return isoDate;
     }
   }

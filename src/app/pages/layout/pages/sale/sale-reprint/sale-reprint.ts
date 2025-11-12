@@ -1,29 +1,29 @@
-import {Component, computed, inject, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {CreateOrderResponse} from '../../../../../modules/order/post/models/create-order-response.model';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { Component, computed, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-list-response.model';
 
 @Component({
-  selector: 'app-order-reprint',
+  selector: 'app-sale-reprint',
   imports: [CommonModule, DecimalPipe],
-  templateUrl: './order-reprint.html',
-  styleUrl: './order-reprint.css'
+  templateUrl: './sale-reprint.html',
+  styleUrl: './sale-reprint.css'
 })
-export class OrderReprint implements OnInit {
+export class SaleReprint implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  readonly orderData = signal<CreateOrderResponse | null>(null);
+  readonly saleData = signal<SaleListResponse | null>(null);
 
-  readonly orderNumber = computed(() => this.orderData()?.number || 'N/A');
-  readonly status = computed(() => this.orderData()?.status || 'DRAFT');
-  readonly customerName = computed(() => this.orderData()?.customer.name || '');
-  readonly customerPhone = computed(() => this.orderData()?.customer.phone || '');
-  readonly username = computed(() => this.orderData()?.user.username || '');
-  readonly notes = computed(() => this.orderData()?.notes || 'Ninguna');
-  readonly currency = computed(() => this.orderData()?.currency || 'BOB');
+  readonly saleNumber = computed(() => this.saleData()?.number || 'N/A');
+  readonly status = computed(() => this.saleData()?.status || 'BORRADOR');
+  readonly customerName = computed(() => this.saleData()?.customer.name || '');
+  readonly customerPhone = computed(() => this.saleData()?.customer.phone || '');
+  readonly username = computed(() => this.saleData()?.user.username || '');
+  readonly notes = computed(() => this.saleData()?.notes || 'Ninguna');
+  readonly currency = computed(() => this.saleData()?.currency || 'BOB');
 
   readonly details = computed(() => {
-    const data = this.orderData();
+    const data = this.saleData();
     if (!data) return [];
     return data.details.map((d, i) => ({
       item: i + 1,
@@ -37,9 +37,9 @@ export class OrderReprint implements OnInit {
   });
 
   readonly totalQuantity = computed(() => this.details().reduce((sum, d) => sum + d.quantity, 0));
-  readonly total = computed(() => this.orderData()?.totals.total || 0);
-  readonly paymentAmount = computed(() => this.orderData()?.totals.payment || 0);
-  readonly pendingAmount = computed(() => this.orderData()?.totals.pending || 0);
+  readonly total = computed(() => this.saleData()?.totals.total || 0);
+  readonly paymentAmount = computed(() => this.saleData()?.totals.payment || 0);
+  readonly pendingAmount = computed(() => this.saleData()?.totals.pending || 0);
 
   readonly amountInWords = computed(() => {
     const total = this.total();
@@ -51,7 +51,7 @@ export class OrderReprint implements OnInit {
 
   readonly formattedDate = computed(() => {
     try {
-      return new Date(this.orderData()?.createdAt || '').toLocaleDateString('es-BO');
+      return new Date(this.saleData()?.createdAt || '').toLocaleDateString('es-BO');
     } catch {
       return new Date().toLocaleDateString('es-BO');
     }
@@ -59,33 +59,33 @@ export class OrderReprint implements OnInit {
 
   readonly formattedDateTime = computed(() => {
     try {
-      return new Date(this.orderData()?.createdAt || '').toLocaleString('es-BO');
+      return new Date(this.saleData()?.createdAt || '').toLocaleString('es-BO');
     } catch {
       return new Date().toLocaleString('es-BO');
     }
   });
 
-  readonly paymentName = computed(() => this.orderData()?.payment?.name || 'N/A');
+  readonly paymentName = computed(() => this.saleData()?.payment?.name || 'N/A');
 
   ngOnInit(): void {
     if (this.isBrowser) {
-      const storedData = sessionStorage.getItem('order-print-data');
+      const storedData = sessionStorage.getItem('sale-print-data');
       
       if (storedData) {
         try {
           const data = JSON.parse(storedData);
-          this.orderData.set(data);
-          sessionStorage.removeItem('order-print-data');
+          this.saleData.set(data);
+          sessionStorage.removeItem('sale-print-data');
           return;
         } catch (error) {
-          sessionStorage.removeItem('order-print-data');
+          sessionStorage.removeItem('sale-print-data');
         }
       }
     }
     
-    fetch('/assets/mock/order.json')
+    fetch('/assets/mock/sale.json')
       .then(r => r.json())
-      .then(data => this.orderData.set(data))
+      .then(data => this.saleData.set(data))
       .catch(() => {});
   }
 

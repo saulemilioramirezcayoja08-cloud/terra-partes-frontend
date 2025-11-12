@@ -77,52 +77,56 @@
                   <td>{{ quotation.customer.name }}</td>
                   <td>{{ quotation.totals.total | number:'1.2-2' }}</td>
                   <td>
-                    <div class="actions-wrapper">
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                           (click)="toggleDropdown(quotation.id, $event)">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                        <g id="SVGRepo_iconCarrier">
-                          <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                          <path
-                            d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        </g>
-                      </svg>
+                    @if (canShowActions(quotation)) {
+                      <div class="actions-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                             (click)="toggleDropdown(quotation.id, $event)">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                          <g id="SVGRepo_iconCarrier">
+                            <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path
+                              d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
+                              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          </g>
+                        </svg>
 
-                      @if (activeDropdown() === quotation.id) {
-                        <div class="dropdown-menu" (click)="$event.stopPropagation()">
-                          <button class="dropdown-item details">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                              <g id="SVGRepo_iconCarrier">
-                                <path d="M9 4.45962C9.91153 4.16968 10.9104 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C3.75612 8.07914 4.32973 7.43025 5 6.82137" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5"></path>
-                              </g>
-                            </svg>
-                            <span>Ver detalles</span>
-                          </button>
+                        @if (activeDropdown() === quotation.id) {
+                          <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                            @if (canConfirm(quotation)) {
+                              <button class="dropdown-item confirm" (click)="onConfirmQuotation(quotation)">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                  <g id="SVGRepo_iconCarrier">
+                                    <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
+                                          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                  </g>
+                                </svg>
+                                <span>Confirmar cotización</span>
+                              </button>
 
-                          <div class="dropdown-divider"></div>
+                              <div class="dropdown-divider"></div>
+                            }
 
-                          <button class="dropdown-item print">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                              <g id="SVGRepo_iconCarrier">
-                                <path d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67" stroke="currentColor" stroke-width="1.5"></path>
-                                <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                <path d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6" stroke="currentColor" stroke-width="1.5"></path>
-                                <path d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z" stroke="currentColor" stroke-width="1.5"></path>
-                              </g>
-                            </svg>
-                            <span>Imprimir</span>
-                          </button>
-                        </div>
-                      }
-                    </div>
+                            <button class="dropdown-item print" (click)="onPrintQuotation(quotation)">
+                              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                  <path d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67" stroke="currentColor" stroke-width="1.5"></path>
+                                  <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                  <path d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6" stroke="currentColor" stroke-width="1.5"></path>
+                                  <path d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z" stroke="currentColor" stroke-width="1.5"></path>
+                                </g>
+                              </svg>
+                              <span>Imprimir</span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    }
                   </td>
                 </tr>
               }

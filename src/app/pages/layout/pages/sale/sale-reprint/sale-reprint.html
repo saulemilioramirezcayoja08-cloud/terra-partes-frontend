@@ -1,4 +1,4 @@
-<div class="order-reprint-component">
+<div class="sale-reprint-component">
   <div class="orders">
     <div class="document-header">
       <div class="header-row">
@@ -11,8 +11,8 @@
         </div>
 
         <div class="header-column order-info">
-          <h2>ORDEN</h2>
-          <p>Nro.: {{ orderNumber() }}</p>
+          <h2>VENTA</h2>
+          <p>Nro.: {{ saleNumber() }}</p>
           <p>Fecha: {{ formattedDate() }}</p>
         </div>
 
@@ -34,7 +34,6 @@
           </div>
         </div>
         <div class="customer-column right">
-
           <div class="customer-field">
             <span class="label">Vendedor:</span>
             <span class="value">{{ username() }}</span>

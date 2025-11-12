@@ -172,5 +172,11 @@ export const routes: Routes = [
       import('./pages/layout/pages/purchase/purchase-reprint/purchase-reprint')
         .then(m => m.PurchaseReprint),
   },
+  {
+    path: 'sale/reprint',
+    loadComponent: () =>
+      import('./pages/layout/pages/sale/sale-reprint/sale-reprint')
+        .then(m => m.SaleReprint),
+  },
   { path: '**', redirectTo: '' },
 ];

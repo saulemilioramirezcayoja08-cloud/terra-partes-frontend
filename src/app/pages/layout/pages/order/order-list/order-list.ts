@@ -133,6 +133,10 @@ export class OrderList implements OnInit, OnDestroy {
   }
 
   canShowActions(order: OrderListResponse): boolean {
+    return true;
+  }
+
+  canConfirm(order: OrderListResponse): boolean {
     return order.status === 'BORRADOR' || order.status === 'DRAFT';
   }
 
@@ -158,7 +162,6 @@ export class OrderList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al confirmar orden:', error);
         alert('Error al confirmar la orden: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
@@ -210,11 +213,18 @@ export class OrderList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al registrar pago:', error);
         alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
+  }
+
+  onPrintOrder(order: OrderListResponse): void {
+    this.activeDropdown.set(null);
+    
+    sessionStorage.setItem('order-print-data', JSON.stringify(order));
+    
+    window.open('/order/reprint', '_blank');
   }
 
   formatBolivianDate(isoDate: string): string {
@@ -238,7 +248,6 @@ export class OrderList implements OnInit, OnDestroy {
 
       return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
     } catch (error) {
-      console.error('Error formateando fecha:', error);
       return isoDate;
     }
   }

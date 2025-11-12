@@ -1,5 +1,5 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
-import {CommonModule, DecimalPipe} from '@angular/common';
+import {Component, computed, inject, OnInit, PLATFORM_ID, signal} from '@angular/core';
+import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
 import {CreateQuotationResponse} from '../../../../../modules/quotation/post/models/create-quotation-response.model';
 
 @Component({
@@ -9,6 +9,9 @@ import {CreateQuotationResponse} from '../../../../../modules/quotation/post/mod
   styleUrl: './quotation-reprint.css'
 })
 export class QuotationReprint implements OnInit {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+
   readonly quotationData = signal<CreateQuotationResponse | null>(null);
 
   readonly quotationNumber = computed(() => this.quotationData()?.number || 'N/A');
@@ -71,10 +74,25 @@ export class QuotationReprint implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.isBrowser) {
+      const storedData = sessionStorage.getItem('quotation-print-data');
+      
+      if (storedData) {
+        try {
+          const data = JSON.parse(storedData);
+          this.quotationData.set(data);
+          sessionStorage.removeItem('quotation-print-data');
+          return;
+        } catch (error) {
+          sessionStorage.removeItem('quotation-print-data');
+        }
+      }
+    }
+    
     fetch('/assets/mock/quotation.json')
       .then(r => r.json())
       .then(data => this.quotationData.set(data))
-      .catch(() => console.error('No se pudo cargar quotation.json'));
+      .catch(() => {});
   }
 
   private numberToWordsBob(num: number): string {

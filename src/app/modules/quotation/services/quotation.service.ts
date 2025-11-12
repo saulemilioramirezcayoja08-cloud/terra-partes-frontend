@@ -7,6 +7,8 @@ import {PageResponse} from '../../../core/models/page-response.model';
 import {QuotationListResponse} from '../get/models/quotation-list-response.model';
 import {CreateQuotationRequest} from '../post/models/create-quotation-request.model';
 import {CreateQuotationResponse} from '../post/models/create-quotation-response.model';
+import { ConfirmQuotationRequest } from '../put/models/confirm-quotation-request.model';
+import { QuotationConfirmResponse } from '../put/models/quotation-confirm-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +52,17 @@ export class QuotationService {
     return this.http.post<ApiResponse<CreateQuotationResponse>>(
       this.apiUrl,
       payload
+    );
+  }
+
+  // ← NUEVO MÉTODO
+  confirmQuotation(
+    id: number,
+    payload?: ConfirmQuotationRequest
+  ): Observable<ApiResponse<QuotationConfirmResponse>> {
+    return this.http.put<ApiResponse<QuotationConfirmResponse>>(
+      `${this.apiUrl}/${id}/confirm`,
+      payload || {}
     );
   }
 }

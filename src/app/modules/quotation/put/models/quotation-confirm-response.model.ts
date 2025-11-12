@@ -1,4 +1,23 @@
-export interface OrderListResponse {
+export interface QuotationConfirmResponse {
+  // Información de la Cotización confirmada
+  quotation: Quotation;
+
+  // Información de la Orden creada
+  order: Order;
+
+  // Información de las Reservas creadas
+  reservations: Reservation[];
+}
+
+export interface Quotation {
+  id: number;
+  number: string;
+  status: string;
+  notes?: string;
+  updatedAt: string;
+}
+
+export interface Order {
   id: number;
   number: string;
   status: string;
@@ -61,7 +80,15 @@ export interface Product {
 
 export interface Totals {
   total: number;
-  payment: number;
-  pending: number;
   items: number;
+}
+
+export interface Reservation {
+  id: number;
+  status: string;
+  quantity: number;
+  notes?: string;
+  product: Product;
+  warehouse: Warehouse;
+  createdAt: string;
 }

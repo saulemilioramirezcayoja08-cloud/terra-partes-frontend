@@ -3,6 +3,7 @@ import { Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal } f
 import { FormsModule } from '@angular/forms';
 import { QuotationService } from '../../../../../modules/quotation/services/quotation.service';
 import { QuotationListResponse } from '../../../../../modules/quotation/get/models/quotation-list-response.model';
+import { ConfirmQuotationRequest } from '../../../../../modules/quotation/put/models/confirm-quotation-request.model';
 
 @Component({
   selector: 'app-quotation-list',
@@ -138,6 +139,73 @@ export class QuotationList implements OnInit, OnDestroy {
     if (!target.closest('.dropdown-trigger') && !target.closest('.dropdown-menu')) {
       this.activeDropdown.set(null);
     }
+  }
+
+  canShowActions(quotation: QuotationListResponse): boolean {
+    return true;
+  }
+
+  canConfirm(quotation: QuotationListResponse): boolean {
+    return quotation.status === 'BORRADOR' || quotation.status === 'DRAFT';
+  }
+
+  onConfirmQuotation(quotation: QuotationListResponse): void {
+    this.activeDropdown.set(null);
+
+    const notesInput = prompt(
+      `Confirmar cotización ${quotation.number}\n\n` +
+      `Total: Bs. ${quotation.totals.total.toFixed(2)}\n` +
+      `Productos: ${quotation.totals.items}\n\n` +
+      `Notas (opcional):`,
+      quotation.notes || ''
+    );
+
+    if (notesInput === null) return;
+
+    const paymentInput = prompt('ID de método de pago (opcional, Enter para omitir):');
+
+    this.isLoading.set(true);
+
+    const request: ConfirmQuotationRequest = {
+      notes: notesInput.trim() || undefined,
+      paymentId: paymentInput && paymentInput.trim() ? parseInt(paymentInput.trim()) : undefined
+    };
+
+    this.quotationService.confirmQuotation(quotation.id, request).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert(`Cotización ${quotation.number} confirmada exitosamente`);
+          this.loadQuotations();
+        }
+      },
+      error: (error) => {
+        let errorMessage = 'Error desconocido';
+        
+        if (error.message) {
+          errorMessage = error.message;
+        } else if (error.code) {
+          const errorMap: Record<string, string> = {
+            'QUOTATION_NOT_FOUND': 'Cotización no encontrada',
+            'QUOTATION_ALREADY_CONFIRMED': 'La cotización ya fue confirmada',
+            'ORDER_ALREADY_EXISTS_FOR_QUOTATION': 'Ya existe una orden para esta cotización',
+            'QUOTATION_HAS_NO_DETAILS': 'La cotización no tiene productos',
+            'PAYMENT_NOT_FOUND': 'Método de pago no encontrado'
+          };
+          errorMessage = errorMap[error.code] || error.code;
+        }
+        
+        alert('Error: ' + errorMessage);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  onPrintQuotation(quotation: QuotationListResponse): void {
+    this.activeDropdown.set(null);
+    
+    sessionStorage.setItem('quotation-print-data', JSON.stringify(quotation));
+    
+    window.open('/quotation/reprint', '_blank');
   }
 
   formatBolivianDate(isoDate: string): string {
