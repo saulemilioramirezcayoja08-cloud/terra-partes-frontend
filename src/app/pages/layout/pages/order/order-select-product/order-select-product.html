@@ -10,47 +10,39 @@
     <div class="col">
       <div class="row">
         <div class="col">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar productos..."
-            [ngModel]="searchTerm()"
-            (ngModelChange)="searchTerm.set($event)"
-            (keyup.enter)="onEnter()"
-            autocomplete="off">
+          <input type="text" class="search-input" placeholder="Buscar productos..." [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onEnter()" autocomplete="off">
           <div class="search-hint">
             @if (wildcardActive()) {
-              Formato: <code>nombre*código</code> • Ejemplo: <code>FAROL*S2010300</code> • <kbd>Enter</kbd> buscar
+            Formato: <code>nombre*código</code> • Ejemplo: <code>FAROL*S2010300</code> • <kbd>Enter</kbd> buscar
             } @else {
-              Busca por {{ searchMode() === 'name' ? 'nombre' : 'código' }} • <kbd>Enter</kbd> buscar
+            Busca por
+            @if (searchMode() === 'name') { nombre }
+            @if (searchMode() === 'code') { código }
+            @if (searchMode() === 'sku') { SKU }
+            • <kbd>Enter</kbd> buscar
             }
           </div>
         </div>
 
         <div class="col">
           <div class="toggle-group">
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'name'"
-              (click)="toggleSearchMode('name')">
+            <button class="toggle-btn" [class.active]="searchMode() === 'name'" (click)="toggleSearchMode('name')">
               Nombre
             </button>
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'code'"
-              (click)="toggleSearchMode('code')">
+            <button class="toggle-btn" [class.active]="searchMode() === 'code'" (click)="toggleSearchMode('code')">
               Código
+            </button>
+            <button class="toggle-btn" [class.active]="searchMode() === 'sku'" (click)="toggleSearchMode('sku')">
+              SKU
             </button>
           </div>
 
-          <button
-            class="wildcard-btn"
-            [class.active]="wildcardActive()"
-            (click)="toggleWildcard()">
+          <button class="wildcard-btn" [class.active]="wildcardActive()" (click)="toggleWildcard()">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="SVGRepo_iconCarrier">
                 <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                      stroke-linejoin="round"></path>
+                  stroke-linejoin="round"></path>
                 <path
                   d="M3.02907 13.0776C2.7032 12.3958 2.7032 11.6032 3.02907 10.9214C3.16997 10.6266 3.41023 10.3447 3.89076 9.78084C4.08201 9.55642 4.17764 9.44421 4.25796 9.32437C4.44209 9.04965 4.56988 8.74114 4.63393 8.41669C4.66188 8.27515 4.6736 8.12819 4.69706 7.83426C4.75599 7.09576 4.78546 6.72651 4.89427 6.41844C5.14594 5.70591 5.7064 5.14546 6.41893 4.89378C6.72699 4.78497 7.09625 4.7555 7.83475 4.69657C8.12868 4.67312 8.27564 4.66139 8.41718 4.63344C8.74163 4.56939 9.05014 4.4416 9.32485 4.25747C9.4447 4.17715 9.55691 4.08152 9.78133 3.89027C10.3452 3.40974 10.6271 3.16948 10.9219 3.02859C11.6037 2.70271 12.3963 2.70271 13.0781 3.02859C13.3729 3.16948 13.6548 3.40974 14.2187 3.89027C14.4431 4.08152 14.5553 4.17715 14.6752 4.25747C14.9499 4.4416 15.2584 4.56939 15.5828 4.63344C15.7244 4.66139 15.8713 4.67312 16.1653 4.69657C16.9038 4.7555 17.273 4.78497 17.5811 4.89378M4.89427 17.5806C5.14594 18.2931 5.7064 18.8536 6.41893 19.1053C6.72699 19.2141 7.09625 19.2435 7.83475 19.3025C8.12868 19.3259 8.27564 19.3377 8.41718 19.3656C8.74163 19.4297 9.05014 19.5574 9.32485 19.7416C9.44469 19.8219 9.55691 19.9175 9.78133 20.1088C10.3452 20.5893 10.6271 20.8296 10.9219 20.9705C11.6037 21.2963 12.3963 21.2963 13.0781 20.9705C13.3729 20.8296 13.6548 20.5893 14.2187 20.1088C14.4431 19.9175 14.5553 19.8219 14.6752 19.7416C14.9499 19.5574 15.2584 19.4297 15.5828 19.3656C15.7244 19.3377 15.8713 19.3259 16.1653 19.3025C16.9038 19.2435 17.273 19.2141 17.5811 19.1053C18.2936 18.8536 18.8541 18.2931 19.1058 17.5806C19.2146 17.2725 19.244 16.9033 19.303 16.1648C19.3264 15.8709 19.3381 15.7239 19.3661 15.5824C19.4301 15.2579 19.5579 14.9494 19.7421 14.6747C19.8224 14.5548 19.918 14.4426 20.1093 14.2182C20.5898 13.6543 20.8301 13.3724 20.971 13.0776C21.2968 12.3958 21.2968 11.6032 20.971 10.9214"
                   stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
@@ -63,62 +55,57 @@
       <div class="row">
         <table>
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>COD INT.</th>
-            <th>COD OEM</th>
-            <th>NOMBRE</th>
-            <th>PRECIO</th>
-            <th></th>
-          </tr>
+            <tr>
+              <th>ID</th>
+              <th>COD INT.</th>
+              <th>COD OEM</th>
+              <th>NOMBRE</th>
+              <th>PRECIO</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             @if (isLoading()) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>Cargando...</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>Cargando...</em>
+              </td>
+            </tr>
             } @else if (products().length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron productos</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>No se encontraron productos</em>
+              </td>
+            </tr>
             } @else {
-              @for (product of products(); track trackByProductId($index, product)) {
-                <tr
-                  (click)="selectProduct(product)"
-                  [class.selected]="selectedProduct()?.id === product.id"
-                  [class.in-cart]="isInCart(product.id)">
-                  <td>{{ product.id }}</td>
-                  <td>{{ product.sku }}</td>
-                  <td>{{ getOemCode(product) }}</td>
-                  <td>
-                    {{ product.name }}
-                    @if (isInCart(product.id)) {
-                      <span class="badge"></span>
-                    }
-                  </td>
-                  <td>{{ product.price | number:'1.2-2' }}</td>
-                  <td>
-                    <svg
-                      [class.disabled]="isInCart(product.id)"
-                      (click)="addProductToOrder(product); $event.stopPropagation()"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <g id="SVGRepo_iconCarrier">
-                        <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5"
-                              stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path
-                          d="M3.02907 13.0776C2.7032 12.3958 2.7032 11.6032 3.02907 10.9214C3.16997 10.6266 3.41023 10.3447 3.89076 9.78084C4.08201 9.55642 4.17764 9.44421 4.25796 9.32437C4.44209 9.04965 4.56988 8.74114 4.63393 8.41669C4.66188 8.27515 4.6736 8.12819 4.69706 7.83426C4.75599 7.09576 4.78546 6.72651 4.89427 6.41844C5.14594 5.70591 5.7064 5.14546 6.41893 4.89378C6.72699 4.78497 7.09625 4.7555 7.83475 4.69657C8.12868 4.67312 8.27564 4.66139 8.41718 4.63344C8.74163 4.56939 9.05014 4.4416 9.32486 4.25747C9.44469 4.17715 9.55691 4.08152 9.78133 3.89027C10.3452 3.40974 10.627 3.16947 10.9214 3.02857C11.6032 2.70271 12.3958 2.70271 13.0776 3.02857C13.372 3.16947 13.6538 3.40974 14.2177 3.89027C14.4421 4.08152 14.5543 4.17715 14.6741 4.25747C14.9489 4.4416 15.2574 4.56939 15.5818 4.63344C15.7234 4.66139 15.8703 4.67312 16.1643 4.69657C16.9028 4.7555 17.272 4.78497 17.5801 4.89378C18.2926 5.14546 18.8531 5.70591 19.1047 6.41844C19.2135 6.72651 19.243 7.09576 19.3019 7.83426C19.3254 8.12819 19.3371 8.27515 19.3651 8.41669C19.4291 8.74114 19.5569 9.04965 19.741 9.32437C19.8214 9.44421 19.917 9.55642 20.1082 9.78084C20.5888 10.3447 20.829 10.6266 20.9699 10.9214C21.2958 11.6032 21.2958 12.3958 20.9699 13.0776C20.829 13.372 20.5888 13.6538 20.1082 14.2177C19.917 14.4421 19.8214 14.5543 19.741 14.6741C19.5569 14.9489 19.4291 15.2574 19.3651 15.5818C19.3371 15.7234 19.3254 15.8703 19.3019 16.1643C19.243 16.9028 19.2135 17.272 19.1047 17.5801C18.8531 18.2926 18.2926 18.8531 17.5801 19.1047C17.272 19.2135 16.9028 19.243 16.1643 19.3019C15.8703 19.3254 15.7234 19.3371 15.5818 19.3651C15.2574 19.4291 14.9489 19.5569 14.6741 19.741C14.5543 19.8214 14.4421 19.917 14.2177 20.1082C13.6538 20.5888 13.372 20.829 13.0776 20.9699C12.3958 21.2958 11.6032 21.2958 10.9214 20.9699C10.627 20.829 10.3452 20.5888 9.78133 20.1082C9.55691 19.917 9.44469 19.8214 9.32486 19.741C9.05014 19.5569 8.74163 19.4291 8.41718 19.3651C8.27564 19.3371 8.12868 19.3254 7.83475 19.3019C7.09625 19.243 6.72699 19.2135 6.41893 19.1047C5.7064 18.8531 5.14594 18.2926 4.89427 17.5801C4.78546 17.272 4.75599 16.9028 4.69706 16.1643C4.6736 15.8703 4.66188 15.7234 4.63393 15.5818C4.56988 15.2574 4.44209 14.9489 4.25796 14.6741C4.17764 14.5543 4.08201 14.4421 3.89076 14.2177C3.41023 13.6538 3.16997 13.372 3.02907 13.0776Z"
-                          stroke="currentColor" stroke-width="1.5"></path>
-                      </g>
-                    </svg>
-                  </td>
-                </tr>
-              }
+            @for (product of products(); track trackByProductId($index, product)) {
+            <tr (click)="selectProduct(product)" [class.selected]="selectedProduct()?.id === product.id"
+              [class.in-cart]="isInCart(product.id)">
+              <td>{{ product.id }}</td>
+              <td>{{ product.sku }}</td>
+              <td>{{ getOemCode(product) }}</td>
+              <td>
+                {{ product.name }}
+                @if (isInCart(product.id)) {
+                <span class="badge"></span>
+                }
+              </td>
+              <td>{{ product.price | number:'1.2-2' }}</td>
+              <td>
+                <svg [class.disabled]="isInCart(product.id)"
+                  (click)="addProductToOrder(product); $event.stopPropagation()" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path
+                      d="M3.02907 13.0776C2.7032 12.3958 2.7032 11.6032 3.02907 10.9214C3.16997 10.6266 3.41023 10.3447 3.89076 9.78084C4.08201 9.55642 4.17764 9.44421 4.25796 9.32437C4.44209 9.04965 4.56988 8.74114 4.63393 8.41669C4.66188 8.27515 4.6736 8.12819 4.69706 7.83426C4.75599 7.09576 4.78546 6.72651 4.89427 6.41844C5.14594 5.70591 5.7064 5.14546 6.41893 4.89378C6.72699 4.78497 7.09625 4.7555 7.83475 4.69657C8.12868 4.67312 8.27564 4.66139 8.41718 4.63344C8.74163 4.56939 9.05014 4.4416 9.32486 4.25747C9.44469 4.17715 9.55691 4.08152 9.78133 3.89027C10.3452 3.40974 10.627 3.16947 10.9214 3.02857C11.6032 2.70271 12.3958 2.70271 13.0776 3.02857C13.372 3.16947 13.6538 3.40974 14.2177 3.89027C14.4421 4.08152 14.5543 4.17715 14.6741 4.25747C14.9489 4.4416 15.2574 4.56939 15.5818 4.63344C15.7234 4.66139 15.8703 4.67312 16.1643 4.69657C16.9028 4.7555 17.272 4.78497 17.5801 4.89378C18.2926 5.14546 18.8531 5.70591 19.1047 6.41844C19.2135 6.72651 19.243 7.09576 19.3019 7.83426C19.3254 8.12819 19.3371 8.27515 19.3651 8.41669C19.4291 8.74114 19.5569 9.04965 19.741 9.32437C19.8214 9.44421 19.917 9.55642 20.1082 9.78084C20.5888 10.3447 20.829 10.6266 20.9699 10.9214C21.2958 11.6032 21.2958 12.3958 20.9699 13.0776C20.829 13.372 20.5888 13.6538 20.1082 14.2177C19.917 14.4421 19.8214 14.5543 19.741 14.6741C19.5569 14.9489 19.4291 15.2574 19.3651 15.5818C19.3371 15.7234 19.3254 15.8703 19.3019 16.1643C19.243 16.9028 19.2135 17.272 19.1047 17.5801C18.8531 18.2926 18.2926 18.8531 17.5801 19.1047C17.272 19.2135 16.9028 19.243 16.1643 19.3019C15.8703 19.3254 15.7234 19.3371 15.5818 19.3651C15.2574 19.4291 14.9489 19.5569 14.6741 19.741C14.5543 19.8214 14.4421 19.917 14.2177 20.1082C13.6538 20.5888 13.372 20.829 13.0776 20.9699C12.3958 21.2958 11.6032 21.2958 10.9214 20.9699C10.627 20.829 10.3452 20.5888 9.78133 20.1082C9.55691 19.917 9.44469 19.8214 9.32486 19.741C9.05014 19.5569 8.74163 19.4291 8.41718 19.3651C8.27564 19.3371 8.12868 19.3254 7.83475 19.3019C7.09625 19.243 6.72699 19.2135 6.41893 19.1047C5.7064 18.8531 5.14594 18.2926 4.89427 17.5801C4.78546 17.272 4.75599 16.9028 4.69706 16.1643C4.6736 15.8703 4.66188 15.7234 4.63393 15.5818C4.56988 15.2574 4.44209 14.9489 4.25796 14.6741C4.17764 14.5543 4.08201 14.4421 3.89076 14.2177C3.41023 13.6538 3.16997 13.372 3.02907 13.0776Z"
+                      stroke="currentColor" stroke-width="1.5"></path>
+                  </g>
+                </svg>
+              </td>
+            </tr>
+            }
             }
           </tbody>
         </table>
@@ -138,155 +125,155 @@
 
     <div class="col">
       @if (selectedProduct(); as product) {
-        <div class="row">
-          <div class="col">
-            <div class="title">Información básica</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Información básica</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ product.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">COD INT.</div>
-            <span>{{ product.sku }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ product.id }}</span>
         </div>
+        <div class="col">
+          <div class="subtitle">COD INT.</div>
+          <span>{{ product.sku }}</span>
+        </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ product.name }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ product.name }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Categoría</div>
-            @if (product.category) {
-              <span>{{ product.category.name }}</span>
-            } @else {
-              <em>Sin categoría</em>
-            }
-          </div>
-          <div class="col">
-            <div class="subtitle">UOM</div>
-            <span>{{ product.uom }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Categoría</div>
+          @if (product.category) {
+          <span>{{ product.category.name }}</span>
+          } @else {
+          <em>Sin categoría</em>
+          }
         </div>
+        <div class="col">
+          <div class="subtitle">UOM</div>
+          <span>{{ product.uom }}</span>
+        </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Precio unitario</div>
-            <strong>Bs. {{ product.price | number:'1.2-2' }}</strong>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Precio unitario</div>
+          <strong>Bs. {{ product.price | number:'1.2-2' }}</strong>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Códigos</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Códigos</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            @if (product.codes.length > 0) {
-              <table>
-                <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Código</th>
-                </tr>
-                </thead>
-                <tbody>
-                  @for (code of product.codes; track code.id) {
-                    <tr>
-                      <td>{{ code.type }}</td>
-                      <td>{{ code.code }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            } @else {
-              <em>Sin códigos</em>
-            }
-          </div>
+      <div class="row">
+        <div class="col">
+          @if (product.codes.length > 0) {
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Código</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (code of product.codes; track code.id) {
+              <tr>
+                <td>{{ code.type }}</td>
+                <td>{{ code.code }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          } @else {
+          <em>Sin códigos</em>
+          }
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Inventario</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Inventario</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Stock</div>
-            <span>{{ product.inventory.stock }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Reservado</div>
-            <span>{{ product.inventory.reservation }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Disponible</div>
-            <mark [class]="getStockClass(product.inventory.available)">
-              {{ product.inventory.available }}
-            </mark>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Stock</div>
+          <span>{{ product.inventory.stock }}</span>
         </div>
+        <div class="col">
+          <div class="subtitle">Reservado</div>
+          <span>{{ product.inventory.reservation }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Disponible</div>
+          <mark [class]="getStockClass(product.inventory.available)">
+            {{ product.inventory.available }}
+          </mark>
+        </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Últimos precios</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Últimos precios</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Última compra</div>
-            @if (product.last.purchase) {
-              <span>Bs. {{ product.last.purchase | number:'1.2-2' }}</span>
-            } @else {
-              <em>Sin datos</em>
-            }
-          </div>
-          <div class="col">
-            <div class="subtitle">Última venta</div>
-            @if (product.last.sale) {
-              <span>Bs. {{ product.last.sale | number:'1.2-2' }}</span>
-            } @else {
-              <em>Sin datos</em>
-            }
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Última compra</div>
+          @if (product.last.purchase) {
+          <span>Bs. {{ product.last.purchase | number:'1.2-2' }}</span>
+          } @else {
+          <em>Sin datos</em>
+          }
         </div>
+        <div class="col">
+          <div class="subtitle">Última venta</div>
+          @if (product.last.sale) {
+          <span>Bs. {{ product.last.sale | number:'1.2-2' }}</span>
+          } @else {
+          <em>Sin datos</em>
+          }
+        </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Última cotización</div>
-            @if (product.last.quotation) {
-              <span>Bs. {{ product.last.quotation | number:'1.2-2' }}</span>
-            } @else {
-              <em>Sin datos</em>
-            }
-          </div>
-          <div class="col">
-            <div class="subtitle">Última orden</div>
-            @if (product.last.order) {
-              <span>Bs. {{ product.last.order | number:'1.2-2' }}</span>
-            } @else {
-              <em>Sin datos</em>
-            }
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Última cotización</div>
+          @if (product.last.quotation) {
+          <span>Bs. {{ product.last.quotation | number:'1.2-2' }}</span>
+          } @else {
+          <em>Sin datos</em>
+          }
         </div>
+        <div class="col">
+          <div class="subtitle">Última orden</div>
+          @if (product.last.order) {
+          <span>Bs. {{ product.last.order | number:'1.2-2' }}</span>
+          } @else {
+          <em>Sin datos</em>
+          }
+        </div>
+      </div>
       } @else {
-        <div class="row">
-          <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona un producto para ver sus detalles</em>
-          </div>
+      <div class="row">
+        <div class="col" style="padding: 40px; text-align: center;">
+          <em>Selecciona un producto para ver sus detalles</em>
         </div>
+      </div>
       }
     </div>
   </div>

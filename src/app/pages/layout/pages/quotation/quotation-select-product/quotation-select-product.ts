@@ -22,7 +22,7 @@ export class QuotationSelectProduct implements OnInit, OnDestroy {
   readonly products = signal<ProductListResponse[]>([]);
   readonly selectedProduct = signal<ProductListResponse | null>(null);
   readonly searchTerm = signal('');
-  readonly searchMode = signal<'name' | 'code'>('name');
+  readonly searchMode = signal<'name' | 'code' | 'sku'>('name');
   readonly wildcardActive = signal(false);
   readonly isLoading = signal(false);
 
@@ -43,7 +43,7 @@ export class QuotationSelectProduct implements OnInit, OnDestroy {
     () => `Página ${this.currentPage() + 1} de ${this.totalPages()}`
   );
 
-  private activeFilters: { name?: string; code?: string } = {};
+private activeFilters: { name?: string; code?: string; sku?: string } = {};
   private keyboardListener?: (e: KeyboardEvent) => void;
 
   ngOnInit(): void {
@@ -112,10 +112,10 @@ export class QuotationSelectProduct implements OnInit, OnDestroy {
     this.loadProducts();
   }
 
-  toggleSearchMode(mode: 'name' | 'code'): void {
+  toggleSearchMode(mode: 'name' | 'code' | 'sku'): void {
     this.searchMode.set(mode);
   }
-
+  
   toggleWildcard(): void {
     this.wildcardActive.update(v => !v);
   }

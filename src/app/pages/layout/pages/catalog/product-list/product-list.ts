@@ -25,7 +25,7 @@ export class ProductList implements OnInit {
   readonly products = signal<ProductListResponse[]>([]);
   readonly selectedProduct = signal<ProductListResponse | null>(null);
   readonly searchTerm = signal('');
-  readonly searchMode = signal<'name' | 'code'>('name');
+  readonly searchMode = signal<'name' | 'code' | 'sku'>('name');
   readonly wildcardActive = signal(false);
   readonly isLoading = signal(false);
 
@@ -68,7 +68,7 @@ export class ProductList implements OnInit {
     `Página ${this.currentPage() + 1} de ${this.totalPages()}`
   );
 
-  private activeFilters: { name?: string; code?: string } = {};
+  private activeFilters: { name?: string; code?: string; sku?: string } = {};
 
   ngOnInit(): void {
     this.loadProducts();
@@ -133,7 +133,7 @@ export class ProductList implements OnInit {
     this.loadProducts();
   }
 
-  toggleSearchMode(mode: 'name' | 'code'): void {
+  toggleSearchMode(mode: 'name' | 'code' | 'sku'): void {
     this.searchMode.set(mode);
   }
 

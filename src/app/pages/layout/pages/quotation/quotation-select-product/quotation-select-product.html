@@ -22,7 +22,11 @@
             @if (wildcardActive()) {
               Formato: <code>nombre*código</code> • Ejemplo: <code>FAROL*S2010300</code> • <kbd>Enter</kbd> buscar
             } @else {
-              Busca por {{ searchMode() === 'name' ? 'nombre' : 'código' }} • <kbd>Enter</kbd> buscar
+              Busca por 
+              @if (searchMode() === 'name') { nombre }
+              @if (searchMode() === 'code') { código }
+              @if (searchMode() === 'sku') { SKU }
+              • <kbd>Enter</kbd> buscar
             }
           </div>
         </div>
@@ -40,6 +44,12 @@
               [class.active]="searchMode() === 'code'"
               (click)="toggleSearchMode('code')">
               Código
+            </button>
+                        <button
+              class="toggle-btn"
+              [class.active]="searchMode() === 'sku'"
+              (click)="toggleSearchMode('sku')">
+              SKU
             </button>
           </div>
 
