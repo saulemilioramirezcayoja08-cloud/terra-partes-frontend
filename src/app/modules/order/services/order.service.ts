@@ -11,6 +11,8 @@ import {ConfirmOrderRequest} from '../put/models/confirm-order-request.model';
 import {ConfirmOrderResponse} from '../put/models/confirm-order-response.model';
 import {CreateOrderPaymentRequest} from '../post/models/create-order-payment-request.model';
 import {CreateOrderPaymentResponse} from '../post/models/create-order-payment-response.model';
+import { OrderDraftListResponse } from '../get/models/order-draft-list-response.model';
+import { OrderConfirmedListResponse } from '../get/models/order-confirmed-list-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +76,52 @@ export class OrderService {
     return this.http.post<ApiResponse<CreateOrderPaymentResponse>>(
       `${this.apiUrl}/${orderId}/payments`,
       payload
+    );
+  }
+
+  getDraftOrders(
+    params?: {
+      username?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Observable<ApiResponse<OrderDraftListResponse>> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<OrderDraftListResponse>>(
+      `${this.apiUrl}/draft`,
+      {params: httpParams}
+    );
+  }
+
+  getConfirmedOrders(
+    params?: {
+      username?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Observable<ApiResponse<OrderConfirmedListResponse>> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<OrderConfirmedListResponse>>(
+      `${this.apiUrl}/confirmed`,
+      {params: httpParams}
     );
   }
 }

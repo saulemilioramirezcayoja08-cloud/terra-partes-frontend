@@ -1,0 +1,271 @@
+<div class="purchase-draft-list-component">
+    <div class="row">
+        <div class="title">Compras Borrador</div>
+        <div class="subtitle">
+            Solo compras en borrador • Filtra por usuario o rango de fechas • <kbd>Enter</kbd> para buscar
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row filters-container">
+                <div class="col filters-left">
+                    <div class="date-row">
+                        <div class="date-group">
+                            <label>Desde</label>
+                            <input type="date" class="date-input" [ngModel]="startDate()"
+                                (ngModelChange)="startDate.set($event)">
+                        </div>
+                        <div class="date-group">
+                            <label>Hasta</label>
+                            <input type="date" class="date-input" [ngModel]="endDate()"
+                                (ngModelChange)="endDate.set($event)">
+                        </div>
+                    </div>
+
+                    <div class="search-row">
+                        <input type="text" class="search-input" placeholder="Buscar por usuario..."
+                            [ngModel]="searchUsername()" (ngModelChange)="searchUsername.set($event)"
+                            (keyup.enter)="onEnter()" autocomplete="off">
+                        <div class="search-hint">
+                            Busca por nombre de usuario • <kbd>Enter</kbd> buscar
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col filters-right">
+                    <button class="btn-search" (click)="onSearch()">Buscar</button>
+                    <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USUARIO</th>
+                            <th>PROVEEDOR</th>
+                            <th>TOTAL</th>
+                            <th>PENDIENTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (purchases().length === 0) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron compras borrador</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (purchase of purchases(); track trackByPurchaseId($index, purchase)) {
+                        <tr (click)="selectPurchase(purchase)"
+                            [class.selected]="selectedPurchase()?.id === purchase.id">
+                            <td>{{ purchase.id }}</td>
+                            <td>{{ purchase.user.username }}</td>
+                            <td>{{ purchase.supplier.name }}</td>
+                            <td>{{ purchase.totals.total | number:'1.2-2' }}</td>
+                            <td [class.pending-amount]="purchase.totals.pending > 0">
+                                {{ purchase.totals.pending | number:'1.2-2' }}
+                            </td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (summary(); as sum) {
+            <div class="row summary-bar">
+                <div class="summary-item">
+                    <span class="summary-label">Total Compras:</span>
+                    <span class="summary-value">{{ sum.totalPurchases }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Monto Total:</span>
+                    <span class="summary-value highlight">Bs. {{ sum.totalAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Pagado:</span>
+                    <span class="summary-value success">Bs. {{ sum.totalPayments | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Pendiente:</span>
+                    <span class="summary-value pending">Bs. {{ sum.totalPending | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Items:</span>
+                    <span class="summary-value">{{ sum.totalItems }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row result-info">
+                <span>{{ resultInfo() }}</span>
+            </div>
+        </div>
+
+        <div class="col">
+            @if (selectedPurchase(); as purchase) {
+            <div class="row">
+                <div class="col">
+                    <div class="title">Información de la compra</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">ID</div>
+                    <span>{{ purchase.id }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Número</div>
+                    <span>{{ purchase.number }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Estado</div>
+                    <span class="status-badge">{{ purchase.status }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Moneda</div>
+                    <span>{{ purchase.currency }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Creada</div>
+                    <span>{{ formatBolivianDate(purchase.createdAt) }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Actualizada</div>
+                    <span>{{ formatBolivianDate(purchase.updatedAt) }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Proveedor</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre</div>
+                    <span>{{ purchase.supplier.name }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">NIT</div>
+                    <span>{{ purchase.supplier.taxId }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Teléfono</div>
+                    <span>{{ purchase.supplier.phone }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Detalles</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>COD INT.</th>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (detail of purchase.details; track detail.id) {
+                            <tr>
+                                <td>{{ detail.product.sku }}</td>
+                                <td>{{ detail.product.name }}</td>
+                                <td>{{ detail.quantity }}</td>
+                                <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
+                                <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Totales</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Total</div>
+                    <strong>Bs. {{ purchase.totals.total | number:'1.2-2' }}</strong>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Pagado</div>
+                    <span>Bs. {{ purchase.totals.payment | number:'1.2-2' }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Pendiente</div>
+                    <mark class="positive">Bs. {{ purchase.totals.pending | number:'1.2-2' }}</mark>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Almacén</div>
+                    <span>{{ purchase.warehouse.name }}</span>
+                </div>
+                @if (purchase.payment) {
+                <div class="col">
+                    <div class="subtitle">Método de pago</div>
+                    <span>{{ purchase.payment.name }}</span>
+                </div>
+                }
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Usuario</div>
+                    <span>{{ purchase.user.name }}</span>
+                </div>
+            </div>
+
+            @if (purchase.notes) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Notas</div>
+                    <span>{{ purchase.notes }}</span>
+                </div>
+            </div>
+            }
+
+            } @else {
+            <div class="row">
+                <div class="col" style="padding: 40px; text-align: center;">
+                    <em>Selecciona una compra para ver sus detalles</em>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

@@ -31,6 +31,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'order/draft-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/order/order-draft-list/order-draft-list').then(
+            m => m.OrderDraftList,
+          ),
+      },
+      {
+        path: 'order/confirmed-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/order/order-confirmed-list/order-confirmed-list').then(
+            m => m.OrderConfirmedList,
+          ),
+      },
+      {
         path: 'order/select-product',
         loadComponent: () =>
           import('./pages/layout/pages/order/order-select-product/order-select-product')
@@ -89,6 +103,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sale/draft-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/sale/sale-draft-list/sale-draft-list').then(
+            m => m.SaleDraftList,
+          ),
+      },
+      {
         path: 'sale/confirmed-list',
         loadComponent: () =>
           import('./pages/layout/pages/sale/sale-confirmed-list/sale-confirmed-list').then(
@@ -100,6 +121,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/layout/pages/purchase/purchase-list/purchase-list').then(
             m => m.PurchaseList,
+          ),
+      },
+      {
+        path: 'purchase/draft-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/purchase/purchase-draft-list/purchase-draft-list').then(
+            m => m.PurchaseDraftList,
           ),
       },
       {

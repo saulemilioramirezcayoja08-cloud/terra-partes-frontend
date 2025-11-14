@@ -1,0 +1,276 @@
+<div class="sale-draft-list-component">
+    <div class="row">
+        <div class="title">Ventas Borrador</div>
+        <div class="subtitle">
+            Solo ventas en borrador • Filtra por usuario o rango de fechas • <kbd>Enter</kbd> para buscar
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row filters-container">
+                <div class="col filters-left">
+                    <div class="date-row">
+                        <div class="date-group">
+                            <label>Desde</label>
+                            <input type="date" class="date-input" [ngModel]="startDate()"
+                                (ngModelChange)="startDate.set($event)">
+                        </div>
+                        <div class="date-group">
+                            <label>Hasta</label>
+                            <input type="date" class="date-input" [ngModel]="endDate()"
+                                (ngModelChange)="endDate.set($event)">
+                        </div>
+                    </div>
+
+                    <div class="search-row">
+                        <input type="text" class="search-input" placeholder="Buscar por usuario..."
+                            [ngModel]="searchUsername()" (ngModelChange)="searchUsername.set($event)"
+                            (keyup.enter)="onEnter()" autocomplete="off">
+                        <div class="search-hint">
+                            Busca por nombre de usuario • <kbd>Enter</kbd> buscar
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col filters-right">
+                    <button class="btn-search" (click)="onSearch()">Buscar</button>
+                    <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USUARIO</th>
+                            <th>CLIENTE</th>
+                            <th>TOTAL</th>
+                            <th>PENDIENTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (sales().length === 0) {
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron ventas borrador</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (sale of sales(); track trackBySaleId($index, sale)) {
+                        <tr (click)="selectSale(sale)" [class.selected]="selectedSale()?.id === sale.id">
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.user.username }}</td>
+                            <td>{{ sale.customer.name }}</td>
+                            <td>{{ sale.totals.total | number:'1.2-2' }}</td>
+                            <td [class.pending-amount]="sale.totals.pending > 0">
+                                {{ sale.totals.pending | number:'1.2-2' }}
+                            </td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (summary(); as sum) {
+            <div class="row summary-bar">
+                <div class="summary-item">
+                    <span class="summary-label">Total Ventas:</span>
+                    <span class="summary-value">{{ sum.totalSales }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Monto Total:</span>
+                    <span class="summary-value highlight">Bs. {{ sum.totalAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Pagado:</span>
+                    <span class="summary-value success">Bs. {{ sum.totalPayments | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Pendiente:</span>
+                    <span class="summary-value pending">Bs. {{ sum.totalPending | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Items:</span>
+                    <span class="summary-value">{{ sum.totalItems }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="row result-info">
+                <span>{{ resultInfo() }}</span>
+            </div>
+        </div>
+
+        <div class="col">
+            @if (selectedSale(); as sale) {
+            <div class="row">
+                <div class="col">
+                    <div class="title">Información de la venta</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">ID</div>
+                    <span>{{ sale.id }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Número</div>
+                    <span>{{ sale.number }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Estado</div>
+                    <span class="status-badge">{{ sale.status }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Moneda</div>
+                    <span>{{ sale.currency }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Creada</div>
+                    <span>{{ formatBolivianDate(sale.createdAt) }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Actualizada</div>
+                    <span>{{ formatBolivianDate(sale.updatedAt) }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Cliente</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Nombre</div>
+                    <span>{{ sale.customer.name }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">NIT</div>
+                    <span>{{ sale.customer.taxId }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Dirección</div>
+                    <span>{{ sale.customer.address }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Teléfono</div>
+                    <span>{{ sale.customer.phone }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Detalles</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>COD INT.</th>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (detail of sale.details; track detail.id) {
+                            <tr>
+                                <td>{{ detail.product.sku }}</td>
+                                <td>{{ detail.product.name }}</td>
+                                <td>{{ detail.quantity }}</td>
+                                <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
+                                <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Totales</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Total</div>
+                    <strong>Bs. {{ sale.totals.total | number:'1.2-2' }}</strong>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Pagado</div>
+                    <span>Bs. {{ sale.totals.payment | number:'1.2-2' }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Pendiente</div>
+                    <mark class="positive">Bs. {{ sale.totals.pending | number:'1.2-2' }}</mark>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Almacén</div>
+                    <span>{{ sale.warehouse.name }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Método de pago</div>
+                    <span>{{ sale.payment.name }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Orden</div>
+                    <span>{{ sale.order.number }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Usuario</div>
+                    <span>{{ sale.user.name }}</span>
+                </div>
+            </div>
+
+            @if (sale.notes) {
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Notas</div>
+                    <span>{{ sale.notes }}</span>
+                </div>
+            </div>
+            }
+
+            } @else {
+            <div class="row">
+                <div class="col" style="padding: 40px; text-align: center;">
+                    <em>Selecciona una venta para ver sus detalles</em>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
