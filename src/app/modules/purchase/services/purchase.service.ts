@@ -9,6 +9,8 @@ import {CreatePurchaseRequest} from '../post/models/create-purchase-request.mode
 import {CreatePurchaseResponse} from '../post/models/create-purchase-response.model';
 import {ConfirmPurchaseRequest} from '../put/models/confirm-purchase-request.model';
 import {ConfirmPurchaseResponse} from '../put/models/confirm-purchase-response.model';
+import { CreatePurchasePaymentRequest } from '../purchase/post/models/create-purchase-payment-request.model';
+import { CreatePurchasePaymentResponse } from '../post/models/create-purchase-payment-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +64,16 @@ export class PurchaseService {
     return this.http.put<ApiResponse<ConfirmPurchaseResponse>>(
       `${this.apiUrl}/${id}/confirm`,
       payload || {}
+    );
+  }
+
+  createPayment(
+    purchaseId: number,
+    payload: CreatePurchasePaymentRequest
+  ): Observable<ApiResponse<CreatePurchasePaymentResponse>> {
+    return this.http.post<ApiResponse<CreatePurchasePaymentResponse>>(
+      `${this.apiUrl}/${purchaseId}/payments`,
+      payload
     );
   }
 }

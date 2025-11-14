@@ -1,8 +1,9 @@
-import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {PurchaseService} from '../../../../../modules/purchase/services/purchase.service';
-import {PurchaseListResponse} from '../../../../../modules/purchase/get/models/purchase-list-response.model';
+import { Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PurchaseService } from '../../../../../modules/purchase/services/purchase.service';
+import { PurchaseListResponse } from '../../../../../modules/purchase/get/models/purchase-list-response.model';
+import { AuthService } from '../../../../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-purchase-list',
@@ -12,6 +13,7 @@ import {PurchaseListResponse} from '../../../../../modules/purchase/get/models/p
 })
 export class PurchaseList implements OnInit, OnDestroy {
   private readonly purchaseService = inject(PurchaseService);
+  private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -131,7 +133,18 @@ export class PurchaseList implements OnInit, OnDestroy {
   }
 
   canShowActions(purchase: PurchaseListResponse): boolean {
+    return true;
+  }
+
+  canConfirm(purchase: PurchaseListResponse): boolean {
     return purchase.status === 'BORRADOR' || purchase.status === 'DRAFT';
+  }
+
+  canAddPayment(purchase: PurchaseListResponse): boolean {
+    return purchase.status === 'BORRADOR' || 
+           purchase.status === 'DRAFT' || 
+           purchase.status === 'CONFIRMADA' || 
+           purchase.status === 'CONFIRMED';
   }
 
   onConfirmPurchase(purchase: PurchaseListResponse): void {
@@ -156,8 +169,58 @@ export class PurchaseList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al confirmar compra:', error);
         alert('Error al confirmar la compra: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  onAddPayment(purchase: PurchaseListResponse): void {
+    this.activeDropdown.set(null);
+
+    const pending = purchase.totals.pending;
+    const amountInput = prompt(
+      `Registrar pago para compra ${purchase.number}\n\n` +
+      `Total: Bs. ${purchase.totals.total.toFixed(2)}\n` +
+      `Pagado: Bs. ${purchase.totals.payment.toFixed(2)}\n` +
+      `Pendiente: Bs. ${pending.toFixed(2)}\n\n` +
+      `Ingrese el monto a pagar:`
+    );
+
+    if (amountInput === null) return;
+
+    const amount = parseFloat(amountInput);
+
+    if (isNaN(amount) || amount <= 0) {
+      alert('El monto debe ser un número positivo');
+      return;
+    }
+
+    if (amount > pending) {
+      alert(`El monto no puede exceder el saldo pendiente de Bs. ${pending.toFixed(2)}`);
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+    if (!currentUser) {
+      alert('Usuario no autenticado');
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.purchaseService.createPayment(purchase.id, {
+      amount: amount,
+      userId: currentUser.id
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert(`Pago de Bs. ${amount.toFixed(2)} registrado exitosamente`);
+          this.loadPurchases();
+        }
+      },
+      error: (error) => {
+        alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
@@ -184,7 +247,6 @@ export class PurchaseList implements OnInit, OnDestroy {
 
       return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
     } catch (error) {
-      console.error('Error formateando fecha:', error);
       return isoDate;
     }
   }

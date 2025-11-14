@@ -58,5 +58,7 @@ export interface Product {
 
 export interface Totals {
   total: number;
+  payment: number;
+  pending: number;
   items: number;
 }
