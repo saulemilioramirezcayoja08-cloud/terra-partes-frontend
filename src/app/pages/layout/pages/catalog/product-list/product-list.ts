@@ -1,8 +1,8 @@
-import {Component, computed, inject, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {ProductService} from '../../../../../modules/catalog/services/product.service';
-import {ProductListResponse} from '../../../../../modules/catalog/get/models/product-list-response.model';
+import { Component, computed, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProductService } from '../../../../../modules/catalog/services/product.service';
+import { ProductListResponse } from '../../../../../modules/catalog/get/models/product-list-response.model';
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { ErrorHandlerService } from '../../../../../core/services/error-handler.service';
 import { AddCodeRequest, CodeItem } from '../../../../../modules/catalog/codes/models/add-code-request.model';
@@ -36,12 +36,10 @@ export class ProductList implements OnInit {
   readonly hasNext = signal(false);
   readonly hasPrevious = signal(false);
 
-  // Modales
   readonly showEditProductModal = signal(false);
   readonly showAddCodeModal = signal(false);
   readonly showEditCodeModal = signal(false);
 
-  // Formularios
   readonly editForm = signal({
     sku: '',
     name: '',
@@ -68,7 +66,7 @@ export class ProductList implements OnInit {
     `Página ${this.currentPage() + 1} de ${this.totalPages()}`
   );
 
-private activeFilters: { name?: string; code?: string; sku?: string } = {};
+  private activeFilters: { name?: string; code?: string; sku?: string } = {};
   ngOnInit(): void {
     this.loadProducts();
   }
@@ -172,7 +170,6 @@ private activeFilters: { name?: string; code?: string; sku?: string } = {};
     return product.id;
   }
 
-  // === EDITAR PRODUCTO ===
   openEditProductModal(): void {
     const product = this.selectedProduct();
     if (!product) return;
@@ -223,7 +220,6 @@ private activeFilters: { name?: string; code?: string; sku?: string } = {};
     });
   }
 
-  // === AGREGAR CÓDIGO ===
   openAddCodeModal(): void {
     this.newCode.set({ type: '', code: '' });
     this.showAddCodeModal.set(true);
@@ -268,7 +264,6 @@ private activeFilters: { name?: string; code?: string; sku?: string } = {};
     });
   }
 
-  // === EDITAR CÓDIGO ===
   openEditCodeModal(code: any): void {
     this.editCode.set({
       id: code.id,

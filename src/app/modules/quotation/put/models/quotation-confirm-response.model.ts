@@ -1,11 +1,8 @@
 export interface QuotationConfirmResponse {
-  // Información de la Cotización confirmada
   quotation: Quotation;
 
-  // Información de la Orden creada
   order: Order;
 
-  // Información de las Reservas creadas
   reservations: Reservation[];
 }
 

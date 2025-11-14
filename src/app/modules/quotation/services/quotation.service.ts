@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {ApiResponse} from '../../../core/models/api-response.model';
-import {PageResponse} from '../../../core/models/page-response.model';
-import {QuotationListResponse} from '../get/models/quotation-list-response.model';
-import {CreateQuotationRequest} from '../post/models/create-quotation-request.model';
-import {CreateQuotationResponse} from '../post/models/create-quotation-response.model';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../../../core/models/api-response.model';
+import { PageResponse } from '../../../core/models/page-response.model';
+import { QuotationListResponse } from '../get/models/quotation-list-response.model';
+import { CreateQuotationRequest } from '../post/models/create-quotation-request.model';
+import { CreateQuotationResponse } from '../post/models/create-quotation-response.model';
 import { ConfirmQuotationRequest } from '../put/models/confirm-quotation-request.model';
 import { QuotationConfirmResponse } from '../put/models/quotation-confirm-response.model';
 
@@ -42,7 +42,7 @@ export class QuotationService {
 
     return this.http.get<ApiResponse<PageResponse<QuotationListResponse>>>(
       this.apiUrl,
-      {params: httpParams}
+      { params: httpParams }
     );
   }
 
@@ -55,7 +55,6 @@ export class QuotationService {
     );
   }
 
-  // ← NUEVO MÉTODO
   confirmQuotation(
     id: number,
     payload?: ConfirmQuotationRequest

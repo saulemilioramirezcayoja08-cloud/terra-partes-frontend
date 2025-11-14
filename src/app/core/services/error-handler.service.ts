@@ -11,7 +11,7 @@ export class ErrorHandlerService {
     'INVALID_CREDENTIALS': 'Credenciales inválidas',
 
     'CUSTOMER_NOT_FOUND': 'Cliente no encontrado',
-    'CUSTOMER_TAX_ID_DUPLICATE': 'El NIT/CI del cliente ya existe', // Nueva
+    'CUSTOMER_TAX_ID_DUPLICATE': 'El NIT/CI del cliente ya existe',
     'WAREHOUSE_NOT_FOUND': 'Almacén no encontrado',
     'PRODUCT_NOT_FOUND': 'Producto no encontrado',
     'PRODUCT_SKU_DUPLICATE': 'El código SKU ya existe',
@@ -21,8 +21,8 @@ export class ErrorHandlerService {
     'QUOTATION_NOT_FOUND': 'Cotización no encontrada',
     'SALE_NOT_FOUND': 'Venta no encontrada',
     'PURCHASE_NOT_FOUND': 'Compra no encontrada',
-    'SUPPLIER_NOT_FOUND': 'Proveedor no encontrado', // Nueva
-    'SUPPLIER_EMAIL_DUPLICATE': 'El email del proveedor ya existe', // Nueva
+    'SUPPLIER_NOT_FOUND': 'Proveedor no encontrado',
+    'SUPPLIER_EMAIL_DUPLICATE': 'El email del proveedor ya existe',
 
     'INSUFFICIENT_STOCK': 'Stock insuficiente para completar la operación',
     'PAYMENT_EXCEEDS_TOTAL': 'El pago excede el total',
