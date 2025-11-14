@@ -11,6 +11,7 @@ import {ConfirmPurchaseRequest} from '../put/models/confirm-purchase-request.mod
 import {ConfirmPurchaseResponse} from '../put/models/confirm-purchase-response.model';
 import { CreatePurchasePaymentRequest } from '../purchase/post/models/create-purchase-payment-request.model';
 import { CreatePurchasePaymentResponse } from '../post/models/create-purchase-payment-response.model';
+import { PurchaseConfirmedListResponse } from '../get/models/purchase-confirmed-list-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,29 @@ export class PurchaseService {
     return this.http.post<ApiResponse<CreatePurchasePaymentResponse>>(
       `${this.apiUrl}/${purchaseId}/payments`,
       payload
+    );
+  }
+
+  getConfirmedPurchases(
+    params?: {
+      username?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Observable<ApiResponse<PurchaseConfirmedListResponse>> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<PurchaseConfirmedListResponse>>(
+      `${this.apiUrl}/confirmed`,
+      { params: httpParams }
     );
   }
 }

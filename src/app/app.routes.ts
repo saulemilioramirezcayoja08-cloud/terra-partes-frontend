@@ -103,6 +103,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'purchase/confirmed-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/purchase/purchase-confirmed-list/purchase-confirmed-list').then(
+            m => m.PurchaseConfirmedList,
+          ),
+      },
+      {
         path: 'customer/create',
         loadComponent: () =>
           import('./pages/layout/pages/customer/customer-create/customer-create').then(
