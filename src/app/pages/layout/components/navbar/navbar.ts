@@ -16,7 +16,7 @@ export class Navbar {
   currentUrl: string = '';
 
   private readonly routeMap = {
-    ventas: ['/quotation', '/order', '/sale', '/credit', '/payments', '/reservas'],
+    ventas: ['/quotation', '/order', '/sale', '/credit', '/payments', '/reservation'],
     inventario: ['/inventory'],
     compras: ['/purchase'],
     proveedores: ['/supplier'],

@@ -51,6 +51,12 @@ export const routes: Routes = [
             .then(m => m.OrderSelectProduct),
       },
       {
+        path: 'order/reservation-list',
+        loadComponent: () =>
+          import('./pages/layout/pages/order/reservation-list/reservation-list')
+            .then(m => m.ReservationList),
+      },
+      {
         path: 'quotation/create',
         loadComponent: () =>
           import('./pages/layout/pages/quotation/quotation-create/quotation-create').then(
