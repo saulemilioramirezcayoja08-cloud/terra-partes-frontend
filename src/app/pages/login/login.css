@@ -42,6 +42,19 @@
     transparent 20px,
     rgba(55, 53, 47, 0.02) 20px,
     rgba(55, 53, 47, 0.02) 40px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+  width: 280px;
+  height: 140px;
+  background-image: url('/assets/logo.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .form {
