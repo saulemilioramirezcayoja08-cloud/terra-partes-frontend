@@ -1,0 +1,205 @@
+<div class="stock-list-component">
+    <div class="row">
+        <div class="title">Stock por Almacén</div>
+        <div class="subtitle">
+            Stock disponible vs reservado • <kbd>Enter</kbd> para buscar
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="search-input" placeholder="Código de almacén..."
+                        [ngModel]="warehouseCodeSearch()" (ngModelChange)="warehouseCodeSearch.set($event)"
+                        (keyup.enter)="onSearch()" autocomplete="off">
+                </div>
+
+                <div class="col">
+                    <input type="text" class="search-input" placeholder="SKU de producto..."
+                        [ngModel]="productSkuSearch()" (ngModelChange)="productSkuSearch.set($event)"
+                        (keyup.enter)="onSearch()" autocomplete="off">
+                </div>
+
+                <div class="col">
+                    <button class="btn-search" (click)="onSearch()">Buscar</button>
+                </div>
+            </div>
+
+            @if (alertCounts().critical > 0 || alertCounts().warning > 0 || alertCounts().info > 0) {
+            <div class="row alerts-summary">
+                @if (alertCounts().critical > 0) {
+                <div class="alert-badge critical">
+                    <span class="badge-count">{{ alertCounts().critical }}</span>
+                    <span class="badge-label">Crítico</span>
+                </div>
+                }
+                @if (alertCounts().warning > 0) {
+                <div class="alert-badge warning">
+                    <span class="badge-count">{{ alertCounts().warning }}</span>
+                    <span class="badge-label">Advertencia</span>
+                </div>
+                }
+                @if (alertCounts().info > 0) {
+                <div class="alert-badge info">
+                    <span class="badge-count">{{ alertCounts().info }}</span>
+                    <span class="badge-label">Stock bajo</span>
+                </div>
+                }
+            </div>
+            }
+
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ALMACÉN</th>
+                            <th>SKU</th>
+                            <th>PRODUCTO</th>
+                            <th>STOCK</th>
+                            <th>RESERV.</th>
+                            <th>DISP.</th>
+                            <th>VALOR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (stocks().length === 0) {
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron registros</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (stock of stocks(); track trackByIndex($index)) {
+                        <tr (click)="selectStock(stock)" [class.selected]="selectedStock() === stock"
+                            [class]="getAlertClass(stock.alertSeverity)">
+                            <td>{{ stock.warehouse.code }}</td>
+                            <td>{{ stock.product.sku }}</td>
+                            <td>{{ stock.product.name }}</td>
+                            <td>{{ stock.stockTotal }}</td>
+                            <td>{{ stock.reserved }}</td>
+                            <td>{{ stock.available }}</td>
+                            <td>Bs. {{ stock.inventoryValue | number:'1.2-2' }}</td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col">
+            @if (selectedStock(); as stock) {
+            <div class="row">
+                <div class="col">
+                    <div class="title">Detalle del Stock</div>
+                </div>
+            </div>
+
+            @if (stock.alertType) {
+            <div class="row">
+                <div class="alert-message" [class]="getAlertClass(stock.alertSeverity)">
+                    @if (stock.alertType === 'NEGATIVE_STOCK') {
+                    Stock negativo: hay más reservas que inventario disponible
+                    } @else if (stock.alertType === 'ZERO_AVAILABLE') {
+                    Sin stock disponible: todo está reservado
+                    } @else if (stock.alertType === 'LOW_STOCK') {
+                    Stock bajo: menos de 5 unidades disponibles
+                    }
+                </div>
+            </div>
+            }
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Almacén</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Código</div>
+                    <span>{{ stock.warehouse.code }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Nombre</div>
+                    <span>{{ stock.warehouse.name }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Producto</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">SKU</div>
+                    <span>{{ stock.product.sku }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Nombre</div>
+                    <span>{{ stock.product.name }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Cantidades</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Stock Total</div>
+                    <span>{{ stock.stockTotal }} unidades</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Reservado</div>
+                    <span>{{ stock.reserved }} unidades</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Disponible</div>
+                    <strong [class.negative]="stock.available < 0">
+                        {{ stock.available }} unidades
+                    </strong>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="title">Valorización</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="subtitle">Precio Unitario</div>
+                    <span>Bs. {{ stock.price | number:'1.2-2' }}</span>
+                </div>
+                <div class="col">
+                    <div class="subtitle">Valor Total</div>
+                    <strong>Bs. {{ stock.inventoryValue | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+
+            } @else {
+            <div class="row">
+                <div class="col" style="padding: 40px; text-align: center;">
+                    <em>Selecciona un registro para ver los detalles</em>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

@@ -171,6 +171,13 @@ export const routes: Routes = [
             m => m.SupplierList,
           ),
       },
+      {
+        path: 'inventory/stock',
+        loadComponent: () =>
+          import('./pages/layout/pages/inventory/stock-list/stock-list/stock-list').then(
+            m => m.StockList,
+          ),
+      },
     ],
   },
   {

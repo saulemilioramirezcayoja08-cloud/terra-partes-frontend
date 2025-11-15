@@ -6,7 +6,7 @@ import { ReservationListResponse } from '../../../../../modules/order/get/models
 
 @Component({
   selector: 'app-reservation-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './reservation-list.html',
   styleUrl: './reservation-list.css'
 })
