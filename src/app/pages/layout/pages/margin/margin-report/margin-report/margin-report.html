@@ -1,0 +1,255 @@
+<div class="margin-report-component">
+    <div class="row header">
+        <div class="title">Reporte de Márgenes</div>
+        <div class="subtitle">
+            Calcula la rentabilidad del negocio comparando costos de compra vs ingresos por venta de productos, mostrando márgenes de ganancia por producto y período.
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col products-col">
+            <div class="row filters">
+                <div class="col">
+                    <input type="text" class="search-input" placeholder="Buscar por SKU..." [ngModel]="skuSearch()"
+                        (ngModelChange)="skuSearch.set($event)" (keyup.enter)="onSearch()" autocomplete="off">
+
+                    <div class="date-inputs">
+                        <input type="datetime-local" class="date-input" [ngModel]="startDate()"
+                            (ngModelChange)="startDate.set($event)">
+                        <span class="date-separator">→</span>
+                        <input type="datetime-local" class="date-input" [ngModel]="endDate()"
+                            (ngModelChange)="endDate.set($event)">
+                    </div>
+
+                    <button class="btn-search" (click)="onSearch()">Buscar</button>
+                </div>
+
+                <div class="col">
+                    <div class="status-filter">
+                        <button [class.active]="statusFilter() === 'ALL'" (click)="toggleStatusFilter('ALL')">
+                            TODOS
+                        </button>
+                        <button class="filter-profitable" [class.active]="statusFilter() === 'PROFITABLE'"
+                            (click)="toggleStatusFilter('PROFITABLE')">
+                            RENTABLES
+                        </button>
+                        <button class="filter-low" [class.active]="statusFilter() === 'LOW_MARGIN'"
+                            (click)="toggleStatusFilter('LOW_MARGIN')">
+                            BAJO
+                        </button>
+                        <button class="filter-no-margin" [class.active]="statusFilter() === 'NO_MARGIN'"
+                            (click)="toggleStatusFilter('NO_MARGIN')">
+                            SIN MARGEN
+                        </button>
+                        <button class="filter-loss" [class.active]="statusFilter() === 'LOSS'"
+                            (click)="toggleStatusFilter('LOSS')">
+                            PÉRDIDA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>PRODUCTO</th>
+                            <th>COSTO TOTAL</th>
+                            <th>INGRESOS</th>
+                            <th>GANANCIA</th>
+                            <th>MARGEN %</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading()) {
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px;">
+                                <em>Cargando...</em>
+                            </td>
+                        </tr>
+                        } @else if (filteredProducts().length === 0) {
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px;">
+                                <em>No se encontraron productos</em>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (product of filteredProducts(); track trackByProductId($index, product)) {
+                        <tr (click)="selectProduct(product)"
+                            [class.selected]="selectedProduct()?.productId === product.productId">
+                            <td>{{ product.sku }}</td>
+                            <td class="text-left">{{ product.name }}</td>
+                            <td>{{ product.purchases.totalCost | number:'1.2-2' }}</td>
+                            <td>{{ product.sales.totalRevenue | number:'1.2-2' }}</td>
+                            <td [class.profit]="product.margin.totalProfit > 0"
+                                [class.loss]="product.margin.totalProfit < 0">
+                                {{ product.margin.totalProfit | number:'1.2-2' }}
+                            </td>
+                            <td [class.profit]="product.margin.profitPercentage > 0"
+                                [class.loss]="product.margin.profitPercentage < 0">
+                                {{ product.margin.profitPercentage | number:'1.2-2' }}%
+                            </td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getStatusClass(product.margin.status)">
+                                    {{ getStatusLabel(product.margin.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (summary(); as sum) {
+            <div class="row summary-row">
+                <div class="summary-item">
+                    <div class="summary-label">Productos</div>
+                    <div class="summary-value">{{ sum.productsAnalyzed }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Costo Total</div>
+                    <div class="summary-value">{{ sum.totalPurchaseCost | number:'1.2-2' }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Ingresos Total</div>
+                    <div class="summary-value">{{ sum.totalSalesRevenue | number:'1.2-2' }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Ganancia Total</div>
+                    <div class="summary-value" [class.profit]="sum.totalProfit > 0" [class.loss]="sum.totalProfit < 0">
+                        {{ sum.totalProfit | number:'1.2-2' }}
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Margen Promedio</div>
+                    <div class="summary-value" [class.profit]="sum.averageMarginPercentage > 0">
+                        {{ sum.averageMarginPercentage | number:'1.2-2' }}%
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="col details-col">
+            @if (selectedProduct(); as product) {
+            <div class="row section">
+                <div class="section-title">Información del Producto</div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">SKU</div>
+                    <span>{{ product.sku }}</span>
+                </div>
+                <div class="col">
+                    <div class="label">ID</div>
+                    <span>{{ product.productId }}</span>
+                </div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col full">
+                    <div class="label">Nombre</div>
+                    <span>{{ product.name }}</span>
+                </div>
+            </div>
+
+            <div class="row section">
+                <div class="section-title">Compras</div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Unidades Compradas</div>
+                    <span>{{ product.purchases.totalUnits }}</span>
+                </div>
+                <div class="col">
+                    <div class="label">Transacciones</div>
+                    <span>{{ product.purchases.transactions }}</span>
+                </div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Costo Total</div>
+                    <span>{{ product.purchases.totalCost | number:'1.2-2' }}</span>
+                </div>
+                <div class="col">
+                    <div class="label">Costo Unitario Promedio</div>
+                    <span>{{ product.purchases.averageUnitCost | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <div class="row section">
+                <div class="section-title">Ventas</div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Unidades Vendidas</div>
+                    <span>{{ product.sales.totalUnits }}</span>
+                </div>
+                <div class="col">
+                    <div class="label">Transacciones</div>
+                    <span>{{ product.sales.transactions }}</span>
+                </div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Ingresos Total</div>
+                    <span>{{ product.sales.totalRevenue | number:'1.2-2' }}</span>
+                </div>
+                <div class="col">
+                    <div class="label">Precio Venta Promedio</div>
+                    <span>{{ product.sales.averageUnitPrice | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <div class="row section">
+                <div class="section-title">Margen</div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Ganancia por Unidad</div>
+                    <span [class.profit]="product.margin.profitPerUnit > 0"
+                        [class.loss]="product.margin.profitPerUnit < 0">
+                        {{ product.margin.profitPerUnit | number:'1.2-2' }}
+                    </span>
+                </div>
+                <div class="col">
+                    <div class="label">Ganancia Total</div>
+                    <span [class.profit]="product.margin.totalProfit > 0" [class.loss]="product.margin.totalProfit < 0">
+                        {{ product.margin.totalProfit | number:'1.2-2' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col">
+                    <div class="label">Margen Porcentual</div>
+                    <span [class.profit]="product.margin.profitPercentage > 0"
+                        [class.loss]="product.margin.profitPercentage < 0">
+                        {{ product.margin.profitPercentage | number:'1.2-2' }}%
+                    </span>
+                </div>
+                <div class="col">
+                    <div class="label">Estado</div>
+                    <span class="status-badge" [ngClass]="getStatusClass(product.margin.status)">
+                        {{ getStatusLabel(product.margin.status) }}
+                    </span>
+                </div>
+            </div>
+
+            } @else {
+            <div class="row empty-state">
+                <em>Selecciona un producto para ver sus detalles</em>
+            </div>
+            }
+        </div>
+    </div>
+</div>

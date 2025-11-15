@@ -178,6 +178,13 @@ export const routes: Routes = [
             m => m.StockList,
           ),
       },
+      {
+        path: 'margin/report',
+        loadComponent: () =>
+          import('./pages/layout/pages/margin/margin-report/margin-report/margin-report').then(
+            m => m.MarginReport
+          ),
+      },
     ],
   },
   {
