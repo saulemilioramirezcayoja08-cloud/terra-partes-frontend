@@ -140,15 +140,20 @@ export class OrderList implements OnInit, OnDestroy {
     const isDraft = order.status === 'BORRADOR' || order.status === 'DRAFT';
     const isPaidInFull = order.totals.pending === 0;
     const isCredit = order.payment?.name === 'Credito';
-    
+
     return isDraft && (isPaidInFull || isCredit);
   }
 
   canAddPayment(order: OrderListResponse): boolean {
     const isDraft = order.status === 'BORRADOR' || order.status === 'DRAFT';
     const hasPendingAmount = order.totals.pending > 0;
-    
+
     return isDraft && hasPendingAmount;
+  }
+
+  canCancel(order: OrderListResponse): boolean {
+    const isDraft = order.status === 'BORRADOR' || order.status === 'DRAFT';
+    return isDraft;
   }
 
   onConfirmOrder(order: OrderListResponse): void {
@@ -163,7 +168,7 @@ export class OrderList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
+    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
 
     this.orderService.confirmOrder(order.id, payload).subscribe({
       next: (response) => {
@@ -230,11 +235,47 @@ export class OrderList implements OnInit, OnDestroy {
     });
   }
 
+  onCancelOrder(order: OrderListResponse): void {
+    this.activeDropdown.set(null);
+
+    const confirmation = confirm(
+      `¿Está seguro que desea cancelar la orden ${order.number}?\n\n` +
+      `Esta acción marcará la orden y sus reservas como CANCELADAS.\n` +
+      `La orden permanecerá en el histórico pero no podrá ser confirmada.`
+    );
+
+    if (!confirmation) return;
+
+    const notesInput = prompt(
+      'Motivo de cancelación (opcional):',
+      ''
+    );
+
+    if (notesInput === null) return;
+
+    this.isLoading.set(true);
+
+    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
+
+    this.orderService.cancelOrder(order.id, payload).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert('Orden cancelada exitosamente');
+          this.loadOrders();
+        }
+      },
+      error: (error) => {
+        alert('Error al cancelar la orden: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
+    });
+  }
+
   onPrintOrder(order: OrderListResponse): void {
     this.activeDropdown.set(null);
-    
+
     sessionStorage.setItem('order-print-data', JSON.stringify(order));
-    
+
     window.open('/order/reprint', '_blank');
   }
 

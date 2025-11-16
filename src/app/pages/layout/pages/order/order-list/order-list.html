@@ -60,7 +60,8 @@
             <tr (click)="selectOrder(order)" [class.selected]="selectedOrder()?.id === order.id">
               <td>{{ order.number }}</td>
               <td [class.status-confirmed]="order.status === 'CONFIRMADA' || order.status === 'CONFIRMED'"
-                [class.status-draft]="order.status === 'BORRADOR' || order.status === 'DRAFT'">
+                [class.status-draft]="order.status === 'BORRADOR' || order.status === 'DRAFT'"
+                [class.status-cancelled]="order.status === 'CANCELADA' || order.status === 'CANCELLED'">
                 {{ order.status }}
               </td>
               <td>{{ order.customer.name }}</td>
@@ -120,6 +121,22 @@
                         </g>
                       </svg>
                       <span>Registrar pago</span>
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+                    }
+
+                    @if (canCancel(order)) {
+                    <button class="dropdown-item cancel" (click)="onCancelOrder(order)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        </g>
+                      </svg>
+                      <span>Cancelar orden</span>
                     </button>
 
                     <div class="dropdown-divider"></div>

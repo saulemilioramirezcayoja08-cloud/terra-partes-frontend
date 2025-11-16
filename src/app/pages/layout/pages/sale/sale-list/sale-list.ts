@@ -156,6 +156,11 @@ export class SaleList implements OnInit, OnDestroy {
     return false;
   }
 
+  canCancel(sale: SaleListResponse): boolean {
+    const isDraft = sale.status === 'BORRADOR' || sale.status === 'DRAFT';
+    return isDraft;
+  }
+
   onConfirmSale(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
 
@@ -230,6 +235,45 @@ export class SaleList implements OnInit, OnDestroy {
       },
       error: (error) => {
         alert('Error al registrar el pago: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  onCancelSale(sale: SaleListResponse): void {
+    this.activeDropdown.set(null);
+
+    const confirmation = confirm(
+      `¿Está seguro que desea cancelar la venta ${sale.number}?\n\n` +
+      `Esta acción marcará:\n` +
+      `- La venta como CANCELADA\n` +
+      `- La orden asociada como CANCELADA\n` +
+      `- Las reservas como CANCELADAS\n\n` +
+      `Todo permanecerá en el histórico pero no podrá ser confirmado.`
+    );
+
+    if (!confirmation) return;
+
+    const notesInput = prompt(
+      'Motivo de cancelación (opcional):',
+      ''
+    );
+
+    if (notesInput === null) return;
+
+    this.isLoading.set(true);
+
+    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
+
+    this.saleService.cancelSale(sale.id, payload).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          alert('Venta cancelada exitosamente');
+          this.loadSales();
+        }
+      },
+      error: (error) => {
+        alert('Error al cancelar la venta: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });

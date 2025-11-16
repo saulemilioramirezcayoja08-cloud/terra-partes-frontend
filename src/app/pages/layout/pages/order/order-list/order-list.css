@@ -621,3 +621,9 @@ td.status-draft {
   font-weight: 600;
   background-color: rgba(245, 158, 11, 0.1);
 }
+
+td.status-cancelled {
+  color: #ef4444;
+  font-weight: 600;
+  background-color: rgba(239, 68, 68, 0.1);
+}

@@ -11,6 +11,8 @@ import { CreateSalePaymentRequest } from '../post/models/create-sale-payment-req
 import { CreateSalePaymentResponse } from '../post/models/create-sale-payment-response.model';
 import { SaleConfirmedListResponse } from '../get/models/sale-confirmed-list-response.model';
 import { SaleDraftListResponse } from '../get/models/sale-draft-list-response.model';
+import { CancelSaleRequest } from '../put/models/cancel-sale-request.model';
+import { CancelSaleResponse } from '../put/models/cancel-sale-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -111,6 +113,16 @@ export class SaleService {
     return this.http.get<ApiResponse<SaleConfirmedListResponse>>(
       `${this.apiUrl}/confirmed`,
       { params: httpParams }
+    );
+  }
+
+  cancelSale(
+    id: number,
+    payload?: CancelSaleRequest
+  ): Observable<ApiResponse<CancelSaleResponse>> {
+    return this.http.put<ApiResponse<CancelSaleResponse>>(
+      `${this.apiUrl}/${id}/cancel`,
+      payload || {}
     );
   }
 }

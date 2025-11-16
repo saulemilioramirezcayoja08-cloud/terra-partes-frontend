@@ -63,7 +63,8 @@
               <td>{{ reservation.id }}</td>
               <td>{{ reservation.order.number }}</td>
               <td [class.status-active]="reservation.status === 'ACTIVA'"
-                [class.status-consumed]="reservation.status === 'CONSUMIDA'">
+                [class.status-consumed]="reservation.status === 'CONSUMIDA'"
+                [class.status-cancelled]="reservation.status === 'CANCELADA'">
                 {{ reservation.status }}
               </td>
               <td>{{ reservation.product.name }}</td>

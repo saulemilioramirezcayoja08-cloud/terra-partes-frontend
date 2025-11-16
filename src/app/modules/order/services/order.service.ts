@@ -1,18 +1,19 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {ApiResponse} from '../../../core/models/api-response.model';
-import {PageResponse} from '../../../core/models/page-response.model';
-import {OrderListResponse} from '../get/models/order-list-response.model';
-import {CreateOrderRequest} from '../post/models/create-order-request.model';
-import {CreateOrderResponse} from '../post/models/create-order-response.model';
-import {ConfirmOrderRequest} from '../put/models/confirm-order-request.model';
-import {ConfirmOrderResponse} from '../put/models/confirm-order-response.model';
-import {CreateOrderPaymentRequest} from '../post/models/create-order-payment-request.model';
-import {CreateOrderPaymentResponse} from '../post/models/create-order-payment-response.model';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../../../core/models/api-response.model';
+import { PageResponse } from '../../../core/models/page-response.model';
+import { OrderListResponse } from '../get/models/order-list-response.model';
+import { CreateOrderRequest } from '../post/models/create-order-request.model';
+import { CreateOrderResponse } from '../post/models/create-order-response.model';
+import { ConfirmOrderRequest } from '../put/models/confirm-order-request.model';
+import { ConfirmOrderResponse } from '../put/models/confirm-order-response.model';
+import { CreateOrderPaymentRequest } from '../post/models/create-order-payment-request.model';
+import { CreateOrderPaymentResponse } from '../post/models/create-order-payment-response.model';
 import { OrderDraftListResponse } from '../get/models/order-draft-list-response.model';
 import { OrderConfirmedListResponse } from '../get/models/order-confirmed-list-response.model';
+import { CancelOrderRequest } from '../put/models/cancel-order-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,7 @@ export class OrderService {
 
     return this.http.get<ApiResponse<PageResponse<OrderListResponse>>>(
       this.apiUrl,
-      {params: httpParams}
+      { params: httpParams }
     );
   }
 
@@ -98,7 +99,7 @@ export class OrderService {
 
     return this.http.get<ApiResponse<OrderDraftListResponse>>(
       `${this.apiUrl}/draft`,
-      {params: httpParams}
+      { params: httpParams }
     );
   }
 
@@ -121,7 +122,17 @@ export class OrderService {
 
     return this.http.get<ApiResponse<OrderConfirmedListResponse>>(
       `${this.apiUrl}/confirmed`,
-      {params: httpParams}
+      { params: httpParams }
+    );
+  }
+
+  cancelOrder(
+    id: number,
+    payload?: CancelOrderRequest
+  ): Observable<ApiResponse<CreateOrderResponse>> {
+    return this.http.put<ApiResponse<CreateOrderResponse>>(
+      `${this.apiUrl}/${id}/cancel`,
+      payload || {}
     );
   }
 }
