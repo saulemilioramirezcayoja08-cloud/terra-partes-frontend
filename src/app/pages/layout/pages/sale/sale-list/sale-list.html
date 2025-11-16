@@ -59,7 +59,10 @@
             @for (sale of sales(); track trackBySaleId($index, sale)) {
             <tr (click)="selectSale(sale)" [class.selected]="selectedSale()?.id === sale.id">
               <td>{{ sale.number }}</td>
-              <td>{{ sale.status }}</td>
+              <td [class.status-confirmed]="sale.status === 'CONFIRMADA' || sale.status === 'CONFIRMED'"
+                [class.status-draft]="sale.status === 'BORRADOR' || sale.status === 'DRAFT'">
+                {{ sale.status }}
+              </td>
               <td>{{ sale.customer.name }}</td>
               <td>{{ sale.totals.total | number:'1.2-2' }}</td>
               <td [class.pending-amount]="sale.totals.pending > 0">

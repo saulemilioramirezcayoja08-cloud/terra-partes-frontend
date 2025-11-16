@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-.sale-list-component > .row:nth-child(1) {
+.sale-list-component>.row:nth-child(1) {
   flex: 0 0 64px;
   background-color: #efefef;
   padding: 0 16px;
@@ -52,27 +52,27 @@
   font-size: 10px;
 }
 
-.sale-list-component > .row:nth-child(2) {
+.sale-list-component>.row:nth-child(2) {
   flex: 1;
   gap: 2px;
   min-height: 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1) {
   flex: 4;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(1) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(1) {
   flex: 0 0 60px;
   flex-direction: row;
   gap: 8px;
   background-color: #efefef;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(1) > .col:nth-child(1) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(1)>.col:nth-child(1) {
   flex: 8;
   flex-direction: column;
   justify-content: center;
@@ -112,7 +112,7 @@
   line-height: 1.3;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(1) > .col:nth-child(2) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(1)>.col:nth-child(2) {
   flex: 4;
   flex-direction: row;
   justify-content: end;
@@ -145,7 +145,7 @@
   z-index: 0;
 }
 
-.toggle-group .toggle-btn:nth-child(2).active ~ ::before,
+.toggle-group .toggle-btn:nth-child(2).active~ ::before,
 .toggle-group:has(.toggle-btn:nth-child(2).active)::before {
   transform: translateX(100%);
 }
@@ -175,7 +175,7 @@
   color: white;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(2) {
   flex: 1;
   flex-direction: column;
   background-color: white;
@@ -184,20 +184,20 @@
   overflow-x: hidden;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2)::-webkit-scrollbar {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(2)::-webkit-scrollbar {
   width: 4px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2)::-webkit-scrollbar-track {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(2)::-webkit-scrollbar-track {
   background-color: rgba(128, 128, 128, 0.1);
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2)::-webkit-scrollbar-thumb {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(2)::-webkit-scrollbar-thumb {
   background-color: rgba(128, 128, 128, 0.4);
   border-radius: 16px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row:nth-child(2)::-webkit-scrollbar-thumb:hover {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(2)::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.6);
 }
 
@@ -367,6 +367,7 @@ td svg.disabled {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -418,7 +419,7 @@ td svg.disabled {
   margin: 4px 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
@@ -428,7 +429,7 @@ td svg.disabled {
   flex-shrink: 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination > .col {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination>.col {
   gap: 8px;
 }
 
@@ -436,7 +437,7 @@ td svg.disabled {
   color: rgba(93, 93, 93, 0.3);
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination button {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination button {
   height: 1.5rem;
   padding: 0 14px;
   border: none;
@@ -450,16 +451,16 @@ td svg.disabled {
   color: white;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination button:hover:not(:disabled) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination button:hover:not(:disabled) {
   background-color: #4a4a4a;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(1) > .row.pagination button:disabled {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) {
   flex: 4;
   flex-direction: column;
   gap: 1px;
@@ -468,24 +469,24 @@ td svg.disabled {
   overflow-y: auto;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2)::-webkit-scrollbar {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)::-webkit-scrollbar {
   width: 4px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2)::-webkit-scrollbar-track {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)::-webkit-scrollbar-track {
   background-color: rgba(128, 128, 128, 0.1);
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2)::-webkit-scrollbar-thumb {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)::-webkit-scrollbar-thumb {
   background-color: rgba(128, 128, 128, 0.4);
   border-radius: 16px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2)::-webkit-scrollbar-thumb:hover {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.6);
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) > .row {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)>.row {
   background-color: white;
   border-bottom: 2px dashed rgba(128, 128, 128, 0.1);
   border-left: 2px dashed rgba(128, 128, 128, 0.1);
@@ -493,19 +494,19 @@ td svg.disabled {
   gap: 8px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) > .row > .col {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2)>.row>.col {
   flex: 1;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) .title {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) .title {
   position: relative;
   padding-bottom: 6px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) .title::after {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) .title::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -516,7 +517,7 @@ td svg.disabled {
   border-radius: 2px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) .subtitle {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) .subtitle {
   font-family: "Poppins", sans-serif;
   font-size: 10px;
   font-weight: 600;
@@ -525,7 +526,7 @@ td svg.disabled {
   color: #9ca3af;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) span {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) span {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
   color: #6b7280;
@@ -533,14 +534,14 @@ td svg.disabled {
   word-wrap: break-word;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) strong {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) strong {
   font-family: "Poppins", sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #3b82f6;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) em {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) em {
   font-family: "Poppins", sans-serif;
   font-size: 13px;
   color: #9ca3af;
@@ -548,7 +549,7 @@ td svg.disabled {
   font-weight: 400;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) mark {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) mark {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
   color: #10b981;
@@ -556,16 +557,16 @@ td svg.disabled {
   background: transparent;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) mark.positive {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) mark.positive {
   color: #10b981;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table {
   font-size: 11px;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th,
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th,
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td {
   height: 24px;
   line-height: 24px;
   padding: 4px 8px;
@@ -573,59 +574,71 @@ td svg.disabled {
   text-overflow: ellipsis;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(1),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(1) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(1),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(1) {
   width: 100px;
   text-align: center;
   white-space: nowrap;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(2),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(2) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(2),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(2) {
   width: auto;
   text-align: left;
   white-space: nowrap;
   max-width: 0;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(3),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(3) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(3),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(3) {
   width: 70px;
   text-align: center;
   white-space: nowrap;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(4),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(4) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(4),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(4) {
   width: 110px;
   text-align: right;
   white-space: nowrap;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(5),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(5) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(5),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(5) {
   width: 110px;
   text-align: right;
   white-space: nowrap;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(6),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(6),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(7),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(7),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table th:nth-child(8),
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td:nth-child(8) {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(6),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(6),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(7),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(7),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table th:nth-child(8),
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td:nth-child(8) {
   width: 60px;
   text-align: center;
   white-space: nowrap;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td.sufficient {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td.sufficient {
   color: #10b981;
   font-weight: 600;
 }
 
-.sale-list-component > .row:nth-child(2) > .col:nth-child(2) table td.insufficient {
+.sale-list-component>.row:nth-child(2)>.col:nth-child(2) table td.insufficient {
   color: #ef4444;
   font-weight: 600;
+}
+
+td.status-confirmed {
+  color: #10b981;
+  font-weight: 600;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+td.status-draft {
+  color: #f59e0b;
+  font-weight: 600;
+  background-color: rgba(245, 158, 11, 0.1);
 }

@@ -10,14 +10,8 @@
     <div class="col">
       <div class="row">
         <div class="col">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar por usuario..."
-            [ngModel]="usernameSearch()"
-            (ngModelChange)="usernameSearch.set($event)"
-            (keyup.enter)="onEnter()"
-            autocomplete="off">
+          <input type="text" class="search-input" placeholder="Buscar por usuario..." [ngModel]="usernameSearch()"
+            (ngModelChange)="usernameSearch.set($event)" (keyup.enter)="onEnter()" autocomplete="off">
           <div class="search-hint">
             Busca por nombre de usuario • <kbd>Enter</kbd> buscar
           </div>
@@ -25,15 +19,11 @@
 
         <div class="col">
           <div class="status-toggle-group">
-            <button
-              class="status-toggle-btn active"
-              [class.selected]="selectedStatus() === 'ACTIVE'"
+            <button class="status-toggle-btn active" [class.selected]="selectedStatus() === 'ACTIVE'"
               (click)="toggleStatus('ACTIVE')">
               PENDIENTE
             </button>
-            <button
-              class="status-toggle-btn consumed"
-              [class.selected]="selectedStatus() === 'CONSUMED'"
+            <button class="status-toggle-btn consumed" [class.selected]="selectedStatus() === 'CONSUMED'"
               (click)="toggleStatus('CONSUMED')">
               CONCLUIDAS
             </button>
@@ -44,41 +34,43 @@
       <div class="row">
         <table>
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>ORDEN</th>
-            <th>ESTADO</th>
-            <th>PRODUCTO</th>
-            <th>CANT.</th>
-            <th>USUARIO</th>
-          </tr>
+            <tr>
+              <th>ID</th>
+              <th>ORDEN</th>
+              <th>ESTADO</th>
+              <th>PRODUCTO</th>
+              <th>CANT.</th>
+              <th>USUARIO</th>
+            </tr>
           </thead>
           <tbody>
             @if (isLoading()) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>Cargando...</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>Cargando...</em>
+              </td>
+            </tr>
             } @else if (reservations().length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron reservas</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>No se encontraron reservas</em>
+              </td>
+            </tr>
             } @else {
-              @for (reservation of reservations(); track trackByReservationId($index, reservation)) {
-                <tr
-                  (click)="selectReservation(reservation)"
-                  [class.selected]="selectedReservation()?.id === reservation.id">
-                  <td>{{ reservation.id }}</td>
-                  <td>{{ reservation.order.number }}</td>
-                  <td>{{ reservation.status }}</td>
-                  <td>{{ reservation.product.name }}</td>
-                  <td>{{ reservation.quantity }}</td>
-                  <td>{{ reservation.user?.username || 'N/A' }}</td>
-                </tr>
-              }
+            @for (reservation of reservations(); track trackByReservationId($index, reservation)) {
+            <tr (click)="selectReservation(reservation)"
+              [class.selected]="selectedReservation()?.id === reservation.id">
+              <td>{{ reservation.id }}</td>
+              <td>{{ reservation.order.number }}</td>
+              <td [class.status-active]="reservation.status === 'ACTIVA'"
+                [class.status-consumed]="reservation.status === 'CONSUMIDA'">
+                {{ reservation.status }}
+              </td>
+              <td>{{ reservation.product.name }}</td>
+              <td>{{ reservation.quantity }}</td>
+              <td>{{ reservation.user?.username || 'N/A' }}</td>
+            </tr>
+            }
             }
           </tbody>
         </table>
@@ -98,119 +90,119 @@
 
     <div class="col">
       @if (selectedReservation(); as reservation) {
-        <div class="row">
-          <div class="col">
-            <div class="title">Información de la reserva</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Información de la reserva</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ reservation.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Estado</div>
-            <span>{{ reservation.status }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ reservation.id }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Cantidad</div>
-            <span>{{ reservation.quantity }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Creada</div>
-            <span>{{ formatBolivianDate(reservation.createdAt) }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Estado</div>
+          <span>{{ reservation.status }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Orden</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Cantidad</div>
+          <span>{{ reservation.quantity }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ reservation.order.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Número</div>
-            <span>{{ reservation.order.number }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Creada</div>
+          <span>{{ formatBolivianDate(reservation.createdAt) }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Producto</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Orden</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">SKU</div>
-            <span>{{ reservation.product.sku }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ reservation.product.name }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ reservation.order.id }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="title">Almacén</div>
-          </div>
+        <div class="col">
+          <div class="subtitle">Número</div>
+          <span>{{ reservation.order.number }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Código</div>
-            <span>{{ reservation.warehouse.code }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ reservation.warehouse.name }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Producto</div>
         </div>
+      </div>
 
-        @if (reservation.user) {
-          <div class="row">
-            <div class="col">
-              <div class="title">Usuario</div>
-            </div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">SKU</div>
+          <span>{{ reservation.product.sku }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ reservation.product.name }}</span>
+        </div>
+      </div>
 
-          <div class="row">
-            <div class="col">
-              <div class="subtitle">Usuario</div>
-              <span>{{ reservation.user.username }}</span>
-            </div>
-            <div class="col">
-              <div class="subtitle">Nombre</div>
-              <span>{{ reservation.user.name }}</span>
-            </div>
-          </div>
-        }
+      <div class="row">
+        <div class="col">
+          <div class="title">Almacén</div>
+        </div>
+      </div>
 
-        @if (reservation.notes) {
-          <div class="row">
-            <div class="col">
-              <div class="subtitle">Notas</div>
-              <span>{{ reservation.notes }}</span>
-            </div>
-          </div>
-        }
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Código</div>
+          <span>{{ reservation.warehouse.code }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ reservation.warehouse.name }}</span>
+        </div>
+      </div>
+
+      @if (reservation.user) {
+      <div class="row">
+        <div class="col">
+          <div class="title">Usuario</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Usuario</div>
+          <span>{{ reservation.user.username }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ reservation.user.name }}</span>
+        </div>
+      </div>
+      }
+
+      @if (reservation.notes) {
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Notas</div>
+          <span>{{ reservation.notes }}</span>
+        </div>
+      </div>
+      }
 
       } @else {
-        <div class="row">
-          <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona una reserva para ver sus detalles</em>
-          </div>
+      <div class="row">
+        <div class="col" style="padding: 40px; text-align: center;">
+          <em>Selecciona una reserva para ver sus detalles</em>
         </div>
+      </div>
       }
     </div>
   </div>

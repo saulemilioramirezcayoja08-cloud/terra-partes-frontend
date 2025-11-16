@@ -10,14 +10,8 @@
     <div class="col">
       <div class="row">
         <div class="col">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar órdenes..."
-            [ngModel]="searchTerm()"
-            (ngModelChange)="searchTerm.set($event)"
-            (keyup.enter)="onEnter()"
-            autocomplete="off">
+          <input type="text" class="search-input" placeholder="Buscar órdenes..." [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onEnter()" autocomplete="off">
           <div class="search-hint">
             Busca por {{ searchMode() === 'number' ? 'número' : 'usuario' }} • <kbd>Enter</kbd> buscar
           </div>
@@ -25,15 +19,10 @@
 
         <div class="col">
           <div class="toggle-group">
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'number'"
-              (click)="toggleSearchMode('number')">
+            <button class="toggle-btn" [class.active]="searchMode() === 'number'" (click)="toggleSearchMode('number')">
               Número
             </button>
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'username'"
+            <button class="toggle-btn" [class.active]="searchMode() === 'username'"
               (click)="toggleSearchMode('username')">
               Usuario
             </button>
@@ -44,117 +33,124 @@
       <div class="row">
         <table>
           <thead>
-          <tr>
-            <th>NÚMERO</th>
-            <th>ESTADO</th>
-            <th>CLIENTE</th>
-            <th>TOTAL</th>
-            <th>PENDIENTE</th>
-            <th></th>
-          </tr>
+            <tr>
+              <th>NÚMERO</th>
+              <th>ESTADO</th>
+              <th>CLIENTE</th>
+              <th>TOTAL</th>
+              <th>PENDIENTE</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             @if (isLoading()) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>Cargando...</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>Cargando...</em>
+              </td>
+            </tr>
             } @else if (orders().length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron órdenes</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>No se encontraron órdenes</em>
+              </td>
+            </tr>
             } @else {
-              @for (order of orders(); track trackByOrderId($index, order)) {
-                <tr
-                  (click)="selectOrder(order)"
-                  [class.selected]="selectedOrder()?.id === order.id">
-                  <td>{{ order.number }}</td>
-                  <td>{{ order.status }}</td>
-                  <td>{{ order.customer.name }}</td>
-                  <td>{{ order.totals.total | number:'1.2-2' }}</td>
-                  <td [class.pending-amount]="order.totals.pending > 0">
-                    {{ order.totals.pending | number:'1.2-2' }}
-                  </td>
-                  <td>
-                    @if (canShowActions(order)) {
-                      <div class="actions-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                             (click)="toggleDropdown(order.id, $event)">
-                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                          <g id="SVGRepo_iconCarrier">
-                            <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
-                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                            <path
-                              d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
-                              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                          </g>
-                        </svg>
+            @for (order of orders(); track trackByOrderId($index, order)) {
+            <tr (click)="selectOrder(order)" [class.selected]="selectedOrder()?.id === order.id">
+              <td>{{ order.number }}</td>
+              <td [class.status-confirmed]="order.status === 'CONFIRMADA' || order.status === 'CONFIRMED'"
+                [class.status-draft]="order.status === 'BORRADOR' || order.status === 'DRAFT'">
+                {{ order.status }}
+              </td>
+              <td>{{ order.customer.name }}</td>
+              <td>{{ order.totals.total | number:'1.2-2' }}</td>
+              <td [class.pending-amount]="order.totals.pending > 0">
+                {{ order.totals.pending | number:'1.2-2' }}
+              </td>
+              <td>
+                @if (canShowActions(order)) {
+                <div class="actions-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    (click)="toggleDropdown(order.id, $event)">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path
+                        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </g>
+                  </svg>
 
-                        @if (activeDropdown() === order.id) {
-                          <div class="dropdown-menu" (click)="$event.stopPropagation()">
-                            @if (canConfirm(order)) {
-                              <button class="dropdown-item confirm" (click)="onConfirmOrder(order)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
-                                          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                  </g>
-                                </svg>
-                                <span>Confirmar orden</span>
-                              </button>
+                  @if (activeDropdown() === order.id) {
+                  <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                    @if (canConfirm(order)) {
+                    <button class="dropdown-item confirm" (click)="onConfirmOrder(order)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                      </svg>
+                      <span>Confirmar orden</span>
+                    </button>
 
-                              <div class="dropdown-divider"></div>
-                            }
-
-                            @if (canAddPayment(order)) {
-                              <button class="dropdown-item payment" (click)="onAddPayment(order)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path d="M6 8H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                          stroke-linejoin="round"></path>
-                                    <path
-                                      d="M22 10.5C22 10.4226 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.5774 22 13.5"
-                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                    <circle cx="18" cy="12" r="1" fill="#1C274C"></circle>
-                                    <path
-                                      d="M13 4C16.7712 4 18.6569 4 19.8284 5.17157C20.6366 5.97975 20.8873 7.1277 20.965 9M10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15M9 4.00093C5.8857 4.01004 4.23467 4.10848 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C3.82475 19.4816 4.69989 19.7706 6 19.8985"
-                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                  </g>
-                                </svg>
-                                <span>Registrar pago</span>
-                              </button>
-
-                              <div class="dropdown-divider"></div>
-                            }
-
-                            <button class="dropdown-item print" (click)="onPrintOrder(order)">
-                              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                  <path d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67" stroke="currentColor" stroke-width="1.5"></path>
-                                  <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                  <path d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6" stroke="currentColor" stroke-width="1.5"></path>
-                                  <path d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z" stroke="currentColor" stroke-width="1.5"></path>
-                                </g>
-                              </svg>
-                              <span>Imprimir</span>
-                            </button>
-                          </div>
-                        }
-                      </div>
+                    <div class="dropdown-divider"></div>
                     }
-                  </td>
-                </tr>
-              }
+
+                    @if (canAddPayment(order)) {
+                    <button class="dropdown-item payment" (click)="onAddPayment(order)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M6 8H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                          <path
+                            d="M22 10.5C22 10.4226 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.5774 22 13.5"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <circle cx="18" cy="12" r="1" fill="#1C274C"></circle>
+                          <path
+                            d="M13 4C16.7712 4 18.6569 4 19.8284 5.17157C20.6366 5.97975 20.8873 7.1277 20.965 9M10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15M9 4.00093C5.8857 4.01004 4.23467 4.10848 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C3.82475 19.4816 4.69989 19.7706 6 19.8985"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        </g>
+                      </svg>
+                      <span>Registrar pago</span>
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+                    }
+
+                    <button class="dropdown-item print" (click)="onPrintOrder(order)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path
+                            d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                          <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <path
+                            d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                          <path
+                            d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                        </g>
+                      </svg>
+                      <span>Imprimir</span>
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+              </td>
+            </tr>
+            }
             }
           </tbody>
         </table>
@@ -174,83 +170,83 @@
 
     <div class="col">
       @if (selectedOrder(); as order) {
-        <div class="row">
-          <div class="col">
-            <div class="title">Información de la orden</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Información de la orden</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ order.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Número</div>
-            <span>{{ order.number }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ order.id }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Estado</div>
-            <span>{{ order.status }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Moneda</div>
-            <span>{{ order.currency }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Número</div>
+          <span>{{ order.number }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Creada</div>
-            <span>{{ formatBolivianDate(order.createdAt) }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Actualizada</div>
-            <span>{{ formatBolivianDate(order.updatedAt) }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Estado</div>
+          <span>{{ order.status }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="title">Cliente</div>
-          </div>
+        <div class="col">
+          <div class="subtitle">Moneda</div>
+          <span>{{ order.currency }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ order.customer.name }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">NIT</div>
-            <span>{{ order.customer.taxId }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Creada</div>
+          <span>{{ formatBolivianDate(order.createdAt) }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Dirección</div>
-            <span>{{ order.customer.address }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Teléfono</div>
-            <span>{{ order.customer.phone }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Actualizada</div>
+          <span>{{ formatBolivianDate(order.updatedAt) }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Detalles</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Cliente</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <table>
-              <thead>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ order.customer.name }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">NIT</div>
+          <span>{{ order.customer.taxId }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Dirección</div>
+          <span>{{ order.customer.address }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Teléfono</div>
+          <span>{{ order.customer.phone }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Detalles</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table>
+            <thead>
               <tr>
                 <th>COD INT.</th>
                 <th>Producto</th>
@@ -258,76 +254,76 @@
                 <th>Precio</th>
                 <th>Subtotal</th>
               </tr>
-              </thead>
-              <tbody>
-                @for (detail of order.details; track detail.id) {
-                  <tr>
-                    <td>{{ detail.product.sku }}</td>
-                    <td>{{ detail.product.name }}</td>
-                    <td>{{ detail.quantity }}</td>
-                    <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
-                    <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody>
+              @for (detail of order.details; track detail.id) {
+              <tr>
+                <td>{{ detail.product.sku }}</td>
+                <td>{{ detail.product.name }}</td>
+                <td>{{ detail.quantity }}</td>
+                <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
+                <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Totales</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Totales</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Total</div>
-            <strong>Bs. {{ order.totals.total | number:'1.2-2' }}</strong>
-          </div>
-          <div class="col">
-            <div class="subtitle">Pagado</div>
-            <span>Bs. {{ order.totals.payment | number:'1.2-2' }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Pendiente</div>
-            <mark class="positive">Bs. {{ order.totals.pending | number:'1.2-2' }}</mark>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Total</div>
+          <strong>Bs. {{ order.totals.total | number:'1.2-2' }}</strong>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Almacén</div>
-            <span>{{ order.warehouse.name }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Método de pago</div>
-            <span>{{ order.payment?.name || 'Sin asignar' }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Pagado</div>
+          <span>Bs. {{ order.totals.payment | number:'1.2-2' }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Usuario</div>
-            <span>{{ order.user.name }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Pendiente</div>
+          <mark class="positive">Bs. {{ order.totals.pending | number:'1.2-2' }}</mark>
         </div>
+      </div>
 
-        @if (order.notes) {
-          <div class="row">
-            <div class="col">
-              <div class="subtitle">Notas</div>
-              <span>{{ order.notes }}</span>
-            </div>
-          </div>
-        }
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Almacén</div>
+          <span>{{ order.warehouse.name }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Método de pago</div>
+          <span>{{ order.payment?.name || 'Sin asignar' }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Usuario</div>
+          <span>{{ order.user.name }}</span>
+        </div>
+      </div>
+
+      @if (order.notes) {
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Notas</div>
+          <span>{{ order.notes }}</span>
+        </div>
+      </div>
+      }
 
       } @else {
-        <div class="row">
-          <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona una orden para ver sus detalles</em>
-          </div>
+      <div class="row">
+        <div class="col" style="padding: 40px; text-align: center;">
+          <em>Selecciona una orden para ver sus detalles</em>
         </div>
+      </div>
       }
     </div>
   </div>

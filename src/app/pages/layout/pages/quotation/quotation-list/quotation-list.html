@@ -10,14 +10,8 @@
     <div class="col">
       <div class="row">
         <div class="col">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar cotizaciones..."
-            [ngModel]="searchTerm()"
-            (ngModelChange)="searchTerm.set($event)"
-            (keyup.enter)="onEnter()"
-            autocomplete="off">
+          <input type="text" class="search-input" placeholder="Buscar cotizaciones..." [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onEnter()" autocomplete="off">
           <div class="search-hint">
             Busca por {{ searchMode() === 'number' ? 'número' : 'usuario' }} • <kbd>Enter</kbd> buscar
           </div>
@@ -25,16 +19,10 @@
 
         <div class="col">
           <div class="toggle-group">
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'number'"
-              (click)="switchSearchMode()">
+            <button class="toggle-btn" [class.active]="searchMode() === 'number'" (click)="switchSearchMode()">
               Número
             </button>
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'username'"
-              (click)="switchSearchMode()">
+            <button class="toggle-btn" [class.active]="searchMode() === 'username'" (click)="switchSearchMode()">
               Usuario
             </button>
           </div>
@@ -44,92 +32,99 @@
       <div class="row">
         <table>
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>NÚMERO</th>
-            <th>ESTADO</th>
-            <th>CLIENTE</th>
-            <th>TOTAL</th>
-            <th></th>
-          </tr>
+            <tr>
+              <th>ID</th>
+              <th>NÚMERO</th>
+              <th>ESTADO</th>
+              <th>CLIENTE</th>
+              <th>TOTAL</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             @if (isLoading()) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>Cargando...</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>Cargando...</em>
+              </td>
+            </tr>
             } @else if (quotations().length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron cotizaciones</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>No se encontraron cotizaciones</em>
+              </td>
+            </tr>
             } @else {
-              @for (quotation of quotations(); track trackByQuotationId($index, quotation)) {
-                <tr
-                  (click)="selectQuotation(quotation)"
-                  [class.selected]="selectedQuotation()?.id === quotation.id">
-                  <td>{{ quotation.id }}</td>
-                  <td>{{ quotation.number }}</td>
-                  <td>{{ quotation.status }}</td>
-                  <td>{{ quotation.customer.name }}</td>
-                  <td>{{ quotation.totals.total | number:'1.2-2' }}</td>
-                  <td>
-                    @if (canShowActions(quotation)) {
-                      <div class="actions-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                             (click)="toggleDropdown(quotation.id, $event)">
-                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                          <g id="SVGRepo_iconCarrier">
-                            <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
-                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                            <path
-                              d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
-                              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                          </g>
-                        </svg>
+            @for (quotation of quotations(); track trackByQuotationId($index, quotation)) {
+            <tr (click)="selectQuotation(quotation)" [class.selected]="selectedQuotation()?.id === quotation.id">
+              <td>{{ quotation.id }}</td>
+              <td>{{ quotation.number }}</td>
+              <td [class.status-confirmed]="quotation.status === 'CONFIRMADA' || quotation.status === 'CONFIRMED'"
+                [class.status-draft]="quotation.status === 'BORRADOR' || quotation.status === 'DRAFT'">
+                {{ quotation.status }}
+              </td>
+              <td>{{ quotation.customer.name }}</td>
+              <td>{{ quotation.totals.total | number:'1.2-2' }}</td>
+              <td>
+                @if (canShowActions(quotation)) {
+                <div class="actions-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    (click)="toggleDropdown(quotation.id, $event)">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path
+                        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </g>
+                  </svg>
 
-                        @if (activeDropdown() === quotation.id) {
-                          <div class="dropdown-menu" (click)="$event.stopPropagation()">
-                            @if (canConfirm(quotation)) {
-                              <button class="dropdown-item confirm" (click)="onConfirmQuotation(quotation)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
-                                          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                  </g>
-                                </svg>
-                                <span>Confirmar cotización</span>
-                              </button>
+                  @if (activeDropdown() === quotation.id) {
+                  <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                    @if (canConfirm(quotation)) {
+                    <button class="dropdown-item confirm" (click)="onConfirmQuotation(quotation)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                      </svg>
+                      <span>Confirmar cotización</span>
+                    </button>
 
-                              <div class="dropdown-divider"></div>
-                            }
-
-                            <button class="dropdown-item print" (click)="onPrintQuotation(quotation)">
-                              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                  <path d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67" stroke="currentColor" stroke-width="1.5"></path>
-                                  <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                  <path d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6" stroke="currentColor" stroke-width="1.5"></path>
-                                  <path d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z" stroke="currentColor" stroke-width="1.5"></path>
-                                </g>
-                              </svg>
-                              <span>Imprimir</span>
-                            </button>
-                          </div>
-                        }
-                      </div>
+                    <div class="dropdown-divider"></div>
                     }
-                  </td>
-                </tr>
-              }
+
+                    <button class="dropdown-item print" (click)="onPrintQuotation(quotation)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path
+                            d="M7.5 7.67V6.7C7.5 4.45 7.5 3.32 8.16 2.66C8.82 2 9.94 2 12.19 2H15.31C17.56 2 18.68 2 19.34 2.66C20 3.32 20 4.45 20 6.7V7.67"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                          <path d="M7.5 13H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <path
+                            d="M18 16.5H19C20.1046 16.5 21 15.6046 21 14.5V11C21 9.89543 20.1046 9 19 9H5C3.89543 9 3 9.89543 3 11V14.5C3 15.6046 3.89543 16.5 5 16.5H6"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                          <path
+                            d="M7.5 16.5H16.5C17.052 16.5 17.5 16.948 17.5 17.5V19.5C17.5 20.052 17.052 20.5 16.5 20.5H7.5C6.948 20.5 6.5 20.052 6.5 19.5V17.5C6.5 16.948 6.948 16.5 7.5 16.5Z"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                        </g>
+                      </svg>
+                      <span>Imprimir</span>
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+              </td>
+            </tr>
+            }
             }
           </tbody>
         </table>
@@ -149,57 +144,57 @@
 
     <div class="col">
       @if (selectedQuotation(); as quotation) {
-        <div class="row">
-          <div class="col">
-            <div class="title">Información de la cotización</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Información de la cotización</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ quotation.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Número</div>
-            <span>{{ quotation.number }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ quotation.id }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Estado</div>
-            <span>{{ quotation.status }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Creada</div>
-            <span>{{ formatBolivianDate(quotation.createdAt) }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Número</div>
+          <span>{{ quotation.number }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Cliente</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Estado</div>
+          <span>{{ quotation.status }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ quotation.customer.name }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Creada</div>
+          <span>{{ formatBolivianDate(quotation.createdAt) }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Detalles</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Cliente</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <table>
-              <thead>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ quotation.customer.name }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Detalles</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table>
+            <thead>
               <tr>
                 <th>COD INT.</th>
                 <th>Producto</th>
@@ -207,68 +202,68 @@
                 <th>Precio</th>
                 <th>Subtotal</th>
               </tr>
-              </thead>
-              <tbody>
-                @for (detail of quotation.details; track detail.id) {
-                  <tr>
-                    <td>{{ detail.product.sku }}</td>
-                    <td>{{ detail.product.name }}</td>
-                    <td>{{ detail.quantity }}</td>
-                    <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
-                    <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody>
+              @for (detail of quotation.details; track detail.id) {
+              <tr>
+                <td>{{ detail.product.sku }}</td>
+                <td>{{ detail.product.name }}</td>
+                <td>{{ detail.quantity }}</td>
+                <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
+                <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Totales</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Totales</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Total</div>
-            <strong>Bs. {{ quotation.totals.total | number:'1.2-2' }}</strong>
-          </div>
-          <div class="col">
-            <div class="subtitle">Items</div>
-            <span>{{ quotation.totals.items }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Total</div>
+          <strong>Bs. {{ quotation.totals.total | number:'1.2-2' }}</strong>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Almacén</div>
-            <span>{{ quotation.warehouse.name }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Items</div>
+          <span>{{ quotation.totals.items }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Usuario</div>
-            <span>{{ quotation.user.name }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Almacén</div>
+          <span>{{ quotation.warehouse.name }}</span>
         </div>
+      </div>
 
-        @if (quotation.notes) {
-          <div class="row">
-            <div class="col">
-              <div class="subtitle">Notas</div>
-              <span>{{ quotation.notes }}</span>
-            </div>
-          </div>
-        }
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Usuario</div>
+          <span>{{ quotation.user.name }}</span>
+        </div>
+      </div>
+
+      @if (quotation.notes) {
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Notas</div>
+          <span>{{ quotation.notes }}</span>
+        </div>
+      </div>
+      }
 
       } @else {
-        <div class="row">
-          <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona una cotización para ver sus detalles</em>
-          </div>
+      <div class="row">
+        <div class="col" style="padding: 40px; text-align: center;">
+          <em>Selecciona una cotización para ver sus detalles</em>
         </div>
+      </div>
       }
     </div>
   </div>
