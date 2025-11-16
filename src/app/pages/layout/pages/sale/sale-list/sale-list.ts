@@ -1,9 +1,9 @@
-import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {SaleService} from '../../../../../modules/sale/services/sale.service';
-import {AuthService} from '../../../../../modules/auth/services/auth.service';
-import {SaleListResponse} from '../../../../../modules/sale/get/models/sale-list-response.model';
+import { Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SaleService } from '../../../../../modules/sale/services/sale.service';
+import { AuthService } from '../../../../../modules/auth/services/auth.service';
+import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-list-response.model';
 
 @Component({
   selector: 'app-sale-list',
@@ -137,7 +137,23 @@ export class SaleList implements OnInit, OnDestroy {
   }
 
   canConfirm(sale: SaleListResponse): boolean {
-    return sale.status === 'BORRADOR' || sale.status === 'DRAFT';
+    const isDraft = sale.status === 'BORRADOR' || sale.status === 'DRAFT';
+    const isPaidInFull = sale.totals.pending === 0;
+    const isCredit = sale.payment.name === 'Credito';
+
+    return isDraft && (isPaidInFull || isCredit);
+  }
+
+  canAddPayment(sale: SaleListResponse): boolean {
+    const hasPendingAmount = sale.totals.pending > 0;
+    const isCredit = sale.payment.name === 'Credito';
+    const isDraft = sale.status === 'BORRADOR' || sale.status === 'DRAFT';
+    const isConfirmed = sale.status === 'CONFIRMADA' || sale.status === 'CONFIRMED';
+
+    if (isDraft) return hasPendingAmount;
+    if (isConfirmed) return isCredit && hasPendingAmount;
+
+    return false;
   }
 
   onConfirmSale(sale: SaleListResponse): void {
@@ -152,7 +168,7 @@ export class SaleList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
+    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
 
     this.saleService.confirmSale(sale.id, payload).subscribe({
       next: (response) => {
@@ -221,9 +237,9 @@ export class SaleList implements OnInit, OnDestroy {
 
   onPrintSale(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
-    
+
     sessionStorage.setItem('sale-print-data', JSON.stringify(sale));
-    
+
     window.open('/sale/reprint', '_blank');
   }
 

@@ -34,11 +34,11 @@
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>NÚMERO</th>
               <th>ESTADO</th>
               <th>CLIENTE</th>
               <th>TOTAL</th>
+              <th>PENDIENTE</th>
               <th></th>
             </tr>
           </thead>
@@ -58,11 +58,13 @@
             } @else {
             @for (sale of sales(); track trackBySaleId($index, sale)) {
             <tr (click)="selectSale(sale)" [class.selected]="selectedSale()?.id === sale.id">
-              <td>{{ sale.id }}</td>
               <td>{{ sale.number }}</td>
               <td>{{ sale.status }}</td>
               <td>{{ sale.customer.name }}</td>
               <td>{{ sale.totals.total | number:'1.2-2' }}</td>
+              <td [class.pending-amount]="sale.totals.pending > 0">
+                {{ sale.totals.pending | number:'1.2-2' }}
+              </td>
               <td>
                 @if (canShowActions(sale)) {
                 <div class="actions-wrapper">
@@ -95,7 +97,9 @@
                     </button>
 
                     <div class="dropdown-divider"></div>
+                    }
 
+                    @if (canAddPayment(sale)) {
                     <button class="dropdown-item payment" (click)="onAddPayment(sale)">
                       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -306,9 +310,22 @@
 
       <div class="row">
         <div class="col">
-          <div class="subtitle">Orden</div>
+          <div class="title">Orden Asociada</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID de Orden</div>
+          <span>{{ sale.order.id }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">Número de Orden</div>
           <span>{{ sale.order.number }}</span>
         </div>
+      </div>
+
+      <div class="row">
         <div class="col">
           <div class="subtitle">Usuario</div>
           <span>{{ sale.user.name }}</span>

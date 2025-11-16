@@ -229,20 +229,22 @@ th {
 }
 
 th:nth-child(1) {
-  width: 80px;
-}
-
-th:nth-child(2) {
   width: 100px;
 }
 
-th:nth-child(3) {
+th:nth-child(2) {
   width: 140px;
 }
 
-th:nth-child(4) {
+th:nth-child(3) {
   width: auto;
   text-align: left;
+  padding: 0 8px;
+}
+
+th:nth-child(4) {
+  width: 120px;
+  text-align: right;
   padding: 0 8px;
 }
 
@@ -296,12 +298,12 @@ td:nth-child(2) {
 }
 
 td:nth-child(3) {
-  text-align: center;
+  text-align: left;
+  overflow: hidden;
 }
 
 td:nth-child(4) {
-  text-align: left;
-  overflow: hidden;
+  text-align: right;
 }
 
 td:nth-child(5) {
@@ -311,6 +313,11 @@ td:nth-child(5) {
 td:nth-child(6) {
   text-align: center;
   overflow: visible;
+}
+
+td.pending-amount {
+  color: #ef4444;
+  font-weight: 600;
 }
 
 td:last-child svg {

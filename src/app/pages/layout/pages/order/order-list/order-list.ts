@@ -1,9 +1,9 @@
-import {Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {OrderService} from '../../../../../modules/order/services/order.service';
-import {OrderListResponse} from '../../../../../modules/order/get/models/order-list-response.model';
-import {AuthService} from '../../../../../modules/auth/services/auth.service';
+import { Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { OrderService } from '../../../../../modules/order/services/order.service';
+import { OrderListResponse } from '../../../../../modules/order/get/models/order-list-response.model';
+import { AuthService } from '../../../../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-order-list',
@@ -137,7 +137,18 @@ export class OrderList implements OnInit, OnDestroy {
   }
 
   canConfirm(order: OrderListResponse): boolean {
-    return order.status === 'BORRADOR' || order.status === 'DRAFT';
+    const isDraft = order.status === 'BORRADOR' || order.status === 'DRAFT';
+    const isPaidInFull = order.totals.pending === 0;
+    const isCredit = order.payment?.name === 'Credito';
+    
+    return isDraft && (isPaidInFull || isCredit);
+  }
+
+  canAddPayment(order: OrderListResponse): boolean {
+    const isDraft = order.status === 'BORRADOR' || order.status === 'DRAFT';
+    const hasPendingAmount = order.totals.pending > 0;
+    
+    return isDraft && hasPendingAmount;
   }
 
   onConfirmOrder(order: OrderListResponse): void {
