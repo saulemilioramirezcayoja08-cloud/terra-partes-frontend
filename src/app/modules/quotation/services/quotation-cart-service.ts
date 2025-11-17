@@ -37,10 +37,10 @@ export class QuotationCartService {
       customer: config.customer,
       warehouse: config.warehouse,
       user: {
-        id: user?.id || 1,
-        username: user?.username || 'system',
-        email: user?.email || 'system@system.com',
-        name: user?.name || 'System User'
+        id: user?.id || 0,
+        username: user?.username || '',
+        email: user?.email || '',
+        name: user?.name || ''
       } as User,
       details: [],
       totals: {
@@ -58,6 +58,11 @@ export class QuotationCartService {
 
   updateWarehouse(warehouse: Warehouse): void {
     this._cart.update(cart => ({...cart, warehouse}));
+    this.saveToStorage();
+  }
+
+  updateUser(user: User): void {
+    this._cart.update(cart => ({...cart, user}));
     this.saveToStorage();
   }
 

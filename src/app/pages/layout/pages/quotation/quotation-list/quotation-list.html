@@ -83,6 +83,20 @@
 
                   @if (activeDropdown() === quotation.id) {
                   <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                    <button class="dropdown-item create-order" (click)="onCreateOrderFromQuotation(quotation)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        </g>
+                      </svg>
+                      <span>Crear orden</span>
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+
                     @if (canConfirm(quotation)) {
                     <button class="dropdown-item confirm" (click)="onConfirmQuotation(quotation)">
                       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

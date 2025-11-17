@@ -11,6 +11,8 @@ import { CustomerListResponse } from '../../../../../modules/customer/get/models
 import { WarehouseListResponse } from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
 import { ErrorResponse } from '../../../../../core/models/error-response.model';
 import { Detail } from '../../../../../modules/quotation/get/models/quotation-preview.model';
+import { UserService } from '../../../../../modules/auth/services/user-service';
+import { UserListResponse } from '../../../../../modules/auth/get/models/user-list-response.model';
 
 @Component({
   selector: 'app-quotation-create',
@@ -23,6 +25,7 @@ export class QuotationCreate implements OnInit, OnDestroy {
   private readonly quotationService = inject(QuotationService);
   private readonly customerService = inject(CustomerService);
   private readonly warehouseService = inject(WarehouseService);
+  private readonly userService = inject(UserService);
   private readonly errorHandler = inject(ErrorHandlerService);
   private readonly platformId = inject(PLATFORM_ID);
   readonly router = inject(Router);
@@ -34,12 +37,16 @@ export class QuotationCreate implements OnInit, OnDestroy {
 
   readonly customers = signal<CustomerListResponse[]>([]);
   readonly warehouses = signal<WarehouseListResponse[]>([]);
+  readonly users = signal<UserListResponse[]>([]);
 
   readonly showCustomerDropdown = signal(false);
   readonly customerSearch = signal('');
 
   readonly showWarehouseDropdown = signal(false);
   readonly warehouseSearch = signal('');
+
+  readonly showUserDropdown = signal(false);
+  readonly userSearch = signal('');
 
   readonly filteredCustomers = computed(() => {
     const search = this.customerSearch().toLowerCase().trim();
@@ -58,16 +65,26 @@ export class QuotationCreate implements OnInit, OnDestroy {
     );
   });
 
+  readonly filteredUsers = computed(() => {
+    const search = this.userSearch().toLowerCase().trim();
+    if (!search) return this.users();
+    return this.users().filter(u =>
+      u.name.toLowerCase().includes(search) ||
+      u.username.toLowerCase().includes(search)
+    );
+  });
+
   notesModel = signal('');
 
   readonly missingData = computed(() => ({
     customer: this.cart().customer.id === 0,
-    warehouse: this.cart().warehouse.id === 0
+    warehouse: this.cart().warehouse.id === 0,
+    user: this.cart().user.id === 0
   }));
 
   readonly hasWarnings = computed(() => {
     const m = this.missingData();
-    return m.customer || m.warehouse;
+    return m.customer || m.warehouse || m.user;
   });
 
   readonly warningMessage = computed(() => {
@@ -75,19 +92,22 @@ export class QuotationCreate implements OnInit, OnDestroy {
     const warns: string[] = [];
     if (m.customer) warns.push('cliente');
     if (m.warehouse) warns.push('almacén');
+    if (m.user) warns.push('usuario');
     return warns.length ? `Falta seleccionar: ${warns.join(', ')}. Puedes agregar productos y completar estos datos después.` : '';
   });
 
   readonly canSave = computed(() =>
     this.itemCount() > 0 &&
     this.cart().customer.id > 0 &&
-    this.cart().warehouse.id > 0
+    this.cart().warehouse.id > 0 &&
+    this.cart().user.id > 0
   );
 
   readonly saveBlockReason = computed(() => {
     if (this.itemCount() === 0) return 'Agrega al menos un producto';
     if (this.cart().customer.id === 0) return 'Selecciona un cliente';
     if (this.cart().warehouse.id === 0) return 'Selecciona un almacén';
+    if (this.cart().user.id === 0) return 'Selecciona un usuario';
     return '';
   });
 
@@ -126,6 +146,7 @@ export class QuotationCreate implements OnInit, OnDestroy {
     this.clickListener = () => {
       this.showCustomerDropdown.set(false);
       this.showWarehouseDropdown.set(false);
+      this.showUserDropdown.set(false);
     };
     document.addEventListener('click', this.clickListener);
   }
@@ -139,7 +160,7 @@ export class QuotationCreate implements OnInit, OnDestroy {
     }
 
     if (this.itemCount() > 0) {
-      if (cart.customer.id === 0 || cart.warehouse.id === 0) {
+      if (cart.customer.id === 0 || cart.warehouse.id === 0 || cart.user.id === 0) {
         console.warn('Hay productos pero faltan datos maestros');
       }
       return;
@@ -188,6 +209,17 @@ export class QuotationCreate implements OnInit, OnDestroy {
         console.error(this.errorHandler.handleError(err, 'Error al cargar almacenes'));
       }
     });
+
+    this.userService.getUsers({ size: 1000 }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.users.set(response.data.content);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar usuarios'));
+      }
+    });
   }
 
   toggleCustomerDropdown(event: Event): void {
@@ -225,6 +257,24 @@ export class QuotationCreate implements OnInit, OnDestroy {
     });
     this.showWarehouseDropdown.set(false);
     this.warehouseSearch.set('');
+  }
+
+  toggleUserDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showUserDropdown.update(v => !v);
+    this.userSearch.set('');
+  }
+
+  selectUserFromDropdown(user: UserListResponse, event: Event): void {
+    event.stopPropagation();
+    this.quotationCartService.updateUser({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name
+    });
+    this.showUserDropdown.set(false);
+    this.userSearch.set('');
   }
 
   updateDetailQuantity(productId: number, value: number): void {
@@ -358,6 +408,10 @@ export class QuotationCreate implements OnInit, OnDestroy {
             e.preventDefault();
             this.selectWarehouse();
             break;
+          case 'U':
+            e.preventDefault();
+            this.selectUser();
+            break;
           case 'L':
             e.preventDefault();
             this.clearAll();
@@ -416,6 +470,29 @@ export class QuotationCreate implements OnInit, OnDestroy {
     }
   }
 
+  private selectUser(): void {
+    if (this.users().length === 0) {
+      alert('Cargando usuarios... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del usuario:');
+    if (!id) return;
+
+    const user = this.users().find(u => u.id === parseInt(id));
+    if (user) {
+      this.quotationCartService.updateUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name
+      });
+      alert(`Usuario actualizado: ${user.name}`);
+    } else {
+      alert('Usuario no encontrado. Verifica el ID.');
+    }
+  }
+
   trackByProductId(_: number, detail: Detail): number {
     return detail.productId;
   }
@@ -426,5 +503,9 @@ export class QuotationCreate implements OnInit, OnDestroy {
 
   trackByWarehouseId(_: number, warehouse: WarehouseListResponse): number {
     return warehouse.id;
+  }
+
+  trackByUserId(_: number, user: UserListResponse): number {
+    return user.id;
   }
 }

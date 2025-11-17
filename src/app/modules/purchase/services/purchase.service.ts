@@ -9,10 +9,10 @@ import {CreatePurchaseRequest} from '../post/models/create-purchase-request.mode
 import {CreatePurchaseResponse} from '../post/models/create-purchase-response.model';
 import {ConfirmPurchaseRequest} from '../put/models/confirm-purchase-request.model';
 import {ConfirmPurchaseResponse} from '../put/models/confirm-purchase-response.model';
-import { CreatePurchasePaymentRequest } from '../purchase/post/models/create-purchase-payment-request.model';
 import { CreatePurchasePaymentResponse } from '../post/models/create-purchase-payment-response.model';
 import { PurchaseConfirmedListResponse } from '../get/models/purchase-confirmed-list-response.model';
 import { PurchaseDraftListResponse } from '../get/models/purchase-draft-list-response.model';
+import { CreatePurchasePaymentRequest } from '../post/models/create-purchase-payment-request.model';
 
 @Injectable({
   providedIn: 'root'

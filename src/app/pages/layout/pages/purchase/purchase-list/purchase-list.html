@@ -10,14 +10,8 @@
     <div class="col">
       <div class="row">
         <div class="col">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar compras..."
-            [ngModel]="searchTerm()"
-            (ngModelChange)="searchTerm.set($event)"
-            (keyup.enter)="onEnter()"
-            autocomplete="off">
+          <input type="text" class="search-input" placeholder="Buscar compras..." [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)" (keyup.enter)="onEnter()" autocomplete="off">
           <div class="search-hint">
             Busca por {{ searchMode() === 'number' ? 'número' : 'usuario' }} • <kbd>Enter</kbd> buscar
           </div>
@@ -25,15 +19,10 @@
 
         <div class="col">
           <div class="toggle-group">
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'number'"
-              (click)="toggleSearchMode('number')">
+            <button class="toggle-btn" [class.active]="searchMode() === 'number'" (click)="toggleSearchMode('number')">
               Número
             </button>
-            <button
-              class="toggle-btn"
-              [class.active]="searchMode() === 'username'"
+            <button class="toggle-btn" [class.active]="searchMode() === 'username'"
               (click)="toggleSearchMode('username')">
               Usuario
             </button>
@@ -44,99 +33,103 @@
       <div class="row">
         <table>
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>NÚMERO</th>
-            <th>ESTADO</th>
-            <th>PROVEEDOR</th>
-            <th>TOTAL</th>
-            <th></th>
-          </tr>
+            <tr>
+              <th>NÚMERO</th>
+              <th>ESTADO</th>
+              <th>PROVEEDOR</th>
+              <th>TOTAL</th>
+              <th>PENDIENTE</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             @if (isLoading()) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>Cargando...</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>Cargando...</em>
+              </td>
+            </tr>
             } @else if (purchases().length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                  <em>No se encontraron compras</em>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                <em>No se encontraron compras</em>
+              </td>
+            </tr>
             } @else {
-              @for (purchase of purchases(); track trackByPurchaseId($index, purchase)) {
-                <tr
-                  (click)="selectPurchase(purchase)"
-                  [class.selected]="selectedPurchase()?.id === purchase.id">
-                  <td>{{ purchase.id }}</td>
-                  <td>{{ purchase.number }}</td>
-                  <td>{{ purchase.status }}</td>
-                  <td>{{ purchase.supplier.name }}</td>
-                  <td>{{ purchase.totals.total | number:'1.2-2' }}</td>
-                  <td>
-                    @if (canShowActions(purchase)) {
-                      <div class="actions-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                             (click)="toggleDropdown(purchase.id, $event)">
-                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                          <g id="SVGRepo_iconCarrier">
-                            <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
-                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                            <path
-                              d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
-                              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                          </g>
-                        </svg>
+            @for (purchase of purchases(); track trackByPurchaseId($index, purchase)) {
+            <tr (click)="selectPurchase(purchase)" [class.selected]="selectedPurchase()?.id === purchase.id">
+              <td>{{ purchase.number }}</td>
+              <td [class.status-confirmed]="purchase.status === 'CONFIRMADA' || purchase.status === 'CONFIRMED'"
+                [class.status-draft]="purchase.status === 'BORRADOR' || purchase.status === 'DRAFT'"
+                [class.status-cancelled]="purchase.status === 'CANCELADA' || purchase.status === 'CANCELLED'">
+                {{ purchase.status }}
+              </td>
+              <td>{{ purchase.supplier.name }}</td>
+              <td>{{ purchase.totals.total | number:'1.2-2' }}</td>
+              <td [class.pending-amount]="purchase.totals.pending > 0">
+                {{ purchase.totals.pending | number:'1.2-2' }}
+              </td>
+              <td>
+                @if (canShowActions(purchase)) {
+                <div class="actions-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    (click)="toggleDropdown(purchase.id, $event)">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path d="M13 11L22 2M22 2H16.6562M22 2V7.34375" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path
+                        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2.49073 19.5618 2.16444 18.1934 2.0551 16"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </g>
+                  </svg>
 
-                        @if (activeDropdown() === purchase.id) {
-                          <div class="dropdown-menu" (click)="$event.stopPropagation()">
-                            @if (canConfirm(purchase)) {
-                              <button class="dropdown-item confirm" (click)="onConfirmPurchase(purchase)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
-                                          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                  </g>
-                                </svg>
-                                <span>Confirmar compra</span>
-                              </button>
+                  @if (activeDropdown() === purchase.id) {
+                  <div class="dropdown-menu" (click)="$event.stopPropagation()">
+                    @if (canConfirm(purchase)) {
+                    <button class="dropdown-item confirm" (click)="onConfirmPurchase(purchase)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M7 12.9L10.1429 16.5L12.1071 14.25M18 7.5L14.0714 12" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                      </svg>
+                      <span>Confirmar compra</span>
+                    </button>
 
-                              <div class="dropdown-divider"></div>
-                            }
-
-                            @if (canAddPayment(purchase)) {
-                              <button class="dropdown-item payment" (click)="onAddPayment(purchase)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path d="M6 8H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                          stroke-linejoin="round"></path>
-                                    <path
-                                      d="M22 10.5C22 10.4226 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.5774 22 13.5"
-                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                    <circle cx="18" cy="12" r="1" fill="#1C274C"></circle>
-                                    <path
-                                      d="M13 4C16.7712 4 18.6569 4 19.8284 5.17157C20.6366 5.97975 20.8873 7.1277 20.965 9M10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15M9 4.00093C5.8857 4.01004 4.23467 4.10848 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C3.82475 19.4816 4.69989 19.7706 6 19.8985"
-                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                  </g>
-                                </svg>
-                                <span>Registrar pago</span>
-                              </button>
-                            }
-                          </div>
-                        }
-                      </div>
+                    <div class="dropdown-divider"></div>
                     }
-                  </td>
-                </tr>
-              }
+
+                    @if (canAddPayment(purchase)) {
+                    <button class="dropdown-item payment" (click)="onAddPayment(purchase)">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <path d="M6 8H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                          <path
+                            d="M22 10.5C22 10.4226 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.5774 22 13.5"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <circle cx="18" cy="12" r="1" fill="#1C274C"></circle>
+                          <path
+                            d="M13 4C16.7712 4 18.6569 4 19.8284 5.17157C20.6366 5.97975 20.8873 7.1277 20.965 9M10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15M9 4.00093C5.8857 4.01004 4.23467 4.10848 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C3.82475 19.4816 4.69989 19.7706 6 19.8985"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        </g>
+                      </svg>
+                      <span>Registrar pago</span>
+                    </button>
+                    }
+                  </div>
+                  }
+                </div>
+                }
+              </td>
+            </tr>
+            }
             }
           </tbody>
         </table>
@@ -156,158 +149,158 @@
 
     <div class="col">
       @if (selectedPurchase(); as purchase) {
-        <div class="row">
-          <div class="col">
-            <div class="title">Información de la compra</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Información de la compra</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">ID</div>
-            <span>{{ purchase.id }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Número</div>
-            <span>{{ purchase.number }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">ID</div>
+          <span>{{ purchase.id }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Estado</div>
-            <span>{{ purchase.status }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Moneda</div>
-            <span>{{ purchase.currency }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Número</div>
+          <span>{{ purchase.number }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Creada</div>
-            <span>{{ formatBolivianDate(purchase.createdAt) }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Actualizada</div>
-            <span>{{ formatBolivianDate(purchase.updatedAt) }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Estado</div>
+          <span>{{ purchase.status }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="title">Proveedor</div>
-          </div>
+        <div class="col">
+          <div class="subtitle">Moneda</div>
+          <span>{{ purchase.currency }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Nombre</div>
-            <span>{{ purchase.supplier.name }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">NIT</div>
-            <span>{{ purchase.supplier.taxId }}</span>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Creada</div>
+          <span>{{ formatBolivianDate(purchase.createdAt) }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Teléfono</div>
-            <span>{{ purchase.supplier.phone }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Actualizada</div>
+          <span>{{ formatBolivianDate(purchase.updatedAt) }}</span>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Detalles</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Proveedor</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <table>
-              <thead>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Nombre</div>
+          <span>{{ purchase.supplier.name }}</span>
+        </div>
+        <div class="col">
+          <div class="subtitle">NIT</div>
+          <span>{{ purchase.supplier.taxId }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Teléfono</div>
+          <span>{{ purchase.supplier.phone }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">Detalles</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table>
+            <thead>
               <tr>
-                <th>SKU</th>
+                <th>COD INT.</th>
                 <th>Producto</th>
                 <th>Cant.</th>
                 <th>Precio</th>
                 <th>Subtotal</th>
               </tr>
-              </thead>
-              <tbody>
-                @for (detail of purchase.details; track detail.id) {
-                  <tr>
-                    <td>{{ detail.product.sku }}</td>
-                    <td>{{ detail.product.name }}</td>
-                    <td>{{ detail.quantity }}</td>
-                    <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
-                    <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody>
+              @for (detail of purchase.details; track detail.id) {
+              <tr>
+                <td>{{ detail.product.sku }}</td>
+                <td>{{ detail.product.name }}</td>
+                <td>{{ detail.quantity }}</td>
+                <td>Bs. {{ detail.price | number:'1.2-2' }}</td>
+                <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="title">Totales</div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="title">Totales</div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Total</div>
-            <strong>Bs. {{ purchase.totals.total | number:'1.2-2' }}</strong>
-          </div>
-          <div class="col">
-            <div class="subtitle">Pagado</div>
-            <span>Bs. {{ purchase.totals.payment | number:'1.2-2' }}</span>
-          </div>
-          <div class="col">
-            <div class="subtitle">Pendiente</div>
-            <mark class="positive">Bs. {{ purchase.totals.pending | number:'1.2-2' }}</mark>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Total</div>
+          <strong>Bs. {{ purchase.totals.total | number:'1.2-2' }}</strong>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Almacén</div>
-            <span>{{ purchase.warehouse.name }}</span>
-          </div>
-          @if (purchase.payment) {
-            <div class="col">
-              <div class="subtitle">Método de pago</div>
-              <span>{{ purchase.payment.name }}</span>
-            </div>
-          }
+        <div class="col">
+          <div class="subtitle">Pagado</div>
+          <span>Bs. {{ purchase.totals.payment | number:'1.2-2' }}</span>
         </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="subtitle">Usuario</div>
-            <span>{{ purchase.user.name }}</span>
-          </div>
+        <div class="col">
+          <div class="subtitle">Pendiente</div>
+          <mark class="positive">Bs. {{ purchase.totals.pending | number:'1.2-2' }}</mark>
         </div>
+      </div>
 
-        @if (purchase.notes) {
-          <div class="row">
-            <div class="col">
-              <div class="subtitle">Notas</div>
-              <span>{{ purchase.notes }}</span>
-            </div>
-          </div>
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Almacén</div>
+          <span>{{ purchase.warehouse.name }}</span>
+        </div>
+        @if (purchase.payment) {
+        <div class="col">
+          <div class="subtitle">Método de pago</div>
+          <span>{{ purchase.payment.name }}</span>
+        </div>
         }
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Usuario</div>
+          <span>{{ purchase.user.name }}</span>
+        </div>
+      </div>
+
+      @if (purchase.notes) {
+      <div class="row">
+        <div class="col">
+          <div class="subtitle">Notas</div>
+          <span>{{ purchase.notes }}</span>
+        </div>
+      </div>
+      }
 
       } @else {
-        <div class="row">
-          <div class="col" style="padding: 40px; text-align: center;">
-            <em>Selecciona una compra para ver sus detalles</em>
-          </div>
+      <div class="row">
+        <div class="col" style="padding: 40px; text-align: center;">
+          <em>Selecciona una compra para ver sus detalles</em>
         </div>
+      </div>
       }
     </div>
   </div>

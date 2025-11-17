@@ -110,9 +110,36 @@
           </div>
 
           <label>
-            <span class="label-text">Moneda</span>
+            <span class="label-text">Usuario</span>
+            <kbd>Ctrl+Shift+U</kbd>
           </label>
-          <input type="text" class="data-input" [value]="cart().currency" disabled>
+          <div class="input-wrapper">
+            <input type="text" class="data-input clickable"
+              [value]="cart().user.id ? cart().user.name : 'Sin seleccionar'" readonly
+              [class.empty]="cart().user.id === 0" (click)="toggleUserDropdown($event)">
+
+            @if (showUserDropdown()) {
+            <div class="dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="dropdown-search">
+                <input type="text" class="search-input" placeholder="Buscar usuario..." [ngModel]="userSearch()"
+                  (ngModelChange)="userSearch.set($event)" (click)="$event.stopPropagation()">
+              </div>
+
+              <div class="dropdown-items">
+                @if (filteredUsers().length === 0) {
+                <div class="dropdown-empty">No se encontraron usuarios</div>
+                }
+
+                @for (user of filteredUsers(); track trackByUserId($index, user)) {
+                <div class="dropdown-item" (click)="selectUserFromDropdown(user, $event)">
+                  <span class="customer-name">{{ user.name }}</span>
+                  <span class="customer-detail">Usuario: {{ user.username }}</span>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
         </div>
       </div>
 

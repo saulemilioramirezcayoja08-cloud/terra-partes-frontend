@@ -1,6 +1,6 @@
-import {computed, inject, Injectable, PLATFORM_ID, signal} from '@angular/core';
-import {AuthService} from '../../auth/services/auth.service';
-import {isPlatformBrowser} from '@angular/common';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { AuthService } from '../../auth/services/auth.service';
+import { isPlatformBrowser } from '@angular/common';
 import {
   Detail,
   Payment,
@@ -10,8 +10,8 @@ import {
   User,
   Warehouse
 } from '../get/models/purchase-preview.model';
-import {CreatePurchaseRequest} from '../post/models/create-purchase-request.model';
-import {CreatePurchaseResponse} from '../post/models/create-purchase-response.model';
+import { CreatePurchaseRequest } from '../post/models/create-purchase-request.model';
+import { CreatePurchaseResponse } from '../post/models/create-purchase-response.model';
 
 const STORAGE_KEY = 'purchase_preview';
 const CURRENT_PURCHASE_KEY = 'purchase_current';
@@ -48,29 +48,34 @@ export class PurchaseCartService {
       warehouse: config.warehouse,
       payment: config.payment,
       user: {
-        id: user?.id || 1,
-        username: user?.username || 'system',
-        email: user?.email || 'system@system.com',
-        name: user?.name || 'System User'
+        id: user?.id || 0,
+        username: user?.username || '',
+        email: user?.email || '',
+        name: user?.name || ''
       } as User,
       details: [],
-      totals: {total: 0, items: 0} as Totals
+      totals: { total: 0, items: 0 } as Totals
     });
     this.saveToStorage();
   }
 
   updateSupplier(supplier: Supplier): void {
-    this._cart.update(cart => ({...cart, supplier}));
+    this._cart.update(cart => ({ ...cart, supplier }));
     this.saveToStorage();
   }
 
   updateWarehouse(warehouse: Warehouse): void {
-    this._cart.update(cart => ({...cart, warehouse}));
+    this._cart.update(cart => ({ ...cart, warehouse }));
     this.saveToStorage();
   }
 
   updatePaymentMethod(payment: Payment): void {
-    this._cart.update(cart => ({...cart, payment}));
+    this._cart.update(cart => ({ ...cart, payment }));
+    this.saveToStorage();
+  }
+
+  updateUser(user: User): void {
+    this._cart.update(cart => ({ ...cart, user }));
     this.saveToStorage();
   }
 
@@ -80,7 +85,7 @@ export class PurchaseCartService {
 
     this._cart.update(cart => {
       const newDetails = [...cart.details, detail];
-      return {...cart, details: newDetails, totals: this.calculateTotals(newDetails)};
+      return { ...cart, details: newDetails, totals: this.calculateTotals(newDetails) };
     });
     this.saveToStorage();
   }
@@ -98,7 +103,7 @@ export class PurchaseCartService {
           }
           : d
       );
-      return {...cart, details: newDetails, totals: this.calculateTotals(newDetails)};
+      return { ...cart, details: newDetails, totals: this.calculateTotals(newDetails) };
     });
     this.saveToStorage();
   }
@@ -106,13 +111,13 @@ export class PurchaseCartService {
   removeDetail(productId: number): void {
     this._cart.update(cart => {
       const newDetails = cart.details.filter(d => d.productId !== productId);
-      return {...cart, details: newDetails, totals: this.calculateTotals(newDetails)};
+      return { ...cart, details: newDetails, totals: this.calculateTotals(newDetails) };
     });
     this.saveToStorage();
   }
 
   updateNotes(notes: string): void {
-    this._cart.update(cart => ({...cart, notes}));
+    this._cart.update(cart => ({ ...cart, notes }));
     this.saveToStorage();
   }
 
@@ -123,7 +128,6 @@ export class PurchaseCartService {
 
   toApiRequest(): CreatePurchaseRequest {
     const cart = this._cart();
-
 
     if (!cart.payment || !cart.payment.id) {
       throw new Error('PAYMENT_REQUIRED');
@@ -170,7 +174,7 @@ export class PurchaseCartService {
 
   private calculateTotals(details: Detail[]): Totals {
     const total = details.reduce((sum, d) => sum + d.subtotal, 0);
-    return {total, items: details.length};
+    return { total, items: details.length };
   }
 
   private loadFromStorage(): PurchasePreview {
@@ -182,7 +186,7 @@ export class PurchaseCartService {
     try {
       const parsed: PurchasePreview = JSON.parse(stored);
       if (!('payment' in parsed) || !parsed.payment) {
-        (parsed as any).payment = {id: 0, code: '', name: ''} as Payment;
+        (parsed as any).payment = { id: 0, code: '', name: '' } as Payment;
       }
       return parsed;
     } catch {
@@ -203,12 +207,12 @@ export class PurchaseCartService {
       status: 'BORRADOR',
       currency: '',
       notes: '',
-      supplier: {id: 0, name: '', address: '', taxId: '', phone: ''},
-      warehouse: {id: 0, code: '', name: '', address: ''},
-      payment: {id: 0, code: '', name: ''},
-      user: {id: 0, username: '', email: '', name: ''},
+      supplier: { id: 0, name: '', address: '', taxId: '', phone: '' },
+      warehouse: { id: 0, code: '', name: '', address: '' },
+      payment: { id: 0, code: '', name: '' },
+      user: { id: 0, username: '', email: '', name: '' },
       details: [],
-      totals: {total: 0, items: 0}
+      totals: { total: 0, items: 0 }
     };
   }
 }

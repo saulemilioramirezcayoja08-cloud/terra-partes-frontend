@@ -1,18 +1,20 @@
-import {Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {PurchaseCartService} from '../../../../../modules/purchase/services/purchase-cart-service';
-import {PurchaseService} from '../../../../../modules/purchase/services/purchase.service';
-import {SupplierService} from '../../../../../modules/supplier/services/supplier.service';
-import {WarehouseService} from '../../../../../modules/warehouse/services/warehouse.service';
-import {ErrorHandlerService} from '../../../../../core/services/error-handler.service';
-import {Router} from '@angular/router';
-import {SupplierListResponse} from '../../../../../modules/supplier/get/models/supplier-list-response.model';
-import {WarehouseListResponse} from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
-import {ErrorResponse} from '../../../../../core/models/error-response.model';
-import {Detail, Payment} from '../../../../../modules/order/get/models/order-preview.model';
-import {PaymentService} from '../../../../../modules/payment/services/payment.service';
-import {PaymentListResponse} from '../../../../../modules/payment/get/models/payment-list-response.model';
+import { Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PurchaseCartService } from '../../../../../modules/purchase/services/purchase-cart-service';
+import { PurchaseService } from '../../../../../modules/purchase/services/purchase.service';
+import { SupplierService } from '../../../../../modules/supplier/services/supplier.service';
+import { WarehouseService } from '../../../../../modules/warehouse/services/warehouse.service';
+import { ErrorHandlerService } from '../../../../../core/services/error-handler.service';
+import { Router } from '@angular/router';
+import { SupplierListResponse } from '../../../../../modules/supplier/get/models/supplier-list-response.model';
+import { WarehouseListResponse } from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
+import { ErrorResponse } from '../../../../../core/models/error-response.model';
+import { Detail, Payment } from '../../../../../modules/order/get/models/order-preview.model';
+import { PaymentService } from '../../../../../modules/payment/services/payment.service';
+import { PaymentListResponse } from '../../../../../modules/payment/get/models/payment-list-response.model';
+import { UserService } from '../../../../../modules/auth/services/user-service';
+import { UserListResponse } from '../../../../../modules/auth/get/models/user-list-response.model';
 
 @Component({
   selector: 'app-purchase-create',
@@ -26,6 +28,7 @@ export class PurchaseCreate implements OnInit, OnDestroy {
   private readonly supplierService = inject(SupplierService);
   private readonly warehouseService = inject(WarehouseService);
   private readonly paymentService = inject(PaymentService);
+  private readonly userService = inject(UserService);
   private readonly errorHandler = inject(ErrorHandlerService);
   private readonly platformId = inject(PLATFORM_ID);
   readonly router = inject(Router);
@@ -38,18 +41,68 @@ export class PurchaseCreate implements OnInit, OnDestroy {
   readonly suppliers = signal<SupplierListResponse[]>([]);
   readonly warehouses = signal<WarehouseListResponse[]>([]);
   readonly payments = signal<PaymentListResponse[]>([]);
+  readonly users = signal<UserListResponse[]>([]);
+
+  readonly showSupplierDropdown = signal(false);
+  readonly supplierSearch = signal('');
+
+  readonly showWarehouseDropdown = signal(false);
+  readonly warehouseSearch = signal('');
+
+  readonly showPaymentDropdown = signal(false);
+  readonly paymentSearch = signal('');
+
+  readonly showUserDropdown = signal(false);
+  readonly userSearch = signal('');
+
+  readonly filteredSuppliers = computed(() => {
+    const search = this.supplierSearch().toLowerCase().trim();
+    if (!search) return this.suppliers();
+    return this.suppliers().filter(s =>
+      s.name.toLowerCase().includes(search) ||
+      s.taxId.toLowerCase().includes(search)
+    );
+  });
+
+  readonly filteredWarehouses = computed(() => {
+    const search = this.warehouseSearch().toLowerCase().trim();
+    if (!search) return this.warehouses();
+    return this.warehouses().filter(w =>
+      w.name.toLowerCase().includes(search) ||
+      w.code.toLowerCase().includes(search)
+    );
+  });
+
+  readonly filteredPayments = computed(() => {
+    const search = this.paymentSearch().toLowerCase().trim();
+    if (!search) return this.payments();
+    return this.payments().filter(p =>
+      p.name.toLowerCase().includes(search) ||
+      p.code.toLowerCase().includes(search)
+    );
+  });
+
+  readonly filteredUsers = computed(() => {
+    const search = this.userSearch().toLowerCase().trim();
+    if (!search) return this.users();
+    return this.users().filter(u =>
+      u.name.toLowerCase().includes(search) ||
+      u.username.toLowerCase().includes(search)
+    );
+  });
 
   notesModel = signal('');
 
   readonly missingData = computed(() => ({
     supplier: this.cart().supplier.id === 0,
     warehouse: this.cart().warehouse.id === 0,
-    payment: !this.cart().payment || this.cart().payment.id === 0
+    payment: !this.cart().payment || this.cart().payment.id === 0,
+    user: this.cart().user.id === 0
   }));
 
   readonly hasWarnings = computed(() => {
     const m = this.missingData();
-    return m.supplier || m.warehouse || m.payment;
+    return m.supplier || m.warehouse || m.payment || m.user;
   });
 
   readonly warningMessage = computed(() => {
@@ -58,6 +111,7 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     if (m.supplier) warns.push('proveedor');
     if (m.warehouse) warns.push('almacén');
     if (m.payment) warns.push('método de pago');
+    if (m.user) warns.push('usuario');
     return warns.length ? `Falta seleccionar: ${warns.join(', ')}. Puedes agregar productos y completar estos datos después.` : '';
   });
 
@@ -65,7 +119,8 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     this.itemCount() > 0 &&
     this.cart().supplier.id > 0 &&
     this.cart().warehouse.id > 0 &&
-    !!this.cart().payment && this.cart().payment.id > 0
+    !!this.cart().payment && this.cart().payment.id > 0 &&
+    this.cart().user.id > 0
   );
 
   readonly saveBlockReason = computed(() => {
@@ -73,10 +128,12 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     if (this.cart().supplier.id === 0) return 'Selecciona un proveedor';
     if (this.cart().warehouse.id === 0) return 'Selecciona un almacén';
     if (!this.cart().payment || this.cart().payment.id === 0) return 'Selecciona un método de pago';
+    if (this.cart().user.id === 0) return 'Selecciona un usuario';
     return '';
   });
 
   private keyboardListener?: (e: KeyboardEvent) => void;
+  private clickListener?: () => void;
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor() {
@@ -91,13 +148,29 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     if (this.isBrowser) {
       this.setupKeyboardShortcuts();
       this.showWarningsIfNeeded();
+      this.setupClickListener();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.isBrowser && this.keyboardListener) {
-      document.removeEventListener('keydown', this.keyboardListener);
+    if (this.isBrowser) {
+      if (this.keyboardListener) {
+        document.removeEventListener('keydown', this.keyboardListener);
+      }
+      if (this.clickListener) {
+        document.removeEventListener('click', this.clickListener);
+      }
     }
+  }
+
+  private setupClickListener(): void {
+    this.clickListener = () => {
+      this.showSupplierDropdown.set(false);
+      this.showWarehouseDropdown.set(false);
+      this.showPaymentDropdown.set(false);
+      this.showUserDropdown.set(false);
+    };
+    document.addEventListener('click', this.clickListener);
   }
 
   private ensureCartReady(): void {
@@ -109,13 +182,13 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     }
 
     if (this.itemCount() > 0) {
-      if (cart.supplier.id === 0 || cart.warehouse.id === 0 || !cart.payment || cart.payment.id === 0) {
+      if (cart.supplier.id === 0 || cart.warehouse.id === 0 || !cart.payment || cart.payment.id === 0 || cart.user.id === 0) {
         console.warn('Hay productos pero faltan datos maestros');
       }
       return;
     }
 
-    if (cart.supplier.id === 0 || cart.warehouse.id === 0 || !cart.payment || cart.payment.id === 0) {
+    if (cart.supplier.id === 0 || cart.warehouse.id === 0 || !cart.payment || cart.payment.id === 0 || cart.user.id === 0) {
       this.initializeCart();
     }
   }
@@ -170,6 +243,89 @@ export class PurchaseCreate implements OnInit, OnDestroy {
         console.error(this.errorHandler.handleError(err, 'Error al cargar métodos de pago'));
       }
     });
+
+    this.userService.getUsers({ size: 1000 }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.users.set(response.data.content);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar usuarios'));
+      }
+    });
+  }
+
+  toggleSupplierDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showSupplierDropdown.update(v => !v);
+    this.supplierSearch.set('');
+  }
+
+  selectSupplierFromDropdown(supplier: SupplierListResponse, event: Event): void {
+    event.stopPropagation();
+    this.purchaseCartService.updateSupplier({
+      id: supplier.id,
+      name: supplier.name,
+      address: supplier.address,
+      taxId: supplier.taxId,
+      phone: supplier.phone
+    });
+    this.showSupplierDropdown.set(false);
+    this.supplierSearch.set('');
+  }
+
+  toggleWarehouseDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showWarehouseDropdown.update(v => !v);
+    this.warehouseSearch.set('');
+  }
+
+  selectWarehouseFromDropdown(warehouse: WarehouseListResponse, event: Event): void {
+    event.stopPropagation();
+    this.purchaseCartService.updateWarehouse({
+      id: warehouse.id,
+      code: warehouse.code,
+      name: warehouse.name,
+      address: warehouse.address
+    });
+    this.showWarehouseDropdown.set(false);
+    this.warehouseSearch.set('');
+  }
+
+  togglePaymentDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showPaymentDropdown.update(v => !v);
+    this.paymentSearch.set('');
+  }
+
+  selectPaymentFromDropdown(payment: PaymentListResponse, event: Event): void {
+    event.stopPropagation();
+    this.purchaseCartService.updatePaymentMethod({
+      id: payment.id,
+      code: payment.code,
+      name: payment.name
+    });
+    this.showPaymentDropdown.set(false);
+    this.paymentSearch.set('');
+  }
+
+  toggleUserDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showUserDropdown.update(v => !v);
+    this.userSearch.set('');
+  }
+
+  selectUserFromDropdown(user: UserListResponse, event: Event): void {
+    event.stopPropagation();
+    this.purchaseCartService.updateUser({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name
+    });
+    this.showUserDropdown.set(false);
+    this.userSearch.set('');
   }
 
   updateDetailQuantity(productId: number, value: number): void {
@@ -300,7 +456,7 @@ export class PurchaseCreate implements OnInit, OnDestroy {
               alert(this.saveBlockReason());
             }
             break;
-          case 'U':
+          case 'R':
             e.preventDefault();
             this.selectSupplier();
             break;
@@ -311,6 +467,10 @@ export class PurchaseCreate implements OnInit, OnDestroy {
           case 'M':
             e.preventDefault();
             this.selectPayment();
+            break;
+          case 'U':
+            e.preventDefault();
+            this.selectUser();
             break;
           case 'L':
             e.preventDefault();
@@ -392,7 +552,46 @@ export class PurchaseCreate implements OnInit, OnDestroy {
     }
   }
 
+  private selectUser(): void {
+    if (this.users().length === 0) {
+      alert('Cargando usuarios... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del usuario:');
+    if (!id) return;
+
+    const user = this.users().find(u => u.id === parseInt(id, 10));
+    if (user) {
+      this.purchaseCartService.updateUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name
+      });
+      alert(`Usuario actualizado: ${user.name}`);
+    } else {
+      alert('Usuario no encontrado. Verifica el ID.');
+    }
+  }
+
   trackByProductId(_: number, detail: Detail): number {
     return detail.productId;
+  }
+
+  trackBySupplierId(_: number, supplier: SupplierListResponse): number {
+    return supplier.id;
+  }
+
+  trackByWarehouseId(_: number, warehouse: WarehouseListResponse): number {
+    return warehouse.id;
+  }
+
+  trackByPaymentId(_: number, payment: PaymentListResponse): number {
+    return payment.id;
+  }
+
+  trackByUserId(_: number, user: UserListResponse): number {
+    return user.id;
   }
 }

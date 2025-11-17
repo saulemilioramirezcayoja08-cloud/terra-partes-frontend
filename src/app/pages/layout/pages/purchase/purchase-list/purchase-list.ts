@@ -141,10 +141,10 @@ export class PurchaseList implements OnInit, OnDestroy {
   }
 
   canAddPayment(purchase: PurchaseListResponse): boolean {
-    return purchase.status === 'BORRADOR' || 
-           purchase.status === 'DRAFT' || 
-           purchase.status === 'CONFIRMADA' || 
-           purchase.status === 'CONFIRMED';
+    return purchase.status === 'BORRADOR' ||
+      purchase.status === 'DRAFT' ||
+      purchase.status === 'CONFIRMADA' ||
+      purchase.status === 'CONFIRMED';
   }
 
   onConfirmPurchase(purchase: PurchaseListResponse): void {
@@ -159,7 +159,7 @@ export class PurchaseList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    const payload = notesInput.trim() ? {notes: notesInput.trim()} : undefined;
+    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
 
     this.purchaseService.confirmPurchase(purchase.id, payload).subscribe({
       next: (response) => {

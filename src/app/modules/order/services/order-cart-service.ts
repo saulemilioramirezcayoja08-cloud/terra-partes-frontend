@@ -1,10 +1,11 @@
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { AuthService } from '../../auth/services/auth.service';
 import { isPlatformBrowser } from '@angular/common';
-import { Customer, Detail, OrderPreview, Payment, Totals, Warehouse } from '../get/models/order-preview.model';
+import { Customer, Detail, OrderPreview, Payment, Totals, User, Warehouse } from '../get/models/order-preview.model';
 import { CreateOrderRequest } from '../post/models/create-order-request.model';
 import { CreateOrderResponse } from '../post/models/create-order-response.model';
 import { OrderListResponse } from '../get/models/order-list-response.model';
+import { QuotationListResponse } from '../../quotation/get/models/quotation-list-response.model';
 
 const STORAGE_KEY = 'order_preview';
 const CURRENT_ORDER_KEY = 'order_current';
@@ -44,10 +45,10 @@ export class OrderCartService {
       warehouse: config.warehouse,
       payment: config.payment,
       user: {
-        id: user?.id || 1,
-        username: user?.username || 'system',
-        email: user?.email || 'system@system.com',
-        name: user?.name || 'System User'
+        id: user?.id || 0,
+        username: user?.username || '',
+        email: user?.email || '',
+        name: user?.name || ''
       },
       details: [],
       totals: {
@@ -87,9 +88,38 @@ export class OrderCartService {
       })),
       totals: {
         total: order.totals.total,
-        payment: 0,
-        pending: order.totals.total,
+        payment: order.totals.payment,
+        pending: order.totals.pending,
         items: order.details.length
+      }
+    });
+    this.saveToStorage();
+  }
+
+  loadFromQuotation(quotation: QuotationListResponse): void {
+    this._cart.set({
+      status: 'BORRADOR',
+      currency: quotation.currency,
+      notes: quotation.notes || '',
+      customer: quotation.customer,
+      warehouse: quotation.warehouse,
+      payment: { id: 0, code: '', name: '' },
+      user: quotation.user,
+      details: quotation.details.map(d => ({
+        productId: d.product.id,
+        sku: d.product.sku,
+        name: d.product.name,
+        uom: '',
+        quantity: d.quantity,
+        price: d.price,
+        subtotal: d.subtotal,
+        notes: d.notes
+      })),
+      totals: {
+        total: quotation.totals.total,
+        payment: 0,
+        pending: quotation.totals.total,
+        items: quotation.details.length
       }
     });
     this.saveToStorage();
@@ -107,6 +137,11 @@ export class OrderCartService {
 
   updatePaymentMethod(payment: Payment): void {
     this._cart.update(cart => ({ ...cart, payment }));
+    this.saveToStorage();
+  }
+
+  updateUser(user: User): void {
+    this._cart.update(cart => ({ ...cart, user }));
     this.saveToStorage();
   }
 

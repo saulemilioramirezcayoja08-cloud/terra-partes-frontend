@@ -13,6 +13,8 @@ import { PaymentListResponse } from '../../../../../modules/payment/get/models/p
 import { ErrorResponse } from '../../../../../core/models/error-response.model';
 import { ErrorHandlerService } from '../../../../../core/services/error-handler.service';
 import { Detail } from '../../../../../modules/order/get/models/order-preview.model';
+import { UserService } from '../../../../../modules/auth/services/user-service';
+import { UserListResponse } from '../../../../../modules/auth/get/models/user-list-response.model';
 
 @Component({
   selector: 'app-order-create',
@@ -26,6 +28,7 @@ export class OrderCreate implements OnInit, OnDestroy {
   private readonly customerService = inject(CustomerService);
   private readonly warehouseService = inject(WarehouseService);
   private readonly paymentService = inject(PaymentService);
+  private readonly userService = inject(UserService);
   private readonly errorHandler = inject(ErrorHandlerService);
   private readonly platformId = inject(PLATFORM_ID);
   readonly router = inject(Router);
@@ -40,6 +43,7 @@ export class OrderCreate implements OnInit, OnDestroy {
   readonly customers = signal<CustomerListResponse[]>([]);
   readonly warehouses = signal<WarehouseListResponse[]>([]);
   readonly payments = signal<PaymentListResponse[]>([]);
+  readonly users = signal<UserListResponse[]>([]);
 
   readonly showCustomerDropdown = signal(false);
   readonly customerSearch = signal('');
@@ -49,6 +53,9 @@ export class OrderCreate implements OnInit, OnDestroy {
 
   readonly showPaymentDropdown = signal(false);
   readonly paymentSearch = signal('');
+
+  readonly showUserDropdown = signal(false);
+  readonly userSearch = signal('');
 
   readonly filteredCustomers = computed(() => {
     const search = this.customerSearch().toLowerCase().trim();
@@ -76,18 +83,28 @@ export class OrderCreate implements OnInit, OnDestroy {
     );
   });
 
+  readonly filteredUsers = computed(() => {
+    const search = this.userSearch().toLowerCase().trim();
+    if (!search) return this.users();
+    return this.users().filter(u =>
+      u.name.toLowerCase().includes(search) ||
+      u.username.toLowerCase().includes(search)
+    );
+  });
+
   notesModel = signal('');
   paymentModel = signal(0);
 
   readonly missingData = computed(() => ({
     customer: this.cart().customer.id === 0,
     warehouse: this.cart().warehouse.id === 0,
-    payment: this.cart().payment.id === 0
+    payment: this.cart().payment.id === 0,
+    user: this.cart().user.id === 0
   }));
 
   readonly hasWarnings = computed(() => {
     const missing = this.missingData();
-    return missing.customer || missing.warehouse || missing.payment;
+    return missing.customer || missing.warehouse || missing.payment || missing.user;
   });
 
   readonly warningMessage = computed(() => {
@@ -97,6 +114,7 @@ export class OrderCreate implements OnInit, OnDestroy {
     if (missing.customer) warnings.push('cliente');
     if (missing.warehouse) warnings.push('almacén');
     if (missing.payment) warnings.push('método de pago');
+    if (missing.user) warnings.push('usuario');
 
     if (warnings.length === 0) return '';
 
@@ -107,7 +125,8 @@ export class OrderCreate implements OnInit, OnDestroy {
     this.itemCount() > 0 &&
     this.cart().customer.id > 0 &&
     this.cart().warehouse.id > 0 &&
-    this.cart().payment.id > 0
+    this.cart().payment.id > 0 &&
+    this.cart().user.id > 0
   );
 
   readonly saveBlockReason = computed(() => {
@@ -115,6 +134,7 @@ export class OrderCreate implements OnInit, OnDestroy {
     if (this.cart().customer.id === 0) return 'Selecciona un cliente';
     if (this.cart().warehouse.id === 0) return 'Selecciona un almacén';
     if (this.cart().payment.id === 0) return 'Selecciona un método de pago';
+    if (this.cart().user.id === 0) return 'Selecciona un usuario';
     return '';
   });
 
@@ -156,6 +176,7 @@ export class OrderCreate implements OnInit, OnDestroy {
       this.showCustomerDropdown.set(false);
       this.showWarehouseDropdown.set(false);
       this.showPaymentDropdown.set(false);
+      this.showUserDropdown.set(false);
     };
     document.addEventListener('click', this.clickListener);
   }
@@ -169,7 +190,7 @@ export class OrderCreate implements OnInit, OnDestroy {
     }
 
     if (this.itemCount() > 0) {
-      if (cart.customer.id === 0 || cart.warehouse.id === 0 || cart.payment.id === 0) {
+      if (cart.customer.id === 0 || cart.warehouse.id === 0 || cart.payment.id === 0 || cart.user.id === 0) {
         console.warn('Hay productos pero faltan datos maestros');
       }
       return;
@@ -230,6 +251,17 @@ export class OrderCreate implements OnInit, OnDestroy {
         console.error(this.errorHandler.handleError(err, 'Error al cargar métodos de pago'));
       }
     });
+
+    this.userService.getUsers({ size: 1000 }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.users.set(response.data.content);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        console.error(this.errorHandler.handleError(err, 'Error al cargar usuarios'));
+      }
+    });
   }
 
   toggleCustomerDropdown(event: Event): void {
@@ -284,6 +316,24 @@ export class OrderCreate implements OnInit, OnDestroy {
     });
     this.showPaymentDropdown.set(false);
     this.paymentSearch.set('');
+  }
+
+  toggleUserDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showUserDropdown.update(v => !v);
+    this.userSearch.set('');
+  }
+
+  selectUserFromDropdown(user: UserListResponse, event: Event): void {
+    event.stopPropagation();
+    this.orderCartService.updateUser({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name
+    });
+    this.showUserDropdown.set(false);
+    this.userSearch.set('');
   }
 
   updateDetailQuantity(productId: number, value: number): void {
@@ -434,6 +484,10 @@ export class OrderCreate implements OnInit, OnDestroy {
             e.preventDefault();
             this.selectPaymentMethod();
             break;
+          case 'U':
+            e.preventDefault();
+            this.selectUser();
+            break;
           case 'L':
             e.preventDefault();
             this.clearAll();
@@ -514,6 +568,29 @@ export class OrderCreate implements OnInit, OnDestroy {
     }
   }
 
+  private selectUser(): void {
+    if (this.users().length === 0) {
+      alert('Cargando usuarios... Intenta nuevamente en un momento.');
+      return;
+    }
+
+    const id = prompt('Ingresa el ID del usuario:');
+    if (!id) return;
+
+    const user = this.users().find(u => u.id === parseInt(id));
+    if (user) {
+      this.orderCartService.updateUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name
+      });
+      alert(`Usuario actualizado: ${user.name}`);
+    } else {
+      alert('Usuario no encontrado. Verifica el ID.');
+    }
+  }
+
   trackByProductId(_: number, detail: Detail): number {
     return detail.productId;
   }
@@ -528,5 +605,9 @@ export class OrderCreate implements OnInit, OnDestroy {
 
   trackByPaymentId(_: number, payment: PaymentListResponse): number {
     return payment.id;
+  }
+
+  trackByUserId(_: number, user: UserListResponse): number {
+    return user.id;
   }
 }

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { QuotationService } from '../../../../../modules/quotation/services/quotation.service';
 import { QuotationListResponse } from '../../../../../modules/quotation/get/models/quotation-list-response.model';
 import { ConfirmQuotationRequest } from '../../../../../modules/quotation/put/models/confirm-quotation-request.model';
+import { OrderCartService } from '../../../../../modules/order/services/order-cart-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-quotation-list',
@@ -13,6 +15,8 @@ import { ConfirmQuotationRequest } from '../../../../../modules/quotation/put/mo
 })
 export class QuotationList implements OnInit, OnDestroy {
   private readonly quotationService = inject(QuotationService);
+  private readonly orderCartService = inject(OrderCartService);
+  private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -149,6 +153,27 @@ export class QuotationList implements OnInit, OnDestroy {
     return quotation.status === 'BORRADOR' || quotation.status === 'DRAFT';
   }
 
+  onCreateOrderFromQuotation(quotation: QuotationListResponse): void {
+    this.activeDropdown.set(null);
+
+    const confirmed = confirm(
+      `¿Crear orden desde cotización ${quotation.number}?\n\n` +
+      `Se cargarán:\n` +
+      `• Cliente: ${quotation.customer.name}\n` +
+      `• Almacén: ${quotation.warehouse.name}\n` +
+      `• Usuario: ${quotation.user.name}\n` +
+      `• ${quotation.totals.items} producto(s)\n` +
+      `• Total: Bs. ${quotation.totals.total.toFixed(2)}\n\n` +
+      `Deberás seleccionar el método de pago en la pantalla de creación.`
+    );
+
+    if (!confirmed) return;
+
+    this.orderCartService.clear();
+    this.orderCartService.loadFromQuotation(quotation);
+    this.router.navigate(['/order/create']);
+  }
+
   onConfirmQuotation(quotation: QuotationListResponse): void {
     this.activeDropdown.set(null);
 
@@ -180,7 +205,7 @@ export class QuotationList implements OnInit, OnDestroy {
       },
       error: (error) => {
         let errorMessage = 'Error desconocido';
-        
+
         if (error.message) {
           errorMessage = error.message;
         } else if (error.code) {
@@ -193,7 +218,7 @@ export class QuotationList implements OnInit, OnDestroy {
           };
           errorMessage = errorMap[error.code] || error.code;
         }
-        
+
         alert('Error: ' + errorMessage);
         this.isLoading.set(false);
       }
@@ -202,9 +227,9 @@ export class QuotationList implements OnInit, OnDestroy {
 
   onPrintQuotation(quotation: QuotationListResponse): void {
     this.activeDropdown.set(null);
-    
+
     sessionStorage.setItem('quotation-print-data', JSON.stringify(quotation));
-    
+
     window.open('/quotation/reprint', '_blank');
   }
 
