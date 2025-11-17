@@ -1,9 +1,10 @@
-import {computed, inject, Injectable, PLATFORM_ID, signal} from '@angular/core';
-import {AuthService} from '../../auth/services/auth.service';
-import {isPlatformBrowser} from '@angular/common';
-import {Customer, Detail, OrderPreview, Payment, Totals, Warehouse} from '../get/models/order-preview.model';
-import {CreateOrderRequest} from '../post/models/create-order-request.model';
-import {CreateOrderResponse} from '../post/models/create-order-response.model';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { AuthService } from '../../auth/services/auth.service';
+import { isPlatformBrowser } from '@angular/common';
+import { Customer, Detail, OrderPreview, Payment, Totals, Warehouse } from '../get/models/order-preview.model';
+import { CreateOrderRequest } from '../post/models/create-order-request.model';
+import { CreateOrderResponse } from '../post/models/create-order-response.model';
+import { OrderListResponse } from '../get/models/order-list-response.model';
 
 const STORAGE_KEY = 'order_preview';
 const CURRENT_ORDER_KEY = 'order_current';
@@ -59,18 +60,53 @@ export class OrderCartService {
     this.saveToStorage();
   }
 
+  loadFromExistingOrder(order: OrderListResponse): void {
+    const user = this.authService.currentUser;
+    this._cart.set({
+      status: 'BORRADOR',
+      currency: order.currency,
+      notes: order.notes || '',
+      customer: order.customer,
+      warehouse: order.warehouse,
+      payment: order.payment || { id: 0, code: '', name: '' },
+      user: {
+        id: user?.id || order.user.id,
+        username: user?.username || order.user.username,
+        email: user?.email || order.user.email,
+        name: user?.name || order.user.name
+      },
+      details: order.details.map(d => ({
+        productId: d.product.id,
+        sku: d.product.sku,
+        name: d.product.name,
+        uom: '',
+        quantity: d.quantity,
+        price: d.price,
+        subtotal: d.subtotal,
+        notes: d.notes
+      })),
+      totals: {
+        total: order.totals.total,
+        payment: 0,
+        pending: order.totals.total,
+        items: order.details.length
+      }
+    });
+    this.saveToStorage();
+  }
+
   updateCustomer(customer: Customer): void {
-    this._cart.update(cart => ({...cart, customer}));
+    this._cart.update(cart => ({ ...cart, customer }));
     this.saveToStorage();
   }
 
   updateWarehouse(warehouse: Warehouse): void {
-    this._cart.update(cart => ({...cart, warehouse}));
+    this._cart.update(cart => ({ ...cart, warehouse }));
     this.saveToStorage();
   }
 
   updatePaymentMethod(payment: Payment): void {
-    this._cart.update(cart => ({...cart, payment}));
+    this._cart.update(cart => ({ ...cart, payment }));
     this.saveToStorage();
   }
 
@@ -134,7 +170,7 @@ export class OrderCartService {
   }
 
   updateNotes(notes: string): void {
-    this._cart.update(cart => ({...cart, notes}));
+    this._cart.update(cart => ({ ...cart, notes }));
     this.saveToStorage();
   }
 
@@ -159,7 +195,7 @@ export class OrderCartService {
         notes: d.notes || undefined
       })),
       payment: cart.totals.payment > 0
-        ? {amount: cart.totals.payment}
+        ? { amount: cart.totals.payment }
         : undefined
     };
 
@@ -221,12 +257,12 @@ export class OrderCartService {
       status: 'BORRADOR',
       currency: '',
       notes: '',
-      customer: {id: 0, name: '', address: '', taxId: '', phone: ''},
-      warehouse: {id: 0, code: '', name: '', address: ''},
-      payment: {id: 0, code: '', name: ''},
-      user: {id: 0, username: '', email: '', name: ''},
+      customer: { id: 0, name: '', address: '', taxId: '', phone: '' },
+      warehouse: { id: 0, code: '', name: '', address: '' },
+      payment: { id: 0, code: '', name: '' },
+      user: { id: 0, username: '', email: '', name: '' },
       details: [],
-      totals: {total: 0, payment: 0, pending: 0, items: 0}
+      totals: { total: 0, payment: 0, pending: 0, items: 0 }
     };
   }
 }

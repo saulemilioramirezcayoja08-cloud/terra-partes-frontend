@@ -475,7 +475,6 @@ td svg.disabled {
   min-width: 0;
 }
 
-/* Columna de acciones en el header */
 .actions-col {
   flex: 0 0 auto !important;
   justify-content: flex-end;
@@ -559,7 +558,6 @@ td svg.disabled {
   padding: 4px 8px;
 }
 
-/* === BOTONES DE ACCIÓN === */
 .action-btn {
   display: flex;
   align-items: center;
@@ -602,7 +600,6 @@ td svg.disabled {
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
-/* === BOTÓN DE ICONO EN TABLA === */
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -631,7 +628,6 @@ td svg.disabled {
   color: #3b82f6;
 }
 
-/* === MODALES === */
 .modal-overlay {
   position: fixed;
   top: 0;

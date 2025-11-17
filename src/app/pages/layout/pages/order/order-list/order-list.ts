@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../../../modules/order/services/order.service';
 import { OrderListResponse } from '../../../../../modules/order/get/models/order-list-response.model';
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
+import { OrderCartService } from '../../../../../modules/order/services/order-cart-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -14,6 +16,8 @@ import { AuthService } from '../../../../../modules/auth/services/auth.service';
 export class OrderList implements OnInit, OnDestroy {
   private readonly orderService = inject(OrderService);
   private readonly authService = inject(AuthService);
+  private readonly orderCartService = inject(OrderCartService);
+  private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -261,7 +265,20 @@ export class OrderList implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success && response.data) {
           alert('Orden cancelada exitosamente');
-          this.loadOrders();
+
+          const createNew = confirm(
+            '¿Desea crear una nueva orden basada en la orden cancelada?\n\n' +
+            'Se cargarán todos los productos, cliente, almacén y método de pago\n' +
+            'para facilitar la creación de una orden corregida.'
+          );
+
+          if (createNew) {
+            this.orderCartService.clear();
+            this.orderCartService.loadFromExistingOrder(order);
+            this.router.navigate(['/order/create']);
+          } else {
+            this.loadOrders();
+          }
         }
       },
       error: (error) => {

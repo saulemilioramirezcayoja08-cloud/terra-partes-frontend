@@ -19,7 +19,6 @@
   display: flex;
 }
 
-/* Header */
 .quotation-create-component>.row:nth-child(1) {
   flex: 0 0 64px;
   background-color: #efefef;
@@ -52,7 +51,6 @@
   font-size: 10px;
 }
 
-/* Main Content */
 .quotation-create-component>.row:nth-child(2) {
   flex: 1;
   gap: 2px;
@@ -67,7 +65,6 @@
   overflow: visible;
 }
 
-/* Form Section */
 .quotation-create-component>.row:nth-child(2)>.col:nth-child(1)>.row:nth-child(1) {
   flex: 0 0 120px;
   flex-direction: row;
@@ -138,7 +135,6 @@ label kbd {
   box-shadow: 0 0 0 2px rgba(93, 93, 93, 0.1);
 }
 
-/* Dropdown */
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 4px);
@@ -251,7 +247,6 @@ label kbd {
   font-style: italic;
 }
 
-/* Warning Banner */
 .warning-banner {
   flex: 0 0 auto;
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -282,7 +277,6 @@ label kbd {
   display: block;
 }
 
-/* Table Section */
 .quotation-create-component>.row:nth-child(2)>.col:nth-child(1)>.row:not(:first-child):not(.pagination):not(.warning-banner) {
   flex: 1;
   flex-direction: column;
@@ -516,7 +510,6 @@ tr.notes-row td {
   color: rgba(107, 114, 128, 0.5);
 }
 
-/* Empty State */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -542,7 +535,6 @@ tr.notes-row td {
   color: #6b7280;
 }
 
-/* Pagination */
 .quotation-create-component>.row:nth-child(2)>.col:nth-child(1)>.row.pagination {
   flex: 0 0 40px;
   justify-content: space-between;
@@ -588,7 +580,6 @@ tr.notes-row td {
   cursor: not-allowed;
 }
 
-/* Summary Panel */
 .quotation-create-component>.row:nth-child(2)>.col:nth-child(2) {
   flex: 4;
   flex-direction: column;
