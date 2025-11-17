@@ -1,16 +1,16 @@
-import {Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {CommonModule, DecimalPipe, isPlatformBrowser} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {QuotationCartService} from '../../../../../modules/quotation/services/quotation-cart-service';
-import {QuotationService} from '../../../../../modules/quotation/services/quotation.service';
-import {CustomerService} from '../../../../../modules/customer/services/customer.service';
-import {WarehouseService} from '../../../../../modules/warehouse/services/warehouse.service';
-import {ErrorHandlerService} from '../../../../../core/services/error-handler.service';
-import {Router} from '@angular/router';
-import {CustomerListResponse} from '../../../../../modules/customer/get/models/customer-list-response.model';
-import {WarehouseListResponse} from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
-import {ErrorResponse} from '../../../../../core/models/error-response.model';
-import {Detail} from '../../../../../modules/quotation/get/models/quotation-preview.model';
+import { Component, computed, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { QuotationCartService } from '../../../../../modules/quotation/services/quotation-cart-service';
+import { QuotationService } from '../../../../../modules/quotation/services/quotation.service';
+import { CustomerService } from '../../../../../modules/customer/services/customer.service';
+import { WarehouseService } from '../../../../../modules/warehouse/services/warehouse.service';
+import { ErrorHandlerService } from '../../../../../core/services/error-handler.service';
+import { Router } from '@angular/router';
+import { CustomerListResponse } from '../../../../../modules/customer/get/models/customer-list-response.model';
+import { WarehouseListResponse } from '../../../../../modules/warehouse/get/models/warehouse-list-response.model';
+import { ErrorResponse } from '../../../../../core/models/error-response.model';
+import { Detail } from '../../../../../modules/quotation/get/models/quotation-preview.model';
 
 @Component({
   selector: 'app-quotation-create',
@@ -34,6 +34,29 @@ export class QuotationCreate implements OnInit, OnDestroy {
 
   readonly customers = signal<CustomerListResponse[]>([]);
   readonly warehouses = signal<WarehouseListResponse[]>([]);
+
+  readonly showCustomerDropdown = signal(false);
+  readonly customerSearch = signal('');
+
+  readonly showWarehouseDropdown = signal(false);
+  readonly warehouseSearch = signal('');
+
+  readonly filteredCustomers = computed(() => {
+    const search = this.customerSearch().toLowerCase().trim();
+    if (!search) return this.customers();
+    return this.customers().filter(c =>
+      c.name.toLowerCase().includes(search)
+    );
+  });
+
+  readonly filteredWarehouses = computed(() => {
+    const search = this.warehouseSearch().toLowerCase().trim();
+    if (!search) return this.warehouses();
+    return this.warehouses().filter(w =>
+      w.name.toLowerCase().includes(search) ||
+      w.code.toLowerCase().includes(search)
+    );
+  });
 
   notesModel = signal('');
 
@@ -69,6 +92,7 @@ export class QuotationCreate implements OnInit, OnDestroy {
   });
 
   private keyboardListener?: (e: KeyboardEvent) => void;
+  private clickListener?: () => void;
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor() {
@@ -83,13 +107,27 @@ export class QuotationCreate implements OnInit, OnDestroy {
     if (this.isBrowser) {
       this.setupKeyboardShortcuts();
       this.showWarningsIfNeeded();
+      this.setupClickListener();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.isBrowser && this.keyboardListener) {
-      document.removeEventListener('keydown', this.keyboardListener);
+    if (this.isBrowser) {
+      if (this.keyboardListener) {
+        document.removeEventListener('keydown', this.keyboardListener);
+      }
+      if (this.clickListener) {
+        document.removeEventListener('click', this.clickListener);
+      }
     }
+  }
+
+  private setupClickListener(): void {
+    this.clickListener = () => {
+      this.showCustomerDropdown.set(false);
+      this.showWarehouseDropdown.set(false);
+    };
+    document.addEventListener('click', this.clickListener);
   }
 
   private ensureCartReady(): void {
@@ -150,6 +188,43 @@ export class QuotationCreate implements OnInit, OnDestroy {
         console.error(this.errorHandler.handleError(err, 'Error al cargar almacenes'));
       }
     });
+  }
+
+  toggleCustomerDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showCustomerDropdown.update(v => !v);
+    this.customerSearch.set('');
+  }
+
+  selectCustomerFromDropdown(customer: CustomerListResponse, event: Event): void {
+    event.stopPropagation();
+    this.quotationCartService.updateCustomer({
+      id: customer.id,
+      name: customer.name,
+      address: customer.address,
+      taxId: customer.taxId,
+      phone: customer.phone
+    });
+    this.showCustomerDropdown.set(false);
+    this.customerSearch.set('');
+  }
+
+  toggleWarehouseDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showWarehouseDropdown.update(v => !v);
+    this.warehouseSearch.set('');
+  }
+
+  selectWarehouseFromDropdown(warehouse: WarehouseListResponse, event: Event): void {
+    event.stopPropagation();
+    this.quotationCartService.updateWarehouse({
+      id: warehouse.id,
+      code: warehouse.code,
+      name: warehouse.name,
+      address: warehouse.address
+    });
+    this.showWarehouseDropdown.set(false);
+    this.warehouseSearch.set('');
   }
 
   updateDetailQuantity(productId: number, value: number): void {
@@ -343,5 +418,13 @@ export class QuotationCreate implements OnInit, OnDestroy {
 
   trackByProductId(_: number, detail: Detail): number {
     return detail.productId;
+  }
+
+  trackByCustomerId(_: number, customer: CustomerListResponse): number {
+    return customer.id;
+  }
+
+  trackByWarehouseId(_: number, warehouse: WarehouseListResponse): number {
+    return warehouse.id;
   }
 }

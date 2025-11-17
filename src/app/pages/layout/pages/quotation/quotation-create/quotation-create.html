@@ -14,47 +14,85 @@
             <span class="label-text">Cliente</span>
             <kbd>Ctrl+Shift+C</kbd>
           </label>
-          <input
-            type="text"
-            class="data-input"
-            [value]="cart().customer.id ? cart().customer.name : 'Sin seleccionar'"
-            disabled
-            [class.empty]="cart().customer.id === 0">
+          <div class="input-wrapper">
+            <input type="text" class="data-input clickable"
+              [value]="cart().customer.id ? cart().customer.name : 'Sin seleccionar'" readonly
+              [class.empty]="cart().customer.id === 0" (click)="toggleCustomerDropdown($event)">
+
+            @if (showCustomerDropdown()) {
+            <div class="dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="dropdown-search">
+                <input type="text" class="search-input" placeholder="Buscar cliente..." [ngModel]="customerSearch()"
+                  (ngModelChange)="customerSearch.set($event)" (click)="$event.stopPropagation()">
+              </div>
+
+              <div class="dropdown-items">
+                @if (filteredCustomers().length === 0) {
+                <div class="dropdown-empty">No se encontraron clientes</div>
+                }
+
+                @for (customer of filteredCustomers(); track trackByCustomerId($index, customer)) {
+                <div class="dropdown-item" (click)="selectCustomerFromDropdown(customer, $event)">
+                  <span class="customer-name">{{ customer.name }}</span>
+                  <span class="customer-detail">NIT: {{ customer.taxId }}</span>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
 
           <label>
             <span class="label-text">Almacén</span>
             <kbd>Ctrl+Shift+A</kbd>
           </label>
-          <input
-            type="text"
-            class="data-input"
-            [value]="cart().warehouse.id ? cart().warehouse.name : 'Sin seleccionar'"
-            disabled
-            [class.empty]="cart().warehouse.id === 0">
+          <div class="input-wrapper">
+            <input type="text" class="data-input clickable"
+              [value]="cart().warehouse.id ? cart().warehouse.name : 'Sin seleccionar'" readonly
+              [class.empty]="cart().warehouse.id === 0" (click)="toggleWarehouseDropdown($event)">
+
+            @if (showWarehouseDropdown()) {
+            <div class="dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="dropdown-search">
+                <input type="text" class="search-input" placeholder="Buscar almacén..." [ngModel]="warehouseSearch()"
+                  (ngModelChange)="warehouseSearch.set($event)" (click)="$event.stopPropagation()">
+              </div>
+
+              <div class="dropdown-items">
+                @if (filteredWarehouses().length === 0) {
+                <div class="dropdown-empty">No se encontraron almacenes</div>
+                }
+
+                @for (warehouse of filteredWarehouses(); track trackByWarehouseId($index, warehouse)) {
+                <div class="dropdown-item" (click)="selectWarehouseFromDropdown(warehouse, $event)">
+                  <span class="customer-name">{{ warehouse.name }}</span>
+                  <span class="customer-detail">Código: {{ warehouse.code }}</span>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
         </div>
 
         <div class="col">
           <label>
             <span class="label-text">Moneda</span>
           </label>
-          <input
-            type="text"
-            class="data-input"
-            [value]="cart().currency"
-            disabled>
+          <input type="text" class="data-input" [value]="cart().currency" disabled>
         </div>
       </div>
 
       @if (hasWarnings() && itemCount() > 0) {
-        <div class="row warning-banner">
-          <span>{{ warningMessage() }}</span>
-        </div>
+      <div class="row warning-banner">
+        <span>{{ warningMessage() }}</span>
+      </div>
       }
 
       <div class="row">
         @if (details().length > 0) {
-          <table>
-            <thead>
+        <table>
+          <thead>
             <tr>
               <th></th>
               <th>COD INT.</th>
@@ -64,73 +102,55 @@
               <th>SUBTOTAL</th>
               <th></th>
             </tr>
-            </thead>
-            <tbody>
-              @for (detail of details(); track trackByProductId($index, detail); let i = $index) {
-                <tr>
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ detail.sku }}</td>
-                  <td>
-                    <input
-                      type="number"
-                      [ngModel]="detail.quantity"
-                      (ngModelChange)="updateDetailQuantity(detail.productId, $event)"
-                      class="input-cell"
-                      min="1">
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      [ngModel]="detail.editableName || detail.name"
-                      (ngModelChange)="updateDetailName(detail.productId, $event)"
-                      class="input-cell">
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      [ngModel]="detail.price"
-                      (ngModelChange)="updateDetailPrice(detail.productId, $event)"
-                      class="input-cell"
-                      step="0.01"
-                      min="0">
-                  </td>
-                  <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
-                  <td>
-                    <svg
-                      (click)="removeDetail(detail.productId)"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <g id="SVGRepo_iconCarrier">
-                        <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path
-                          d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                          stroke="currentColor" stroke-width="1.5"></path>
-                        <path
-                          d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5"
-                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                      </g>
-                    </svg>
-                  </td>
-                </tr>
-                <tr class="notes-row">
-                  <td colspan="7">
-                    <input
-                      type="text"
-                      [ngModel]="detail.notes || ''"
-                      (ngModelChange)="updateDetailNotes(detail.productId, $event)"
-                      class="notes-cell"
-                      placeholder="Notas del producto (opcional)...">
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          </thead>
+          <tbody>
+            @for (detail of details(); track trackByProductId($index, detail); let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ detail.sku }}</td>
+              <td>
+                <input type="number" [ngModel]="detail.quantity"
+                  (ngModelChange)="updateDetailQuantity(detail.productId, $event)" class="input-cell" min="1">
+              </td>
+              <td>
+                <input type="text" [ngModel]="detail.editableName || detail.name"
+                  (ngModelChange)="updateDetailName(detail.productId, $event)" class="input-cell">
+              </td>
+              <td>
+                <input type="number" [ngModel]="detail.price"
+                  (ngModelChange)="updateDetailPrice(detail.productId, $event)" class="input-cell" step="0.01" min="0">
+              </td>
+              <td>Bs. {{ detail.subtotal | number:'1.2-2' }}</td>
+              <td>
+                <svg (click)="removeDetail(detail.productId)" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path
+                      d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                      stroke="currentColor" stroke-width="1.5"></path>
+                    <path
+                      d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                  </g>
+                </svg>
+              </td>
+            </tr>
+            <tr class="notes-row">
+              <td colspan="7">
+                <input type="text" [ngModel]="detail.notes || ''"
+                  (ngModelChange)="updateDetailNotes(detail.productId, $event)" class="notes-cell"
+                  placeholder="Notas del producto (opcional)...">
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
         } @else {
-          <div class="empty-state">
-            <p>No hay productos en la cotización</p>
-            <p>Presiona <kbd>Ctrl+Shift+P</kbd> para agregar productos</p>
-          </div>
+        <div class="empty-state">
+          <p>No hay productos en la cotización</p>
+          <p>Presiona <kbd>Ctrl+Shift+P</kbd> para agregar productos</p>
+        </div>
         }
       </div>
 
@@ -148,11 +168,7 @@
           <span class="separator">|</span>
           <button (click)="clearAll()">Limpiar</button>
           <span class="separator">|</span>
-          <button
-            (click)="createQuotation()"
-            class="primary"
-            [disabled]="!canSave()"
-            [title]="saveBlockReason()">
+          <button (click)="createQuotation()" class="primary" [disabled]="!canSave()" [title]="saveBlockReason()">
             Guardar cotización
           </button>
         </div>
@@ -190,12 +206,8 @@
       <div class="row">
         <div class="col">
           <div class="subtitle">Notas</div>
-          <textarea
-            rows="3"
-            [ngModel]="notesModel()"
-            (ngModelChange)="updateQuotationNotes($event)"
-            placeholder="Observaciones..."
-            class="notes-input"></textarea>
+          <textarea rows="3" [ngModel]="notesModel()" (ngModelChange)="updateQuotationNotes($event)"
+            placeholder="Observaciones..." class="notes-input"></textarea>
         </div>
       </div>
     </div>
