@@ -62,7 +62,7 @@
               <td [class.status-confirmed]="order.status === 'CONFIRMADA' || order.status === 'CONFIRMED'"
                 [class.status-draft]="order.status === 'BORRADOR' || order.status === 'DRAFT'"
                 [class.status-cancelled]="order.status === 'CANCELADA' || order.status === 'CANCELLED'">
-                {{ order.status }}
+                {{ order.status | statusDisplay }}
               </td>
               <td>{{ order.customer.name }}</td>
               <td>{{ order.totals.total | number:'1.2-2' }}</td>
@@ -136,7 +136,7 @@
                             stroke-linejoin="round"></path>
                         </g>
                       </svg>
-                      <span>Cancelar orden</span>
+                      <span>Anular orden</span>
                     </button>
 
                     <div class="dropdown-divider"></div>
@@ -207,7 +207,7 @@
       <div class="row">
         <div class="col">
           <div class="subtitle">Estado</div>
-          <span>{{ order.status }}</span>
+          <span>{{ order.status | statusDisplay }}</span>
         </div>
         <div class="col">
           <div class="subtitle">Moneda</div>

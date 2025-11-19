@@ -5,10 +5,11 @@ import { OrderService } from '../../../../../modules/order/services/order.servic
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { OrderListResponse } from '../../../../../modules/order/get/models/order-list-response.model';
 import { Summary } from '../../../../../modules/order/get/models/order-draft-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-order-confirmed-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './order-confirmed-list.html',
   styleUrl: './order-confirmed-list.css'
 })

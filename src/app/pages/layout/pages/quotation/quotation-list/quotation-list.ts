@@ -6,10 +6,11 @@ import { QuotationListResponse } from '../../../../../modules/quotation/get/mode
 import { ConfirmQuotationRequest } from '../../../../../modules/quotation/put/models/confirm-quotation-request.model';
 import { OrderCartService } from '../../../../../modules/order/services/order-cart-service';
 import { Router } from '@angular/router';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-quotation-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './quotation-list.html',
   styleUrl: './quotation-list.css'
 })

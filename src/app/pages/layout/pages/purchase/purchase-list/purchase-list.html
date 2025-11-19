@@ -62,7 +62,7 @@
               <td [class.status-confirmed]="purchase.status === 'CONFIRMADA' || purchase.status === 'CONFIRMED'"
                 [class.status-draft]="purchase.status === 'BORRADOR' || purchase.status === 'DRAFT'"
                 [class.status-cancelled]="purchase.status === 'CANCELADA' || purchase.status === 'CANCELLED'">
-                {{ purchase.status }}
+                {{ purchase.status | statusDisplay }}
               </td>
               <td>{{ purchase.supplier.name }}</td>
               <td>{{ purchase.totals.total | number:'1.2-2' }}</td>
@@ -169,7 +169,7 @@
       <div class="row">
         <div class="col">
           <div class="subtitle">Estado</div>
-          <span>{{ purchase.status }}</span>
+          <span>{{ purchase.status | statusDisplay}}</span>
         </div>
         <div class="col">
           <div class="subtitle">Moneda</div>

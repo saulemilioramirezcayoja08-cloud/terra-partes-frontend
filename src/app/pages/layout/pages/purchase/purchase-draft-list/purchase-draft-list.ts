@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { PurchaseService } from '../../../../../modules/purchase/services/purchase.service';
 import { PurchaseListResponse } from '../../../../../modules/purchase/get/models/purchase-list-response.model';
 import { Summary } from '../../../../../modules/purchase/get/models/purchase-draft-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-purchase-draft-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './purchase-draft-list.html',
   styleUrl: './purchase-draft-list.css'
 })

@@ -3,10 +3,11 @@ import { Component, computed, inject, OnDestroy, OnInit, PLATFORM_ID, signal } f
 import { FormsModule } from '@angular/forms';
 import { ReservationService } from '../../../../../modules/order/services/reservation-service';
 import { ReservationListResponse } from '../../../../../modules/order/get/models/reservation-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-reservation-list',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StatusDisplayPipe],
   templateUrl: './reservation-list.html',
   styleUrl: './reservation-list.css'
 })

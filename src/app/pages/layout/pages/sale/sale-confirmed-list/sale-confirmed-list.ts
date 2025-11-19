@@ -5,10 +5,11 @@ import { SaleService } from '../../../../../modules/sale/services/sale.service';
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-list-response.model';
 import { Summary } from '../../../../../modules/sale/get/models/sale-confirmed-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-sale-confirmed-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './sale-confirmed-list.html',
   styleUrl: './sale-confirmed-list.css'
 })

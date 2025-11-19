@@ -4,10 +4,11 @@ import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-li
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Summary } from '../../../../../modules/sale/get/models/sale-draft-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-sale-draft-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './sale-draft-list.html',
   styleUrl: './sale-draft-list.css'
 })

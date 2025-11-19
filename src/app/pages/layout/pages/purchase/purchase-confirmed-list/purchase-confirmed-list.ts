@@ -5,10 +5,11 @@ import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { PurchaseListResponse } from '../../../../../modules/purchase/get/models/purchase-list-response.model';
 import { Summary } from '../../../../../modules/purchase/get/models/purchase-confirmed-list-response.model';
 import { FormsModule } from '@angular/forms';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-purchase-confirmed-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './purchase-confirmed-list.html',
   styleUrl: './purchase-confirmed-list.css'
 })

@@ -4,10 +4,11 @@ import { OrderListResponse } from '../../../../../modules/order/get/models/order
 import { Summary } from '../../../../../modules/order/get/models/order-draft-list-response.model';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-order-draft-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './order-draft-list.html',
   styleUrl: './order-draft-list.css'
 })

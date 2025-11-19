@@ -25,7 +25,7 @@
             </button>
             <button class="status-toggle-btn consumed" [class.selected]="selectedStatus() === 'CONSUMED'"
               (click)="toggleStatus('CONSUMED')">
-              CONCLUIDAS
+              CONCLUIDA
             </button>
           </div>
         </div>
@@ -65,7 +65,7 @@
               <td [class.status-active]="reservation.status === 'ACTIVA'"
                 [class.status-consumed]="reservation.status === 'CONSUMIDA'"
                 [class.status-cancelled]="reservation.status === 'CANCELADA'">
-                {{ reservation.status }}
+                {{ reservation.status | statusDisplay}}
               </td>
               <td>{{ reservation.product.name }}</td>
               <td>{{ reservation.quantity }}</td>
@@ -104,7 +104,7 @@
         </div>
         <div class="col">
           <div class="subtitle">Estado</div>
-          <span>{{ reservation.status }}</span>
+          <span>{{ reservation.status | statusDisplay}}</span>
         </div>
       </div>
 

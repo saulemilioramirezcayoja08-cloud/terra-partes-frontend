@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { SaleService } from '../../../../../modules/sale/services/sale.service';
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-list-response.model';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-sale-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './sale-list.html',
   styleUrl: './sale-list.css'
 })
@@ -244,11 +245,11 @@ export class SaleList implements OnInit, OnDestroy {
     this.activeDropdown.set(null);
 
     const confirmation = confirm(
-      `¿Está seguro que desea cancelar la venta ${sale.number}?\n\n` +
+      `¿Está seguro que desea anular la venta ${sale.number}?\n\n` +
       `Esta acción marcará:\n` +
-      `- La venta como CANCELADA\n` +
-      `- La orden asociada como CANCELADA\n` +
-      `- Las reservas como CANCELADAS\n\n` +
+      `- La venta como ANULADA\n` +
+      `- La orden asociada como ANULADA\n` +
+      `- Las reservas como ANULADAS\n\n` +
       `Todo permanecerá en el histórico pero no podrá ser confirmado.`
     );
 
@@ -268,12 +269,12 @@ export class SaleList implements OnInit, OnDestroy {
     this.saleService.cancelSale(sale.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert('Venta cancelada exitosamente');
+          alert('Venta anulada exitosamente');
           this.loadSales();
         }
       },
       error: (error) => {
-        alert('Error al cancelar la venta: ' + (error.message || 'Error desconocido'));
+        alert('Error al anular la venta: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });

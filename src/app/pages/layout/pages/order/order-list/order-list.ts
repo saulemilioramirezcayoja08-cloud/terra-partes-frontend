@@ -6,10 +6,11 @@ import { OrderListResponse } from '../../../../../modules/order/get/models/order
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { OrderCartService } from '../../../../../modules/order/services/order-cart-service';
 import { Router } from '@angular/router';
+import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
 
 @Component({
   selector: 'app-order-list',
-  imports: [CommonModule, FormsModule, DecimalPipe],
+  imports: [CommonModule, FormsModule, DecimalPipe, StatusDisplayPipe],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css'
 })
@@ -243,8 +244,8 @@ export class OrderList implements OnInit, OnDestroy {
     this.activeDropdown.set(null);
 
     const confirmation = confirm(
-      `¿Está seguro que desea cancelar la orden ${order.number}?\n\n` +
-      `Esta acción marcará la orden y sus reservas como CANCELADAS.\n` +
+      `¿Está seguro que desea anular la orden ${order.number}?\n\n` +
+      `Esta acción marcará la orden y sus reservas como ANULADAS.\n` +
       `La orden permanecerá en el histórico pero no podrá ser confirmada.`
     );
 
@@ -264,10 +265,10 @@ export class OrderList implements OnInit, OnDestroy {
     this.orderService.cancelOrder(order.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert('Orden cancelada exitosamente');
+          alert('Orden anulada exitosamente');
 
           const createNew = confirm(
-            '¿Desea crear una nueva orden basada en la orden cancelada?\n\n' +
+            '¿Desea crear una nueva orden basada en la orden anulada?\n\n' +
             'Se cargarán todos los productos, cliente, almacén y método de pago\n' +
             'para facilitar la creación de una orden corregida.'
           );
@@ -282,7 +283,7 @@ export class OrderList implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        alert('Error al cancelar la orden: ' + (error.message || 'Error desconocido'));
+        alert('Error al anular la orden: ' + (error.message || 'Error desconocido'));
         this.isLoading.set(false);
       }
     });
