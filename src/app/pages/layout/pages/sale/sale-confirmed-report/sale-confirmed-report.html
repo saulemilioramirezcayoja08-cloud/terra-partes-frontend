@@ -1,0 +1,109 @@
+<div class="sale-confirmed-report-component">
+  <div class="orders">
+    <div class="document-header">
+      <div class="header-row">
+        <div class="header-column contact-info">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+
+        <div class="header-column order-info">
+          <h2>REPORTE DE VENTAS</h2>
+          <p>Fecha: {{ formattedDate() }}</p>
+        </div>
+
+        <div class="header-column logo-info">
+          <div class="logo"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+
+      <div class="customer-row">
+        <div class="customer-column left">
+          <div class="customer-field">
+            <span class="label">Periodo:</span>
+            <span class="value">{{ dateRangeText() }}</span>
+          </div>
+        </div>
+        <div class="customer-column right">
+          <div class="customer-field">
+            <span class="label">Usuario:</span>
+            <span class="value">{{ usernameFilterText() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-section">
+      <table class="products-table">
+        <thead>
+        <tr>
+          <th class="center">ITEM</th>
+          <th class="center">NÚMERO</th>
+          <th class="right">CLIENTE</th>
+          <th class="right">USUARIO</th>
+          <th class="right">FECHA</th>
+          <th class="right">ITEMS</th>
+          <th class="right">TOTAL</th>
+          <th class="right">PAGADO</th>
+          <th class="right">PENDIENTE</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (sale of sales(); track trackBySaleId($index, sale); let i = $index) {
+            <tr>
+              <td class="center">{{ i + 1 }}</td>
+              <td class="center">{{ sale.number }}</td>
+              <td class="right">{{ sale.customer.name }}</td>
+              <td class="right">{{ sale.user.username }}</td>
+              <td class="right">{{ formatBolivianDate(sale.createdAt) }}</td>
+              <td class="right">{{ sale.totals.items | number:'1.0-0' }}</td>
+              <td class="right">Bs. {{ sale.totals.total | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ sale.totals.payment | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ sale.totals.pending | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+
+        <tfoot>
+        <tr class="totals-row">
+          <td class="center totals-label"></td>
+          <td colspan="4" class="right totals-label">TOTALES:</td>
+          <td class="right total-quantity">{{ summary()?.totalItems || 0 }}</td>
+          <td class="right total-amount">Bs. {{ summary()?.totalAmount | number:'1.2-2' }}</td>
+          <td class="right total-quantity">Bs. {{ summary()?.totalPayments | number:'1.2-2' }}</td>
+          <td class="right total-quantity">Bs. {{ summary()?.totalPending | number:'1.2-2' }}</td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="document-footer">
+      <div class="amount-section">
+        <span class="label">Total de Ventas:</span>
+        <span class="value">{{ summary()?.totalSales || 0 }} ventas confirmadas</span>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-right">
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha:</span>
+            <span>{{ formattedDateTime() }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Usuario:</span>
+            <span>{{ generatedBy() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-button-container">
+    <button class="btn-print" onclick="window.print()">Imprimir documento</button>
+  </div>
+</div>
