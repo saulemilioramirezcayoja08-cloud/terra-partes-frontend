@@ -90,6 +90,7 @@ export class SaleConfirmedList implements OnInit, OnDestroy {
       }
     });
   }
+
   onEnter(): void {
     this.loadSales();
   }
@@ -170,6 +171,28 @@ export class SaleConfirmedList implements OnInit, OnDestroy {
         this.isLoading.set(false);
       }
     });
+  }
+
+  onPrintReport(): void {
+    const reportData = {
+      sales: this.sales(),
+      summary: this.summary(),
+      filters: {
+        username: this.searchUsername() || null,
+        startDate: this.startDate() || null,
+        endDate: this.endDate() || null
+      },
+      generatedAt: new Date().toISOString(),
+      generatedBy: this.authService.currentUser?.name || 'Usuario'
+    };
+
+    // Guardar en sessionStorage
+    if (this.isBrowser) {
+      sessionStorage.setItem('sale-confirmed-report-data', JSON.stringify(reportData));
+    }
+
+    // Abrir en nueva ventana/pestaña
+    window.open('/sale/confirmed-report', '_blank');
   }
 
   formatBolivianDate(isoDate: string): string {

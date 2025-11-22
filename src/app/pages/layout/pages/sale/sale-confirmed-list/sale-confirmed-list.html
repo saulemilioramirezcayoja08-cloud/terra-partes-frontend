@@ -47,6 +47,12 @@
         <div class="col filters-right">
           <button class="btn-search" (click)="onSearch()">Buscar</button>
           <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
+          <button 
+            class="btn-print-report" 
+            (click)="onPrintReport()"
+            [disabled]="sales().length === 0">
+            Imprimir Reporte
+          </button>
         </div>
       </div>
 
