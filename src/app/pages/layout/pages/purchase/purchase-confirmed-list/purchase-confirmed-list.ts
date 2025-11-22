@@ -121,6 +121,28 @@ export class PurchaseConfirmedList implements OnInit, OnDestroy {
     this.activeDropdown.set(null);
   }
 
+  onPrintReport(): void {
+  const reportData = {
+    purchases: this.purchases(),
+    summary: this.summary(),
+    filters: {
+      username: this.searchUsername() || null,
+      startDate: this.startDate() || null,
+      endDate: this.endDate() || null
+    },
+    generatedAt: new Date().toISOString(),
+    generatedBy: this.authService.currentUser?.name || 'Usuario'
+  };
+
+  // Guardar en sessionStorage
+  if (this.isBrowser) {
+    sessionStorage.setItem('purchase-confirmed-report-data', JSON.stringify(reportData));
+  }
+
+  // Abrir en nueva ventana/pestaña
+  window.open('/purchase/confirmed-report', '_blank');
+}
+
   onAddPayment(purchase: PurchaseListResponse): void {
     this.activeDropdown.set(null);
 

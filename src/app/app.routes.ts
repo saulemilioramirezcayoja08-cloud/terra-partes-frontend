@@ -239,5 +239,11 @@ export const routes: Routes = [
       import('./pages/layout/pages/sale/sale-confirmed-report/sale-confirmed-report')
         .then(m => m.SaleConfirmedReport),
   },
+      {
+    path: 'purchase/confirmed-report',
+    loadComponent: () =>
+      import('./pages/layout/pages/purchase/purchase-confirmed-report/purchase-confirmed-report')
+        .then(m => m.PurchaseConfirmedReport),
+  },
   { path: '**', redirectTo: '' },
 ];

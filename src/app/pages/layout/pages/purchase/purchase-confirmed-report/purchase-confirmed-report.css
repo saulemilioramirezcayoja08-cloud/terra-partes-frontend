@@ -1,0 +1,372 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Roboto+Mono:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.purchase-confirmed-report-component {
+  width: 100%;
+  background-color: white;
+  min-height: 100vh;
+  height: auto;
+  overflow: visible;
+  position: relative;
+  color: #4B5563;
+}
+
+.orders {
+  width: 260mm;
+  margin: 0 auto;
+  background-color: white;
+  padding: 8mm;
+  font-family: 'Roboto', sans-serif;
+  height: auto;
+  min-height: auto;
+  max-height: none;
+}
+
+.document-header {
+  width: 100%;
+  page-break-after: avoid;
+  page-break-inside: avoid;
+}
+
+.header-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  min-height: 25mm;
+}
+
+.header-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-column.contact-info {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #4B5563;
+}
+
+.header-column.contact-info p {
+  margin: 1px 0;
+}
+
+.header-column.order-info {
+  align-items: center;
+  text-align: center;
+}
+
+.header-column.order-info h2 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  font-family: 'Inter', sans-serif;
+  color: #000000;
+}
+
+.header-column.order-info p {
+  font-size: 10px;
+  margin: 1px 0;
+  font-weight: 600;
+  font-family: 'Roboto Mono', monospace;
+  color: #1F2937;
+}
+
+.order-status {
+  font-weight: 600 !important;
+  color: #000000 !important;
+}
+
+.header-column.logo-info {
+  align-items: flex-end;
+  text-align: end;
+  gap: 6px;
+}
+
+.logo {
+  width: 140px;
+  height: 60px;
+  background-image: url('/assets/logo.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.tagline {
+  font-size: 8px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.customer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+  page-break-inside: avoid;
+  padding-top: 2mm;
+  padding-bottom: 2mm;
+}
+
+.customer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+}
+
+.customer-column.right {
+  align-items: flex-end;
+}
+
+.customer-field {
+  display: flex;
+  align-items: baseline;
+}
+
+.customer-field .label {
+  font-weight: 500;
+  font-size: 11px;
+  min-width: 80px;
+  font-family: 'Inter', sans-serif;
+  color: #374151;
+}
+
+.customer-field .value {
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  color: #5d5d5d;
+}
+
+.products-section {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  margin-top: 2mm;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  font-family: 'Roboto', sans-serif;
+  height: auto;
+  max-height: none;
+}
+
+.products-table thead {
+  display: table-header-group;
+}
+
+.products-table thead th {
+  font-weight: 600;
+  padding: 4px 0;
+  border-bottom: 2px solid #374151;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  color: #1F2937;
+}
+
+.products-table tbody tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.products-table tbody td {
+  padding: 6px 0;
+  border-bottom: 1px dashed #D1D5DB;
+  vertical-align: middle;
+  color: #374151;
+}
+
+.products-table .left {
+  text-align: left;
+}
+
+.products-table .center {
+  text-align: center;
+}
+
+.products-table .right {
+  text-align: right;
+}
+
+.products-table tfoot {
+  display: table-footer-group;
+}
+
+.products-table tfoot tr {
+  font-weight: 600;
+  font-size: 10px;
+}
+
+.products-table tfoot td {
+  padding: 8px 0;
+  vertical-align: middle;
+}
+
+.products-table tfoot .totals-row {
+  border-top: 2px solid #374151;
+  border-bottom: 2px solid #374151;
+}
+
+.products-table tfoot .totals-label {
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: #1F2937;
+}
+
+.products-table tfoot .total-quantity,
+.products-table tfoot .total-amount {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Roboto Mono', monospace;
+  color: #000000;
+}
+
+.document-footer {
+  width: 100%;
+  page-break-inside: avoid;
+}
+
+.amount-section {
+  display: flex;
+  gap: 10px;
+  padding: 2mm 0;
+  border-top: 1px dashed #E5E7EB;
+}
+
+.amount-section .label {
+  font-weight: 600;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #374151;
+}
+
+.amount-section .value {
+  font-size: 12px;
+  font-style: italic;
+  font-family: 'Roboto', sans-serif;
+  color: #1F2937;
+}
+
+.metadata-section {
+  display: flex;
+  justify-content: flex-end;
+  padding: 3mm 0 0 0;
+  gap: 6mm;
+  border-top: 1px dashed #E5E7EB;
+}
+
+.metadata-right {
+  display: flex;
+  gap: 6mm;
+}
+
+.metadata-item {
+  display: flex;
+  gap: 5px;
+  font-size: 10px;
+  font-family: 'Roboto Mono', monospace;
+  color: #6B7280;
+}
+
+.metadata-label {
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.print-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.btn-print {
+  background-color: transparent;
+  color: #5d5d5d;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.btn-print:hover {
+  transform: translateY(-2px);
+}
+
+.btn-print:active {
+  transform: translateY(0);
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0 !important;
+  }
+
+  .purchase-confirmed-report-component {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: white;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .orders {
+    width: 100% !important;
+    max-width: 210mm;
+    margin: 0 !important;
+    padding: 4mm 6mm !important;
+    box-sizing: border-box;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .print-button-container {
+    display: none !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .products-table thead th,
+  .products-table tfoot .totals-row {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@media screen {
+  .purchase-confirmed-report-component {
+    padding: 20px;
+  }
+
+  .orders {
+    box-shadow: rgba(14, 30, 37, 0.12) 0 2px 4px 0, rgba(14, 30, 37, 0.32) 0 2px 16px 0;
+  }
+}

@@ -634,3 +634,28 @@ td:last-child svg:hover {
     text-align: right;
     white-space: nowrap;
 }
+
+
+.btn-print-report {
+    height: 30px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 15px;
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-print-report:hover:not(:disabled) {
+    background-color: #059669;
+}
+
+.btn-print-report:disabled {
+    background-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
