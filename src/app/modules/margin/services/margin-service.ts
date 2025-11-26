@@ -16,6 +16,7 @@ export class MarginService {
   getMarginReport(
     params?: {
       sku?: string;
+      username?: string;
       startDate?: string;
       endDate?: string;
     }

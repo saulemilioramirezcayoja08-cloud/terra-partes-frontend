@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ProductMargin, Summary } from '../../../../../../modules/margin/get/models/margin-report-response.model';
 import { MarginService } from '../../../../../../modules/margin/services/margin-service';
-import { MarginReportResponse, ProductMargin } from '../../../../../../modules/margin/get/models/margin-report-response.model';
 
 @Component({
   selector: 'app-margin-report',
@@ -14,37 +14,64 @@ export class MarginReport implements OnInit {
   private readonly marginService = inject(MarginService);
 
   readonly products = signal<ProductMargin[]>([]);
-  readonly summary = signal<MarginReportResponse['summary'] | null>(null);
-  readonly selectedProduct = signal<ProductMargin | null>(null);
-  readonly isLoading = signal(false);
-
-  readonly skuSearch = signal('');
+  readonly summary = signal<Summary | null>(null);
   readonly startDate = signal('');
   readonly endDate = signal('');
+  readonly searchUsername = signal('');  // ✨ NUEVO
+  readonly isLoading = signal(false);
+  readonly selectedProduct = signal<ProductMargin | null>(null);
 
-  readonly statusFilter = signal<'ALL' | 'PROFITABLE' | 'LOW_MARGIN' | 'NO_MARGIN' | 'LOSS'>('ALL');
+  readonly resultInfo = computed(() => {
+    const count = this.products().length;
+    return `${count} productos con movimiento`;
+  });
 
-  readonly filteredProducts = computed(() => {
-    const filter = this.statusFilter();
-    if (filter === 'ALL') return this.products();
-    return this.products().filter(p => p.margin.status === filter);
+  readonly hasPositiveMargin = computed(() => {
+    const summary = this.summary();
+    return summary && summary.totalProfit > 0;
   });
 
   ngOnInit(): void {
-    this.loadMarginReport();
+    this.setDefaultDates();
+    this.loadReport();
   }
 
-  loadMarginReport(): void {
-    this.isLoading.set(true);
-    const params: any = {};
+  setDefaultDates(): void {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const sku = this.skuSearch().trim();
-    if (sku) params.sku = sku;
+    this.startDate.set(this.formatDate(firstDay));
+    this.endDate.set(this.formatDate(lastDay));
+  }
 
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  loadReport(): void {
     const start = this.startDate();
     const end = this.endDate();
-    if (start) params.startDate = start;
-    if (end) params.endDate = end;
+
+    if (!start || !end) {
+      alert('Debe seleccionar ambas fechas');
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    const params: any = {
+      startDate: `${start}T00:00:00`,
+      endDate: `${end}T23:59:59`
+    };
+
+    const username = this.searchUsername().trim();
+    if (username) {
+      params.username = username;
+    }
 
     this.marginService.getMarginReport(params).subscribe({
       next: (response) => {
@@ -52,46 +79,46 @@ export class MarginReport implements OnInit {
           this.products.set(response.data.products);
           this.summary.set(response.data.summary);
 
-          if (response.data.products.length > 0 && !this.selectedProduct()) {
+          if (response.data.products.length > 0) {
             this.selectProduct(response.data.products[0]);
+          } else {
+            this.selectedProduct.set(null);
           }
         }
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false)
+      error: (error) => {
+        console.error('Error al cargar reporte:', error);
+        alert('Error al cargar el reporte: ' + (error.message || 'Error desconocido'));
+        this.isLoading.set(false);
+      }
     });
   }
 
   onSearch(): void {
-    this.loadMarginReport();
+    this.loadReport();
+  }
+
+  onEnter(): void {
+    this.loadReport();
+  }
+
+  clearFilters(): void {
+    this.searchUsername.set('');
+    this.setDefaultDates();
+    this.loadReport();
   }
 
   selectProduct(product: ProductMargin): void {
     this.selectedProduct.set(product);
   }
 
-  toggleStatusFilter(status: 'ALL' | 'PROFITABLE' | 'LOW_MARGIN' | 'NO_MARGIN' | 'LOSS'): void {
-    this.statusFilter.set(status);
-  }
-
-  getStatusClass(status: string): string {
-    const statusMap: Record<string, string> = {
-      'PROFITABLE': 'status-profitable',
-      'LOW_MARGIN': 'status-low',
-      'NO_MARGIN': 'status-no-margin',
-      'LOSS': 'status-loss'
-    };
-    return statusMap[status] || '';
-  }
-
-  getStatusLabel(status: string): string {
-    const labelMap: Record<string, string> = {
-      'PROFITABLE': 'RENTABLE',
-      'LOW_MARGIN': 'MARGEN BAJO',
-      'NO_MARGIN': 'SIN MARGEN',
-      'LOSS': 'PÉRDIDA'
-    };
-    return labelMap[status] || status;
+  getMarginClass(percent: number): string {
+    if (percent >= 30) return 'margin-excellent';
+    if (percent >= 15) return 'margin-good';
+    if (percent >= 5) return 'margin-fair';
+    if (percent > 0) return 'margin-low';
+    return 'margin-negative';
   }
 
   trackByProductId(_: number, product: ProductMargin): number {

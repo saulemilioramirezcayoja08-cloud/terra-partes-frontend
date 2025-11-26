@@ -12,6 +12,7 @@ export interface Period {
 
 export interface Filters {
   productSku: string | null;
+  username: string | null;
 }
 
 export interface ProductMargin {
@@ -26,19 +27,16 @@ export interface ProductMargin {
 export interface PurchaseData {
   totalUnits: number;
   totalCost: number;
-  averageUnitCost: number;
   transactions: number;
 }
 
 export interface SaleData {
   totalUnits: number;
   totalRevenue: number;
-  averageUnitPrice: number;
   transactions: number;
 }
 
 export interface MarginData {
-  profitPerUnit: number;
   profitPercentage: number;
   totalProfit: number;
   status: 'PROFITABLE' | 'LOW_MARGIN' | 'NO_MARGIN' | 'LOSS';
