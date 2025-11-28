@@ -177,14 +177,7 @@ export const routes: Routes = [
           import('./pages/layout/pages/inventory/stock-list/stock-list/stock-list').then(
             m => m.StockList,
           ),
-      },
-      {
-        path: 'margin/report',
-        loadComponent: () =>
-          import('./pages/layout/pages/margin/margin-report/margin-report/margin-report').then(
-            m => m.MarginReport
-          ),
-      },
+      }
     ],
   },
   {
