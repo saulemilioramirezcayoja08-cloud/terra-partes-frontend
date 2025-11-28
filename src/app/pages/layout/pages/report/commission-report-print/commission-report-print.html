@@ -1,0 +1,114 @@
+<div class="commission-report-print-component">
+  <div class="orders">
+    <div class="document-header">
+      <div class="header-row">
+        <div class="header-column contact-info">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+        <div class="header-column order-info">
+          <h2>REPORTE DE COMISIONES</h2>
+          <p>Fecha: {{ formattedDate() }}</p>
+        </div>
+        <div class="header-column logo-info">
+          <div class="logo"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+      <div class="customer-row">
+        <div class="customer-column left">
+          <div class="customer-field">
+            <span class="label">Periodo:</span>
+            <span class="value">{{ dateRangeText() }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Estado:</span>
+            <span class="value">{{ statusFilterText() }}</span>
+          </div>
+        </div>
+        <div class="customer-column right">
+          <div class="customer-field">
+            <span class="label">Total Pendiente:</span>
+            <span class="value">Bs. {{ resumen()?.totalPendiente | number:'1.2-2' }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Total Pagado:</span>
+            <span class="value">Bs. {{ resumen()?.totalPagado | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="products-section">
+      <table class="products-table">
+        <thead>
+        <tr>
+          <th class="center">ITEM</th>
+          <th class="left">VENTA #</th>
+          <th class="left">CLIENTE</th>
+          <th class="left">VENDEDOR</th>
+          <th class="center">FECHA</th>
+          <th class="right">TOTAL</th>
+          <th class="right">COSTO</th>
+          <th class="right">MARGEN</th>
+          <th class="right">COMISIÓN</th>
+          <th class="center">ESTADO</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (com of comisiones(); track trackById($index, com); let i = $index) {
+            <tr>
+              <td class="center">{{ i + 1 }}</td>
+              <td class="left">{{ com.ventaNumero }}</td>
+              <td class="left">{{ com.cliente }}</td>
+              <td class="left">{{ com.vendedor.nombre }}</td>
+              <td class="center">{{ formatBolivianDate(com.fechaVenta) }}</td>
+              <td class="right">Bs. {{ com.totalVenta | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ com.costoVenta | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ com.margenBruto | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ com.montoComision | number:'1.2-2' }}</td>
+              <td class="center">{{ com.estado }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+        <tr class="totals-row">
+          <td class="center totals-label"></td>
+          <td colspan="4" class="right totals-label">TOTALES:</td>
+          <td class="right total-amount">Bs. {{ resumen()?.totalPendiente + resumen()?.totalPagado | number:'1.2-2' }}</td>
+          <td class="right"></td>
+          <td class="right"></td>
+          <td class="right total-amount">Bs. {{ resumen()?.totalPendiente + resumen()?.totalPagado | number:'1.2-2' }}</td>
+          <td class="center totals-label"></td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+    
+    <div class="document-footer">
+      <div class="amount-section">
+        <span class="label">Total de Comisiones:</span>
+        <span class="value">{{ comisiones().length }} comisiones ({{ resumen()?.cantidadPendiente }} pendientes, {{ resumen()?.cantidadPagada }} pagadas)</span>
+      </div>
+      <div class="metadata-section">
+        <div class="metadata-right">
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha:</span>
+            <span>{{ formattedDateTime() }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Usuario:</span>
+            <span>{{ generatedBy() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="print-button-container">
+    <button class="btn-print" onclick="window.print()">Imprimir documento</button>
+  </div>
+</div>

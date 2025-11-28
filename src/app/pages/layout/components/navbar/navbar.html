@@ -102,6 +102,15 @@
           <a routerLink="/supplier/create" routerLinkActive="active-item" class="menu-item">Crear</a>
         </div>
       </div>
+
+      <div class="tab-item">
+        <span class="tab" [class.active]="isModuleActive('reportes')">
+          Reportes
+        </span>
+        <div class="mega-menu simple">
+          <a routerLink="/report/commissions" routerLinkActive="active-item" class="menu-item">Comisiones</a>
+        </div>
+      </div>
     </nav>
 
     <div class="user-info">

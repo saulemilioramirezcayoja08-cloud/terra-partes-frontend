@@ -177,6 +177,12 @@ export const routes: Routes = [
           import('./pages/layout/pages/inventory/stock-list/stock-list/stock-list').then(
             m => m.StockList,
           ),
+      },
+      {
+        path: 'report/commissions',
+        loadComponent: () =>
+          import('./pages/layout/pages/report/commission-report/commission-report').then(
+            m => m.CommissionReport),
       }
     ],
   },
@@ -226,17 +232,23 @@ export const routes: Routes = [
       import('./pages/layout/pages/sale/sale-reprint/sale-reprint')
         .then(m => m.SaleReprint),
   },
-    {
+  {
     path: 'sale/confirmed-report',
     loadComponent: () =>
       import('./pages/layout/pages/sale/sale-confirmed-report/sale-confirmed-report')
         .then(m => m.SaleConfirmedReport),
   },
-      {
+  {
     path: 'purchase/confirmed-report',
     loadComponent: () =>
       import('./pages/layout/pages/purchase/purchase-confirmed-report/purchase-confirmed-report')
         .then(m => m.PurchaseConfirmedReport),
+  },
+  {
+    path: 'report/commission-print',
+    loadComponent: () =>
+      import('./pages/layout/pages/report/commission-report-print/commission-report-print')
+        .then(m => m.CommissionReportPrint),
   },
   { path: '**', redirectTo: '' },
 ];

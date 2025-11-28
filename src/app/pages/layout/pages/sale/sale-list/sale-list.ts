@@ -165,8 +165,23 @@ export class SaleList implements OnInit, OnDestroy {
   onConfirmSale(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
 
+    const commissionInput = prompt(
+      'Confirmar venta ' + sale.number + '\n\n' +
+      'Porcentaje de comisión (0-100):',
+      '30'
+    );
+
+    if (commissionInput === null) return;
+
+    const commissionRate = parseInt(commissionInput.trim());
+
+    if (isNaN(commissionRate) || commissionRate < 0 || commissionRate > 100) {
+      alert('El porcentaje de comisión debe ser un número entre 0 y 100');
+      return;
+    }
+
     const notesInput = prompt(
-      'Confirmar venta ' + sale.number + '\n\nNotas adicionales (opcional):',
+      'Notas adicionales (opcional):',
       sale.notes || ''
     );
 
@@ -174,12 +189,15 @@ export class SaleList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    const payload = notesInput.trim() ? { notes: notesInput.trim() } : undefined;
+    const payload: any = { commissionRate };
+    if (notesInput.trim()) {
+      payload.notes = notesInput.trim();
+    }
 
     this.saleService.confirmSale(sale.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert('Venta confirmada exitosamente');
+          alert(`Venta confirmada exitosamente con comisión del ${commissionRate}%`);
           this.loadSales();
         }
       },
