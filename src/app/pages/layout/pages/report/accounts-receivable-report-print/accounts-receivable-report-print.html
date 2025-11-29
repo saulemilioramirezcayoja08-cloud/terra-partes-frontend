@@ -1,0 +1,112 @@
+<div class="accounts-receivable-report-print-component">
+  <div class="orders">
+    <div class="document-header">
+      <div class="header-row">
+        <div class="header-column contact-info">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+        <div class="header-column order-info">
+          <h2>REPORTE DE CUENTAS POR COBRAR</h2>
+          <p>Fecha: {{ formattedDate() }}</p>
+        </div>
+        <div class="header-column logo-info">
+          <div class="logo"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+      <div class="customer-row">
+        <div class="customer-column left">
+          <div class="customer-field">
+            <span class="label">Periodo:</span>
+            <span class="value">{{ dateRangeText() }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Ventas:</span>
+            <span class="value">{{ resumen()?.cantidadVentas }} ventas pendientes</span>
+          </div>
+        </div>
+        <div class="customer-column right">
+          <div class="customer-field">
+            <span class="label">Total por Cobrar:</span>
+            <span class="value">Bs. {{ resumen()?.totalPorCobrar | number:'1.2-2' }}</span>
+          </div>
+          <div class="customer-field">
+            <span class="label">Clientes:</span>
+            <span class="value">{{ resumen()?.cantidadClientes }} clientes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="products-section">
+      <table class="products-table">
+        <thead>
+        <tr>
+          <th class="center">ITEM</th>
+          <th class="left">VENTA #</th>
+          <th class="left">CLIENTE</th>
+          <th class="center">FECHA</th>
+          <th class="right">TOTAL</th>
+          <th class="right">PAGADO</th>
+          <th class="right">SALDO</th>
+          <th class="center">DÍAS</th>
+          <th class="left">FORMA PAGO</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (cuenta of cuentas(); track trackById($index, cuenta); let i = $index) {
+            <tr>
+              <td class="center">{{ i + 1 }}</td>
+              <td class="left">{{ cuenta.ventaNumero }}</td>
+              <td class="left">{{ cuenta.cliente.nombre }}</td>
+              <td class="center">{{ formatBolivianDate(cuenta.fechaVenta) }}</td>
+              <td class="right">Bs. {{ cuenta.totalVenta | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ cuenta.totalPagado | number:'1.2-2' }}</td>
+              <td class="right">Bs. {{ cuenta.saldoPendiente | number:'1.2-2' }}</td>
+              <td class="center">{{ cuenta.diasTranscurridos }}</td>
+              <td class="left">{{ cuenta.formaPago?.nombre || 'N/A' }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+        <tr class="totals-row">
+          <td class="center totals-label"></td>
+          <td colspan="3" class="right totals-label">TOTALES:</td>
+          <td class="right total-amount">Bs. {{ totalVentas() | number:'1.2-2' }}</td>
+          <td class="right total-amount">Bs. {{ totalPagado() | number:'1.2-2' }}</td>
+          <td class="right total-amount">Bs. {{ totalSaldo() | number:'1.2-2' }}</td>
+          <td class="center totals-label"></td>
+          <td class="left totals-label"></td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+    
+    <div class="document-footer">
+      <div class="amount-section">
+        <span class="label">Resumen:</span>
+        <span class="value">{{ cuentas().length }} ventas con saldo pendiente de cobro</span>
+      </div>
+      <div class="metadata-section">
+        <div class="metadata-right">
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha:</span>
+            <span>{{ formattedDateTime() }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Usuario:</span>
+            <span>{{ generatedBy() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="print-button-container">
+    <button class="btn-print" onclick="window.print()">Imprimir documento</button>
+  </div>
+</div>

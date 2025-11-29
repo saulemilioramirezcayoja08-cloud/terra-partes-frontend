@@ -183,6 +183,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/layout/pages/report/commission-report/commission-report').then(
             m => m.CommissionReport),
+      },
+      {
+        path: 'report/accounts-receivable',
+        loadComponent: () =>
+          import('./pages/layout/pages/report/accounts-receivable-report/accounts-receivable-report').then(
+            m => m.AccountsReceivableReport),
       }
     ],
   },
@@ -249,6 +255,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/layout/pages/report/commission-report-print/commission-report-print')
         .then(m => m.CommissionReportPrint),
+  },
+  {
+    path: 'report/accounts-receivable-print',
+    loadComponent: () =>
+      import('./pages/layout/pages/report/accounts-receivable-report-print/accounts-receivable-report-print')
+        .then(m => m.AccountsReceivableReportPrint),
   },
   { path: '**', redirectTo: '' },
 ];
