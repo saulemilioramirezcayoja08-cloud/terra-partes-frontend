@@ -1,0 +1,100 @@
+<div class="gross-margin-report-component">
+  <div class="row">
+    <div class="title">Reporte de Margen Bruto</div>
+    <div class="subtitle">
+      Análisis de rentabilidad por venta
+    </div>
+  </div>
+
+  <div class="row filters">
+    <div class="col">
+      <label>Desde:</label>
+      <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)">
+    </div>
+
+    <div class="col">
+      <label>Hasta:</label>
+      <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)">
+    </div>
+
+    <div class="col">
+      <button class="btn-search" (click)="loadReport()">Buscar</button>
+      <button class="btn-print" (click)="onPrint()" [disabled]="ventas().length === 0">Imprimir</button>
+    </div>
+  </div>
+
+  @if (summary(); as s) {
+  <div class="row summary">
+    <div class="card">
+      <div class="card-label">Total Ventas</div>
+      <div class="card-value sales">Bs. {{ s.totalVentas | number:'1.2-2' }}</div>
+      <div class="card-count">{{ s.cantidadVentas }} ventas</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Total Costos</div>
+      <div class="card-value costs">Bs. {{ s.totalCostos | number:'1.2-2' }}</div>
+      <div class="card-count">Costo FIFO</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Margen Bruto</div>
+      <div class="card-value margin">Bs. {{ s.totalMargen | number:'1.2-2' }}</div>
+      <div class="card-count">{{ s.porcentajeMargen | number:'1.2-2' }}%</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Por Cobrar</div>
+      <div class="card-value pending">Bs. {{ s.totalPendiente | number:'1.2-2' }}</div>
+      <div class="card-count">Saldo pendiente</div>
+    </div>
+  </div>
+  }
+
+  <div class="row">
+    <div class="col">
+      @if (isLoading()) {
+      <div class="loading">Cargando...</div>
+      } @else if (ventas().length === 0) {
+      <div class="empty">No se encontraron ventas</div>
+      } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>FECHA</th>
+            <th>VENTA</th>
+            <th>CLIENTE</th>
+            <th>MÉTODO DE PAGO</th>
+            <th>USUARIO</th>
+            <th>TOTAL</th>
+            <th>COSTO</th>
+            <th>MARGEN</th>
+            <th>% MARGEN</th>
+            <th>PAGADO</th>
+            <th>PENDIENTE</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (venta of ventas(); track trackById($index, venta)) {
+          <tr>
+            <td>{{ formatBolivianDate(venta.fecha) }}</td>
+            <td>{{ venta.numero }}</td>
+            <td>{{ venta.cliente }}</td>
+            <td>{{ venta.metodoPago || 'N/A' }}</td>
+            <td>{{ venta.usuario.nombre }}</td>
+            <td class="right">Bs. {{ venta.total | number:'1.2-2' }}</td>
+            <td class="right">Bs. {{ venta.costo | number:'1.2-2' }}</td>
+            <td class="right highlight">Bs. {{ venta.margen | number:'1.2-2' }}</td>
+            <td class="right percent">{{ venta.porcentajeMargen | number:'1.2-2' }}%</td>
+            <td class="right">Bs. {{ venta.pagado | number:'1.2-2' }}</td>
+            <td class="right" [class.has-pending]="venta.pendiente > 0">
+              Bs. {{ venta.pendiente | number:'1.2-2' }}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      }
+    </div>
+  </div>
+</div>

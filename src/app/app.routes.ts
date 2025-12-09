@@ -189,7 +189,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/layout/pages/report/accounts-receivable-report/accounts-receivable-report').then(
             m => m.AccountsReceivableReport),
-      }
+      },
+      {
+        path: 'report/gross-margin',
+        loadComponent: () =>
+          import('./pages/layout/pages/report/gross-margin-report/gross-margin-report/gross-margin-report').then(
+            m => m.GrossMarginReport),
+      },
     ],
   },
   {
@@ -261,6 +267,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/layout/pages/report/accounts-receivable-report-print/accounts-receivable-report-print')
         .then(m => m.AccountsReceivableReportPrint),
+  },
+  {
+    path: 'report/gross-margin-print',
+    loadComponent: () =>
+      import('./pages/layout/pages/report/gross-margin-report-print/gross-margin-report-print')
+        .then(m => m.GrossMarginReportPrint),
   },
   { path: '**', redirectTo: '' },
 ];
