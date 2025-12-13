@@ -1,4 +1,4 @@
 export interface ConfirmSaleRequest {
   notes?: string;
-  commissionRate?: number;
+  productCommissionRates?: { [productId: number]: number };
 }

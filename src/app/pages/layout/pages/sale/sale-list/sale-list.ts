@@ -5,6 +5,7 @@ import { SaleService } from '../../../../../modules/sale/services/sale.service';
 import { AuthService } from '../../../../../modules/auth/services/auth.service';
 import { SaleListResponse } from '../../../../../modules/sale/get/models/sale-list-response.model';
 import { StatusDisplayPipe } from "../../../../../shared/pipes/status-display-pipe";
+import { ConfirmSaleRequest } from '../../../../../modules/sale/put/models/confirm-sale-request.model';
 
 @Component({
   selector: 'app-sale-list',
@@ -165,20 +166,43 @@ export class SaleList implements OnInit, OnDestroy {
   onConfirmSale(sale: SaleListResponse): void {
     this.activeDropdown.set(null);
 
-    const commissionInput = prompt(
-      'Confirmar venta ' + sale.number + '\n\n' +
-      'Porcentaje de comisión (0-100):',
-      '30'
-    );
+    // Construir el prompt con todos los productos
+    let promptMessage = `Confirmar venta ${sale.number}\n\n`;
+    promptMessage += 'Ingrese el porcentaje de comisión (0-100) para cada producto:\n\n';
+    
+    sale.details.forEach((detail, index) => {
+      promptMessage += `${index + 1}. ${detail.product.name} (SKU: ${detail.product.sku})\n`;
+    });
+    
+    promptMessage += '\nFormato: porcentajes separados por comas\n';
+    promptMessage += 'Ejemplo: 100,30,50\n';
+    promptMessage += '(en el mismo orden que los productos listados)';
 
-    if (commissionInput === null) return;
+    const commissionsInput = prompt(promptMessage, '30');
 
-    const commissionRate = parseInt(commissionInput.trim());
+    if (commissionsInput === null) return;
 
-    if (isNaN(commissionRate) || commissionRate < 0 || commissionRate > 100) {
-      alert('El porcentaje de comisión debe ser un número entre 0 y 100');
+    // Parsear los porcentajes
+    const commissionValues = commissionsInput.split(',').map(v => parseInt(v.trim()));
+
+    if (commissionValues.length !== sale.details.length) {
+      alert(`Debe ingresar ${sale.details.length} porcentajes (uno por cada producto)`);
       return;
     }
+
+    // Validar cada porcentaje
+    for (let i = 0; i < commissionValues.length; i++) {
+      if (isNaN(commissionValues[i]) || commissionValues[i] < 0 || commissionValues[i] > 100) {
+        alert(`El porcentaje ${i + 1} debe ser un número entre 0 y 100`);
+        return;
+      }
+    }
+
+    // Construir el mapa productId -> commissionRate
+    const productCommissionRates: { [key: number]: number } = {};
+    sale.details.forEach((detail, index) => {
+      productCommissionRates[detail.product.id] = commissionValues[index];
+    });
 
     const notesInput = prompt(
       'Notas adicionales (opcional):',
@@ -189,7 +213,7 @@ export class SaleList implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
 
-    const payload: any = { commissionRate };
+    const payload: ConfirmSaleRequest = { productCommissionRates };
     if (notesInput.trim()) {
       payload.notes = notesInput.trim();
     }
@@ -197,7 +221,7 @@ export class SaleList implements OnInit, OnDestroy {
     this.saleService.confirmSale(sale.id, payload).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          alert(`Venta confirmada exitosamente con comisión del ${commissionRate}%`);
+          alert('Venta confirmada exitosamente');
           this.loadSales();
         }
       },
