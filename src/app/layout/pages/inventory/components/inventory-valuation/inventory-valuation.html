@@ -1,0 +1,189 @@
+<div class="inventory-valuation-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Categoría</label>
+        <div class="dropdown" [class.open]="open_category_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_category_dropdown()">
+            <span class="text">{{ selected_category_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item simple" (click)="on_category_select(null)">Todas</div>
+            @for (cat of categories(); track cat.id) {
+            <div class="item simple" (click)="on_category_select(cat.id)">{{ cat.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search">
+      <div class="radios">
+        <label class="radio">
+          <input type="radio" name="search_type" value="NAME" [checked]="search_type() === 'NAME'"
+            (change)="on_search_type_change('NAME')" />
+          <span class="label">Nombre</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="search_type" value="SKU" [checked]="search_type() === 'SKU'"
+            (change)="on_search_type_change('SKU')" />
+          <span class="label">Cod. Int.</span>
+        </label>
+      </div>
+      <input type="text" class="input" placeholder="Buscar producto..." [ngModel]="search_text()"
+        (ngModelChange)="search_text.set($event)" (input)="on_search_change()" />
+      <span class="hint">Buscando por : <strong>{{ search_type_label() }}</strong></span>
+    </div>
+
+    <div class="controls">
+      <app-paginator [current_page]="current_page()" [page_size]="page_size()" [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="center"></th>
+            <th class="center">UOM</th>
+            <th class="left">ALMACÉN</th>
+            <th class="right">PRECIO</th>
+            <th class="right">STOCK</th>
+            <th class="right">VALOR</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track get_item_key(item)) {
+          <tr class="row meta">
+            <td class="cell" colspan="6">
+              <div class="metacontent">
+                <div class="metaleft">
+                  <span class="detail">
+                    <span class="label">Cod. Int.:</span>
+                    <span class="value number">{{ item.product.sku }}</span>
+                  </span>
+                  <span class="divider">·</span>
+                  <span class="detail">
+                    <span class="label">Producto:</span>
+                    <span class="value">{{ item.product.name }}</span>
+                  </span>
+                  <span class="divider">·</span>
+                  <span class="detail">
+                    <span class="label">Categoría:</span>
+                    <span class="value">{{ item.category?.name ?? 'Sin categoría' }}</span>
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="row data" (click)="toggle_expand(item)">
+            <td class="cell center">
+              @if (is_expanded(item)) {
+              <svg class="expand icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M12 4.5L7 9.5M12 4.5L17 9.5M12 4.5L12 11M12 14.5C12 16.1667 13 19.5 17 19.5" stroke="#1C274C"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+              </svg>
+              } @else {
+              <svg class="expand icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M12 19.5L17 14.5M12 19.5L7 14.5M12 19.5L12 13M12 9.5C12 7.83333 11 4.5 7 4.5"
+                    stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+              </svg>
+              }
+            </td>
+            <td class="cell center bold">{{ item.product.uom }}</td>
+            <td class="cell left mono italic">{{ item.warehouse.name }}</td>
+            <td class="cell right mono">{{ format_number(item.product.price) }}</td>
+            <td class="cell right mono">{{ get_total_remaining(item) }}</td>
+            <td class="cell right mono">{{ format_number(get_total_value(item)) }}</td>
+          </tr>
+
+          @if (is_expanded(item)) {
+          @if (item.lots.length > 0) {
+          <tr class="row items header">
+            <td class="cell" colspan="6">
+              <div class="items wrapper">
+                <table class="subtable">
+                  <thead>
+                    <tr>
+                      <th class="left">COMPRA N°</th>
+                      <th class="center">TIPO</th>
+                      <th class="center">MONEDA</th>
+                      <th class="left">FECHA</th>
+                      <th class="left">PROVEEDOR</th>
+                      <th class="right">CANT. ORIG.</th>
+                      <th class="right">RESTANTE</th>
+                      <th class="right">COSTO</th>
+                      <th class="right">VALOR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (lot of item.lots; track lot.id) {
+                    <tr class="subrow">
+                      <td class="subcell left mono">{{ lot.purchase_number }}</td>
+                      <td class="subcell center bold">{{ lot.purchase_type }}</td>
+                      <td class="subcell center bold">{{ lot.purchase_currency }}</td>
+                      <td class="subcell left italic">{{ lot.purchase_created_at | date:'dd-MM-yyyy HH:mm' }}</td>
+                      <td class="subcell left mono italic">{{ lot.supplier }}</td>
+                      <td class="subcell right mono">{{ lot.original }}</td>
+                      <td class="subcell right mono">{{ lot.remaining }}</td>
+                      <td class="subcell right mono">{{ format_number(lot.cost) }}</td>
+                      <td class="subcell right mono">{{ format_number(lot.value) }}</td>
+                    </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="subrow total">
+                      <td class="subcell left" colspan="5">TOTAL</td>
+                      <td class="subcell right">{{ get_total_original(item) }}</td>
+                      <td class="subcell right bold">{{ get_total_remaining(item) }}</td>
+                      <td class="subcell right bold">{{ format_number(get_average_cost(item)) }}</td>
+                      <td class="subcell right bold">{{ format_number(get_total_value(item)) }}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </td>
+          </tr>
+          } @else {
+          <tr class="row items empty">
+            <td class="cell center muted" colspan="6">Sin lotes disponibles</td>
+          </tr>
+          }
+          }
+
+          <tr class="row spacer">
+            <td colspan="6"></td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="6">No hay registros de valorización disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

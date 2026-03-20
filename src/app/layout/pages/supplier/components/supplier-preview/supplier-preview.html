@@ -1,0 +1,61 @@
+<div class="supplier-preview-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  @if (supplier(); as data) {
+    <div class="content">
+      <div class="toolbar">
+        <div class="left">
+          <button class="btn back" type="button" (click)="go_back()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section">
+          <div class="group">
+            <div class="field">
+              <label class="label">Usuario</label>
+              <span class="value display">{{ data.user.name }}</span>
+            </div>
+            <div class="field">
+              <label class="label">NIT / CI</label>
+              <span class="value display mono">{{ data.supplier.tax_id ?? 'N/A' }}</span>
+            </div>
+            <div class="field span-2">
+              <label class="label">Nombre</label>
+              <span class="value display">{{ data.supplier.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="group">
+            <div class="field">
+              <label class="label">Teléfono</label>
+              <span class="value display">{{ data.supplier.phone ?? 'N/A' }}</span>
+            </div>
+            <div class="field">
+              <label class="label">Email</label>
+              <span class="value display">{{ data.supplier.email ?? 'N/A' }}</span>
+            </div>
+            <div class="field span-2">
+              <label class="label">Dirección</label>
+              <span class="value display">{{ data.supplier.address ?? 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section metadata">
+          <div class="item">
+            <span class="label">Fecha Reg:</span>
+            <span class="value">{{ format_datetime(data.supplier.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

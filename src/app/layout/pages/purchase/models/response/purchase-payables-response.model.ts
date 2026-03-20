@@ -1,0 +1,28 @@
+export interface purchase_payables_response {
+  purchase: {
+    id: number;
+    number: string;
+    currency: string;
+    created_at: string;
+  };
+  supplier: {
+    id: number;
+    name: string;
+  };
+  warehouse: {
+    id: number;
+    name: string;
+  };
+  payment_method: {
+    id: number;
+    name: string;
+  };
+  total: number;
+  paid: number;
+  balance: number;
+  payments: {
+    id: number;
+    amount: number;
+    created_at: string;
+  }[];
+}

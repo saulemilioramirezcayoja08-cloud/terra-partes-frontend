@@ -1,0 +1,47 @@
+<div class="login-component">
+  <div class="card">
+    <div class="col">
+      <form class="section" (ngSubmit)="on_submit()">
+        <div class="field">
+          <label class="label" for="username">Usuario</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            class="input"
+            [(ngModel)]="username"
+            required
+            autocomplete="username"
+            placeholder="Ingrese su usuario"
+            [disabled]="is_loading()"
+          />
+        </div>
+        <div class="field">
+          <label class="label" for="password">Contraseña</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="input"
+            [(ngModel)]="password"
+            required
+            autocomplete="current-password"
+            placeholder="Ingrese su contraseña"
+            [disabled]="is_loading()"
+          />
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn primary" [disabled]="!is_valid_form() || is_loading()">
+            @if (is_loading()) {
+              <span class="spinner"></span>
+            }
+            <span>Iniciar sesión</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col">
+      <div class="logo"></div>
+    </div>
+  </div>
+</div>

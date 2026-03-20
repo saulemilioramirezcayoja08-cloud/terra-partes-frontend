@@ -1,0 +1,57 @@
+<div class="income-concept-create-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="card">
+    <div class="section">
+      <div class="group">
+        <div class="field">
+          <label class="label">Usuario <span class="required">*</span></label>
+          <div class="dropdown" [class.open]="open_user_dropdown()">
+            <button class="trigger" type="button" (click)="toggle_user_dropdown()">
+              <span class="text">{{ selected_user_name() }}</span>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="menu">
+              @for (user of users(); track user.id) {
+                <div class="item" (click)="on_user_select(user.id)">
+                  <div class="content">
+                    <span class="title">{{ user.name }}</span>
+                    <span class="subtitle">{{ user.username }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="field span-3">
+          <label class="label">Nombre <span class="required">*</span></label>
+          <input type="text" class="input" placeholder="Nombre del concepto..." maxlength="120"
+                 [ngModel]="name()"
+                 (ngModelChange)="name.set($event)"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="group">
+        <div class="field span-4">
+          <label class="label">Descripción</label>
+          <textarea class="input textarea" placeholder="Descripción del concepto..."
+                    [ngModel]="description()"
+                    (ngModelChange)="description.set($event)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section actions">
+      <button class="btn secondary" type="button" (click)="on_cancel()" [disabled]="loading()">Limpiar</button>
+      <button class="btn secondary" type="button" (click)="on_preview()" [disabled]="!has_last_concept()">Ver Concepto</button>
+      <button class="btn primary" type="button" (click)="on_save()" [disabled]="!is_valid_form() || loading()">
+        {{ loading() ? 'Guardando...' : 'Crear Concepto' }}
+      </button>
+    </div>
+  </div>
+</div>

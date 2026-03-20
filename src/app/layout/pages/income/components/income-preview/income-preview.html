@@ -1,0 +1,129 @@
+<div class="income-preview-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="text">Cargando ingreso...</span>
+    </div>
+  } @else if (has_error()) {
+    <div class="error">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="text">{{ error_message() }}</span>
+      <button class="btn secondary" type="button" (click)="go_back()">Volver</button>
+    </div>
+  } @else if (income(); as data) {
+    <div class="content">
+      <div class="toolbar">
+        <div class="left">
+          <button class="btn back" type="button" (click)="go_back()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section header">
+          <div class="contact">
+            <p>Barrio Estacion Argentina</p>
+            <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+            <p>Cel. (591) 76052022</p>
+            <p>Cel. (591) 77388023</p>
+            <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+          </div>
+          <div class="document">
+            <h2 class="title">INGRESO</h2>
+            <p class="detail">Nro.: <strong>{{ data.income.number }}</strong></p>
+            <p class="detail">Fecha: <strong>{{ format_date(data.income.date) }}</strong></p>
+          </div>
+          <div class="logo">
+            <div class="image"></div>
+            <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+          </div>
+        </div>
+
+        <div class="section info">
+          <div class="left">
+            <div class="field">
+              <span class="label">Usuario:</span>
+              <span class="value">{{ data.user.name }}</span>
+            </div>
+          </div>
+          <div class="right">
+            <div class="field">
+              <span class="label">Método Pago:</span>
+              <span class="value">{{ data.payment_method.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section items">
+          <table class="table">
+            <thead>
+            <tr>
+              <th class="left">ITEM</th>
+              <th class="left">CONCEPTO</th>
+              <th class="left">NOTAS</th>
+              <th class="right">MONTO</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (item of data.items; track item.id; let i = $index) {
+                <tr class="row data">
+                  <td class="cell left">{{ i + 1 }}</td>
+                  <td class="cell left bold primary">{{ item.concept_name }}</td>
+                  <td class="cell left muted italic">{{ item.notes ?? '-' }}</td>
+                  <td class="cell right">{{ format_number(item.amount) }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+            <tr class="row totals">
+              <td colspan="2"></td>
+              <td class="cell right label">TOTAL:</td>
+              <td class="cell right value">{{ format_number(data.totals.total) }}</td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="section literal">
+          <span class="label">Son:</span>
+          <span class="value">{{ total_literal() }}</span>
+        </div>
+
+        <div class="section notes">
+          <span class="label">Obs.:</span>
+          <span class="value">{{ data.income.notes ?? '-' }}</span>
+        </div>
+
+        <div class="section signatures">
+          <div class="signature">
+            <span class="label">Entregué Conforme</span>
+          </div>
+          <div class="signature">
+            <span class="label">Recibí Conforme</span>
+          </div>
+        </div>
+
+        <div class="section metadata">
+          <div class="item">
+            <span class="label">Fecha Reg:</span>
+            <span class="value">{{ format_datetime(data.income.created_at) }}</span>
+          </div>
+          <div class="item">
+            <span class="label">Moneda:</span>
+            <span class="value">{{ data.income.currency }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

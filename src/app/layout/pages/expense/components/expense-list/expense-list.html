@@ -1,0 +1,106 @@
+<div class="expense-list-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Usuario</label>
+        <div class="dropdown" [class.open]="open_user_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_user_dropdown()">
+            <span class="text">{{ selected_user_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_user_select(null)">Todos</div>
+            @for (user of users(); track user.id) {
+            <div class="item" (click)="on_user_select(user.id)">{{ user.username }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Método de Pago</label>
+        <div class="dropdown" [class.open]="open_payment_method_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_payment_method_dropdown()">
+            <span class="text">{{ selected_payment_method_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_payment_method_select(null)">Todos</div>
+            @for (pm of payment_methods(); track pm.id) {
+            <div class="item" (click)="on_payment_method_select(pm.id)">{{ pm.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-date-range [label_from]="'Fecha Desde'" [label_to]="'Fecha Hasta'"
+      (range_change)="on_date_range_change($event)">
+    </app-date-range>
+
+    <div class="controls">
+      <app-paginator [current_page]="current_page()" [page_size]="page_size()" [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="left">USUARIO</th>
+            <th class="left">MÉTODO PAGO</th>
+            <th class="center">MONEDA</th>
+            <th class="right">TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.expense.id) {
+          <tr class="row meta">
+            <td class="cell" colspan="4">
+              <div class="metacontent">
+                <div class="metaleft">
+                  <span class="detail">
+                    <span class="label">Nº :</span>
+                    <span class="value number link" (click)="on_expense_click(item.expense.id)">{{ item.expense.number
+                      }}</span>
+                  </span>
+                  <span class="divider">•</span>
+                  <span class="detail">
+                    <span class="label">Fecha:</span>
+                    <span class="value">{{ item.expense.created_at | date:'dd-MM-yyyy HH:mm' }}</span>
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr class="row data">
+            <td class="cell left mono italic">{{ item.user.username }}</td>
+            <td class="cell left mono italic">{{ item.payment_method.name }}</td>
+            <td class="cell center bold">{{ item.expense.currency }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.total) }}</td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="4">No hay egresos disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

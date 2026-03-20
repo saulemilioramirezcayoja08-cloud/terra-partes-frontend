@@ -1,0 +1,192 @@
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Layout */
+.login-component {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
+.card {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  min-height: 500px;
+  max-height: 600px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+  border-radius: 0.6rem;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  animation: fadeInUp 0.3s ease 0.1s backwards;
+  box-sizing: border-box;
+}
+
+.col {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.col:nth-child(2) {
+  background-image: repeating-linear-gradient(45deg,
+  transparent,
+  transparent 20px,
+  rgba(55, 53, 47, 0.03) 20px,
+  rgba(55, 53, 47, 0.03) 40px),
+  repeating-linear-gradient(-45deg,
+    transparent,
+    transparent 20px,
+    rgba(55, 53, 47, 0.02) 20px,
+    rgba(55, 53, 47, 0.02) 40px);
+}
+
+/* Logo */
+.logo {
+  width: 280px;
+  height: 140px;
+  background-image: url('/assets/image/logo.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Section */
+.section {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Field */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Label */
+.label {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.025em;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 1rem;
+  border: none;
+  background-color: #f9fafb;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input:hover {
+  background-color: #f3f4f6;
+}
+
+.input:focus {
+  outline: none;
+  background-color: #f3f4f6;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+/* Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 1rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn.primary {
+  width: 140px;
+  padding: 0.5rem 1rem;
+  background-color: rgba(5, 150, 105, 0.6);
+  color: white;
+  box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+}
+
+.btn.primary:hover:not(:disabled) {
+  background-color: rgba(5, 150, 105, 0.8);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}

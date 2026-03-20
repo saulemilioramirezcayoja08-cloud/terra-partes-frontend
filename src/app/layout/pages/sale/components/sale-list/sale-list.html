@@ -1,0 +1,170 @@
+<div class="sale-list-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Usuario</label>
+        <div class="dropdown" [class.open]="open_user_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_user_dropdown()">
+            <span class="text">{{ selected_user_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_user_select(null)">Todos</div>
+            @for (user of users(); track user.id) {
+            <div class="item" (click)="on_user_select(user.id)">{{ user.username }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Cliente</label>
+        <div class="dropdown" [class.open]="open_customer_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_customer_dropdown()">
+            <span class="text">{{ selected_customer_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_customer_select(null)">Todos</div>
+            @for (customer of customers(); track customer.id) {
+            <div class="item" (click)="on_customer_select(customer.id)">{{ customer.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Estado</label>
+        <div class="dropdown" [class.open]="open_status_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_status_dropdown()">
+            <span class="text">{{ selected_status_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_status_select(null)">Todos</div>
+            @for (status of statuses(); track status.code) {
+            <div class="item" (click)="on_status_select(status.code)">{{ status.label }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Método de Pago</label>
+        <div class="dropdown" [class.open]="open_payment_method_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_payment_method_dropdown()">
+            <span class="text">{{ selected_payment_method_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item" (click)="on_payment_method_select(null)">Todos</div>
+            @for (pm of payment_methods(); track pm.id) {
+            <div class="item" (click)="on_payment_method_select(pm.id)">{{ pm.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-date-range [label_from]="'Fecha Desde'" [label_to]="'Fecha Hasta'"
+      (range_change)="on_date_range_change($event)">
+    </app-date-range>
+
+    <div class="controls">
+      <app-paginator [current_page]="current_page()" [page_size]="page_size()" [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="left">CLIENTE</th>
+            <th class="center">MONEDA</th>
+            <th class="right">TOTAL</th>
+            <th class="right">COSTO</th>
+            <th class="right">MARGEN</th>
+            <th class="right">PAGADO</th>
+            <th class="right">PENDIENTE</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.sale.id) {
+          <tr class="row meta">
+            <td class="cell" colspan="7">
+              <div class="metacontent">
+                <div class="metaleft">
+                  <span class="detail">
+                    <span class="label">Nº :</span>
+                    <span class="value number link" (click)="on_sale_click(item.sale.id)">{{ item.sale.number }}</span>
+                  </span>
+                  <span class="divider">•</span>
+                  <span class="detail">
+                    <span class="label">Fecha:</span>
+                    <span class="value">{{ item.sale.created_at | date:'dd-MM-yyyy HH:mm' }}</span>
+                  </span>
+                  <span class="divider">•</span>
+                  <span class="detail">
+                    <span class="label">Usuario:</span>
+                    <span class="value">{{ item.user?.username ?? '-' }}</span>
+                  </span>
+                  <span class="divider">•</span>
+                  <span class="detail">
+                    <span class="label">Método:</span>
+                    <span class="value">{{ item.payment_method?.name ?? '-' }}</span>
+                  </span>
+                  @if (item.sale.order_id) {
+                  <span class="divider">•</span>
+                  <span class="detail">
+                    <span class="label">Orden Nº :</span>
+                    <span class="value number link" (click)="on_order_click(item.sale.order_id)">{{ item.sale.order_id
+                      }}</span>
+                  </span>
+                  }
+                </div>
+                <div class="metaright">
+                  <span class="badge" [class]="item.sale.status.toLowerCase()">
+                    {{ get_status_label(item.sale.status) }}
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr class="row data">
+            <td class="cell left mono italic">{{ item.customer?.name ?? '-' }}</td>
+            <td class="cell center bold">{{ item.sale.currency }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.total) }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.cost) }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.margin) }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.paid) }}</td>
+            <td class="cell right mono">{{ format_number(item.totals.pending) }}</td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="7">No hay ventas disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

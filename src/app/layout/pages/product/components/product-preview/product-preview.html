@@ -1,0 +1,347 @@
+<div class="product-preview-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="text">Cargando producto...</span>
+    </div>
+  } @else if (has_error()) {
+    <div class="error">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="text">{{ error_message() }}</span>
+      <button class="btn secondary" type="button" (click)="go_back()">Volver</button>
+    </div>
+  } @else if (product(); as data) {
+    <div class="content">
+      <div class="toolbar">
+        <div class="left">
+          <button class="btn back" type="button" (click)="go_back()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        @if (has_id()) {
+          <div class="right">
+            <button class="btn secondary" type="button" (click)="on_discard()" [disabled]="!has_changes() || saving()">
+              Descartar
+            </button>
+            <button class="btn primary" type="button" (click)="on_save()" [disabled]="!can_save()">
+              {{ saving() ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="section">
+          <div class="group">
+            <div class="field">
+              <label class="label">Usuario</label>
+              <span class="value display">{{ data.user.name }}</span>
+            </div>
+
+            <div class="field">
+              <label class="label">Categoría</label>
+              @if (has_id()) {
+                <div class="dropdown" [class.open]="open_category_dropdown()">
+                  <button class="trigger" type="button" (click)="toggle_category_dropdown()">
+                    <span class="text">{{ selected_category_name() }}</span>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="menu">
+                    <div class="item" (click)="on_category_select(null)">
+                      <div class="content">
+                        <span class="title">Sin categoría</span>
+                      </div>
+                    </div>
+                    @for (cat of categories(); track cat.id) {
+                      <div class="item" (click)="on_category_select(cat.id)">
+                        <div class="content">
+                          <span class="title">{{ cat.name }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <span class="value display">{{ data.category?.name ?? 'Sin categoría' }}</span>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">UOM @if (has_id()) {
+                <span class="required">*</span>
+              }</label>
+              @if (has_id()) {
+                <div class="dropdown" [class.open]="open_uom_dropdown()">
+                  <button class="trigger" type="button" (click)="toggle_uom_dropdown()">
+                    <span class="text">{{ selected_uom_name() }}</span>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="menu">
+                    @for (uom of uoms(); track uom.code) {
+                      <div class="item" (click)="on_uom_select(uom.code)">
+                        <div class="content">
+                          <span class="title">{{ uom.code }}</span>
+                          <span class="subtitle">{{ uom.label }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <span class="value display">{{ data.product.uom }}</span>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">Procedencia @if (has_id()) {
+                <span class="required">*</span>
+              }</label>
+              @if (has_id()) {
+                <div class="dropdown" [class.open]="open_origin_dropdown()">
+                  <button class="trigger" type="button" (click)="toggle_origin_dropdown()">
+                    <span class="text">{{ selected_origin_name() }}</span>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="menu">
+                    @for (origin of origins(); track origin.code) {
+                      <div class="item" (click)="on_origin_select(origin.code)">
+                        <div class="content">
+                          <span class="title">{{ origin.label }}</span>
+                          <span class="subtitle">{{ origin.code }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <span class="value display">{{ origin_label() }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="group">
+            <div class="field">
+              <label class="label">Cod. Int. @if (has_id()) {
+                <span class="required">*</span>
+              }</label>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="Código Int..."
+                       [ngModel]="sku()"
+                       (ngModelChange)="sku.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.product.sku }}</span>
+              }
+            </div>
+
+            <div class="field span-2">
+              <label class="label">Nombre @if (has_id()) {
+                <span class="required">*</span>
+              }</label>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="Nombre del producto..."
+                       [ngModel]="name()"
+                       (ngModelChange)="name.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.product.name }}</span>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">Precio @if (has_id()) {
+                <span class="required">*</span>
+              }</label>
+              @if (has_id()) {
+                <input type="number" class="input" placeholder="0.0000" min="0" step="0.0001"
+                       [ngModel]="price()"
+                       (ngModelChange)="price.set($event)"/>
+              } @else {
+                <span class="value display">{{ format_number(data.product.price) }}</span>
+              }
+            </div>
+
+            <div class="field full">
+              <label class="label">Descripción</label>
+              @if (has_id()) {
+                <textarea class="textarea" placeholder="Descripción del producto..." rows="2"
+                          [ngModel]="description()"
+                          (ngModelChange)="description.set($event)"></textarea>
+              } @else if (data.product.description) {
+                <span class="value display">{{ data.product.description }}</span>
+              } @else {
+                <span class="value display muted">Sin descripción</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (has_id()) {
+          <div class="section">
+            <div class="section add">
+              <div class="field type">
+                <label class="label">Tipo de Código</label>
+                <div class="dropdown" [class.open]="open_code_type_dropdown()">
+                  <button class="trigger" type="button" (click)="toggle_code_type_dropdown()">
+                    <span class="text">{{ selected_code_type_name() }}</span>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="menu">
+                    @for (type of code_types(); track type.code) {
+                      <div class="item" (click)="on_code_type_select(type.code)">
+                        <div class="content">
+                          <span class="title">{{ type.code }}</span>
+                          <span class="subtitle">{{ type.label }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="field code">
+                <label class="label">Código</label>
+                <input type="text" class="input" placeholder="Ingrese el código..."
+                       [ngModel]="code_value()"
+                       (ngModelChange)="code_value.set($event); code_error.set(null)"/>
+              </div>
+              <button class="btn primary add" type="button" (click)="add_code()" [disabled]="!can_add_code()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 6V18M6 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Agregar</span>
+              </button>
+            </div>
+
+            @if (code_error()) {
+              <span class="hint error">{{ code_error() }}</span>
+            } @else {
+              <span class="hint">Un código solo puede existir una vez por producto, sin importar el tipo.</span>
+            }
+          </div>
+        }
+
+        <div class="section">
+          @if (has_id()) {
+            @if (codes().length === 0) {
+              <div class="empty">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                  <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+                  <path
+                    d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z"
+                    stroke="currentColor" stroke-width="1.5"></path>
+                </svg>
+                <span class="text">Sin códigos registrados</span>
+              </div>
+            } @else {
+              <div class="container">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th class="left">TIPO</th>
+                    <th class="left">CÓDIGO</th>
+                    <th class="center"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (code of codes(); track $index; let i = $index) {
+                      <tr class="row data">
+                        <td class="cell left bold primary">{{ code.type }}</td>
+                        <td class="cell left">
+                          <input type="text" class="input" placeholder="Código..."
+                                 [ngModel]="code.code"
+                                 (ngModelChange)="update_code_value(i, $event)"/>
+                        </td>
+                        <td class="cell center">
+                          <button class="btn remove" type="button" (click)="remove_code(i)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round"></path>
+                              <path
+                                d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                              <path
+                                d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                                stroke="currentColor" stroke-width="1.5"></path>
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          } @else {
+            @if (data.codes.length === 0) {
+              <div class="empty">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                  <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+                  <path
+                    d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z"
+                    stroke="currentColor" stroke-width="1.5"></path>
+                </svg>
+                <span class="text">Sin códigos registrados</span>
+              </div>
+            } @else {
+              <div class="container">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th class="left">TIPO</th>
+                    <th class="left">CÓDIGO</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (code of data.codes; track code.id) {
+                      <tr class="row data">
+                        <td class="cell left bold primary">{{ code.type }}</td>
+                        <td class="cell left mono">{{ code.code }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          }
+        </div>
+
+        @if (has_id() && codes().length > 0) {
+          <div class="section totals">
+            <div class="grid">
+              <div class="row">
+                <span class="label">Códigos:</span>
+                <span class="value">{{ codes_count() }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="section metadata">
+          <div class="item">
+            <span class="label">Fecha Reg:</span>
+            <span class="value">{{ format_datetime(data.product.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

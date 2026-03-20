@@ -1,0 +1,54 @@
+.paginator-component {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.text {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 1rem;
+  border: 0;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:first-of-type .icon {
+  transform: rotate(90deg);
+}
+
+.btn:last-of-type .icon {
+  transform: rotate(-90deg);
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+}

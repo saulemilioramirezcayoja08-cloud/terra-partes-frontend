@@ -1,0 +1,92 @@
+<div class="inventory-stock-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Categoría</label>
+        <div class="dropdown" [class.open]="open_category_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_category_dropdown()">
+            <span class="text">{{ selected_category_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item simple" (click)="on_category_select(null)">Todas</div>
+            @for (cat of categories(); track cat.id) {
+            <div class="item simple" (click)="on_category_select(cat.id)">{{ cat.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search">
+      <div class="radios">
+        <label class="radio">
+          <input type="radio" name="search_type" value="NAME" [checked]="search_type() === 'NAME'"
+            (change)="on_search_type_change('NAME')" />
+          <span class="label">Nombre</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="search_type" value="SKU" [checked]="search_type() === 'SKU'"
+            (change)="on_search_type_change('SKU')" />
+          <span class="label">Cod. Int.</span>
+        </label>
+      </div>
+      <input type="text" class="input" placeholder="Buscar producto..." [ngModel]="search_text()"
+        (ngModelChange)="search_text.set($event)" (input)="on_search_change()" />
+      <span class="hint">Buscando por : <strong>{{ search_type_label() }}</strong></span>
+    </div>
+
+    <div class="controls">
+      <app-paginator [current_page]="current_page()" [page_size]="page_size()" [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="left">COD. INT.</th>
+            <th class="left">NOMBRE</th>
+            <th class="left">CATEGORÍA</th>
+            <th class="center">UOM</th>
+            <th class="left">ALMACÉN</th>
+            <th class="right">CANTIDAD</th>
+            <th class="right">RESERVADO</th>
+            <th class="right">DISPONIBLE</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.product.id + '-' + item.warehouse.id) {
+          <tr class="row data">
+            <td class="cell left mono bold">{{ item.product.sku }}</td>
+            <td class="cell left mono italic">{{ item.product.name }}</td>
+            <td class="cell left mono italic">{{ item.category?.name ?? 'Sin categoría' }}</td>
+            <td class="cell center bold">{{ item.product.uom }}</td>
+            <td class="cell left mono italic">{{ item.warehouse.name }}</td>
+            <td class="cell right bold mono">{{ item.stock.quantity }}</td>
+            <td class="cell right bold mono">{{ item.stock.reserved }}</td>
+            <td class="cell right bold mono">{{ item.stock.available }}</td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="8">No hay registros de stock disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

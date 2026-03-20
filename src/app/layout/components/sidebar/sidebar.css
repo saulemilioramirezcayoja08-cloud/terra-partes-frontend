@@ -1,0 +1,144 @@
+.sidebar-component {
+  width: 12.25rem;
+  height: 100vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section:last-child {
+  margin-bottom: 2rem;
+}
+
+.header {
+  padding: 0.2rem 1rem;
+}
+
+.header h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: -0.00875rem;
+  line-height: 1.4rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  transition: all 0.3s ease;
+}
+
+.menu {
+  border-left: 1px solid #e5e7eb;
+  margin-left: 1rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.list li {
+  margin: 0;
+}
+
+.link {
+  display: block;
+  position: relative;
+  padding: 0.2rem 1rem;
+  color: #6b7280;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 160%;
+  letter-spacing: -0.02rem;
+  transition: all 0.3s ease;
+  border-radius: 1rem;
+  margin: 0 0.25rem;
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  left: -0.25rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 2px;
+  background: #9ca3af;
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleY(0.7);
+  transition: all 0.3s ease;
+}
+
+.link:hover {
+  background-color: #efefef;
+  color: #4b5563;
+}
+
+.link:hover::before {
+  opacity: 0.4;
+  transform: scaleY(1);
+  background: #9ca3af;
+}
+
+.link.active {
+  background-color: #efefef;
+  color: #374151;
+  font-weight: 500;
+}
+
+.link.active::before {
+  background: #9ca3af;
+  opacity: 1;
+  transform: scaleY(1);
+  box-shadow: 0 0 6px rgba(156, 163, 175, 0.15);
+}
+
+.link.active:hover {
+  background-color: #efefef;
+  color: #374151;
+}

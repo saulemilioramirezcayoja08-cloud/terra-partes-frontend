@@ -1,0 +1,15 @@
+<div class="paginator-component">
+  <div class="controls">
+    <button class="btn" type="button" [disabled]="!can_go_previous()" (click)="on_previous()">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+    <button class="btn" type="button" [disabled]="!can_go_next()" (click)="on_next()">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+  </div>
+  <span class="text">Mostrando {{ start_item() }}-{{ end_item() }} de {{ total_items() }}</span>
+</div>

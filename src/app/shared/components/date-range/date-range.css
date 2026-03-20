@@ -1,0 +1,52 @@
+.date-range-component {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 140px;
+}
+
+.field .label {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.field .input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 1rem;
+  border: none;
+  background-color: white;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  outline: none;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+.field .input:hover {
+  background-color: #f3f4f6;
+}
+
+.field .input:focus {
+  background-color: #f3f4f6;
+}
+
+.field .input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.field .input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}

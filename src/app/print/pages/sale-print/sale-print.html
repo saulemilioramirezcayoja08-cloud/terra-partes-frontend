@@ -1,0 +1,138 @@
+<div class="sale-print-component">
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="text">Cargando venta...</span>
+    </div>
+  } @else if (has_error()) {
+    <div class="error">
+      <span class="text">{{ error_message() }}</span>
+    </div>
+  } @else if (sale(); as data) {
+    <div class="card">
+
+      <div class="section header">
+        <div class="contact">
+          <p>Barrio Estacion Argentina</p>
+          <p>Calle Melchor Mariscal entre Av. 3 pasos al frente y Radial 10. 4to Anillo</p>
+          <p>Cel. (591) 76052022</p>
+          <p>Cel. (591) 77388023</p>
+          <p>E-mail: terra.partes.bolivia&#64;gmail.com</p>
+        </div>
+        <div class="document">
+          <h2 class="title">VENTA</h2>
+          <p class="detail">Nro.: <strong>{{ data.sale.number }}</strong></p>
+          <p class="detail">Fecha: <strong>{{ format_date(data.sale.created_at) }}</strong></p>
+        </div>
+        <div class="logo">
+          <div class="image"></div>
+          <p class="tagline">ACCESORIOS Y REPUESTOS AUTOMOTRICES ORIGINALES</p>
+        </div>
+      </div>
+
+      <div class="section customer">
+        <div class="left">
+          <div class="field">
+            <span class="label">Cliente:</span>
+            <span class="value">{{ data.customer.name }}</span>
+          </div>
+          <div class="field">
+            <span class="label">Usuario:</span>
+            <span class="value">{{ data.user.name }}</span>
+          </div>
+        </div>
+        <div class="right">
+          <div class="field">
+            <span class="label">Almacén:</span>
+            <span class="value">{{ data.warehouse.name }}</span>
+          </div>
+          <div class="field">
+            <span class="label">Método Pago:</span>
+            <span class="value">{{ data.payment_method.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section products">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="center">ITEM</th>
+              <th class="left">COD. INT.</th>
+              <th class="left">PRODUCTO</th>
+              <th class="center">PROC.</th>
+              <th class="right">CANTIDAD</th>
+              <th class="right">PRECIO</th>
+              <th class="right">SUBTOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of data.items; track item.id; let i = $index) {
+              <tr class="row data">
+                <td class="cell center">{{ i + 1 }}</td>
+                <td class="cell left mono bold primary">{{ item.product_sku }}</td>
+                <td class="cell left">{{ item.product_name }}</td>
+                <td class="cell center">{{ item.product_origin }}</td>
+                <td class="cell right">{{ item.quantity }}</td>
+                <td class="cell right">{{ format_number(item.price) }}</td>
+                <td class="cell right">{{ format_number(item.subtotal) }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr class="row totals">
+              <td colspan="3"></td>
+              <td class="cell right label">TOTAL:</td>
+              <td class="cell right value">{{ total_quantity() }}</td>
+              <td class="cell right"></td>
+              <td class="cell right value">{{ format_number(data.totals.total) }}</td>
+            </tr>
+            <tr class="row summary">
+              <td colspan="5"></td>
+              <td class="cell right label">PAGADO:</td>
+              <td class="cell right value">{{ format_number(data.totals.paid) }}</td>
+            </tr>
+            <tr class="row summary last">
+              <td colspan="5"></td>
+              <td class="cell right label">SALDO:</td>
+              <td class="cell right value">{{ format_number(data.totals.pending) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="section literal">
+        <span class="label">Son:</span>
+        <span class="value">{{ total_literal() }}</span>
+      </div>
+
+      <div class="section notes">
+        <span class="label">Obs.:</span>
+        <span class="value">{{ data.sale.notes }}</span>
+      </div>
+
+      <div class="section signatures">
+        <div class="signature">
+          <span class="label">Entregué Conforme</span>
+        </div>
+        <div class="signature">
+          <span class="label">Recibí Conforme</span>
+        </div>
+      </div>
+
+      <div class="section metadata">
+        <div class="item">
+          <span class="label">Fecha Reg:</span>
+          <span class="value">{{ format_datetime(data.sale.created_at) }}</span>
+        </div>
+        <div class="item">
+          <span class="label">Moneda:</span>
+          <span class="value">{{ data.sale.currency }}</span>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</div>

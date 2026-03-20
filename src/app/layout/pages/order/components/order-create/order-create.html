@@ -1,0 +1,214 @@
+<div class="order-create-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="card">
+    <div class="hint">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M6.30928 9C8.59494 5 9.96832 3 12 3C14.3107 3 15.7699 5.58716 18.6883 10.7615L19.0519 11.4063C21.4771 15.7061 22.6897 17.856 21.5937 19.428C20.4978 21 17.7864 21 12.3637 21H11.6363C6.21356 21 3.50217 21 2.40626 19.428C1.45498 18.0635 2.24306 16.2635 4.05373 13"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+        <path d="M12 8V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+        <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+      </svg>
+      <span class="text">Presiona <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> para agregar productos</span>
+    </div>
+
+    <div class="section">
+      <div class="group">
+        <div class="field">
+          <label class="label">Usuario <span class="required">*</span></label>
+          <div class="dropdown" [class.open]="open_user_dropdown()">
+            <button class="trigger" type="button" (click)="toggle_user_dropdown()">
+              <span class="text">{{ selected_user_name() }}</span>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="menu">
+              @for (user of users(); track user.id) {
+              <div class="item" (click)="on_user_select(user.id)">
+                <div class="content">
+                  <span class="title">{{ user.name }}</span>
+                  <span class="subtitle">{{ user.username }}</span>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Cliente <span class="required">*</span></label>
+          <div class="dropdown" [class.open]="open_customer_dropdown()">
+            <button class="trigger" type="button" (click)="toggle_customer_dropdown()">
+              <span class="text">{{ selected_customer_name() }}</span>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="menu">
+              @for (customer of customers(); track customer.id) {
+              <div class="item" (click)="on_customer_select(customer.id)">
+                <div class="content">
+                  <span class="title">{{ customer.name }}</span>
+                  @if (customer.email) {
+                  <span class="subtitle">{{ customer.email }}</span>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Moneda <span class="required">*</span></label>
+          <div class="dropdown" [class.open]="open_currency_dropdown()">
+            <button class="trigger" type="button" (click)="toggle_currency_dropdown()">
+              <span class="text">{{ selected_currency_name() }}</span>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="menu">
+              @for (curr of currencies(); track curr.code) {
+              <div class="item" (click)="on_currency_select(curr.code)">
+                <div class="content">
+                  <span class="title">{{ curr.label }}</span>
+                  <span class="subtitle">{{ curr.code }}</span>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Método de Pago <span class="required">*</span></label>
+          <div class="dropdown" [class.open]="open_payment_method_dropdown()">
+            <button class="trigger" type="button" (click)="toggle_payment_method_dropdown()">
+              <span class="text">{{ selected_payment_method_name() }}</span>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="menu">
+              @for (method of payment_methods(); track method.id) {
+              <div class="item" (click)="on_payment_method_select(method.id)">
+                <div class="content">
+                  <span class="title">{{ method.name }}</span>
+                  <span class="subtitle">{{ method.code }}</span>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label class="label">Notas</label>
+          <textarea class="textarea" placeholder="Notas de la orden..." rows="2" [ngModel]="notes()"
+            (ngModelChange)="notes.set($event)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      @if (items().length === 0) {
+      <div class="empty">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+          <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+          <path
+            d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z"
+            stroke="currentColor" stroke-width="1.5"></path>
+        </svg>
+        <span class="text">No hay productos agregados</span>
+      </div>
+      } @else {
+      <div class="container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="center">ITEM</th>
+              <th class="left">COD. INT.</th>
+              <th class="left">PRODUCTO</th>
+              <th class="left">CATEGORÍA</th>
+              <th class="center">UOM</th>
+              <th class="right">DISPONIBLE</th>
+              <th class="center">CANTIDAD</th>
+              <th class="right">PRECIO</th>
+              <th class="right">SUBTOTAL</th>
+              <th class="center"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.product.id; let i = $index) {
+            <tr class="row data">
+              <td class="cell center">{{ i + 1 }}</td>
+              <td class="cell left mono bold primary">{{ item.product.sku }}</td>
+              <td class="cell left">{{ item.product.name }}</td>
+              <td class="cell left muted">{{ item.category?.name ?? 'Sin categoría' }}</td>
+              <td class="cell center bold">{{ item.product.uom }}</td>
+              <td class="cell right bold success">{{ item.stock.available }}</td>
+              <td class="cell center">
+                <input type="number" class="input" min="1" step="1" [ngModel]="item.detail.quantity"
+                  (ngModelChange)="update_quantity(i, $event)" />
+              </td>
+              <td class="cell right">
+                <input type="number" class="input price" min="0" step="0.01" [ngModel]="item.detail.price"
+                  (ngModelChange)="update_price(i, $event)" />
+              </td>
+              <td class="cell right bold success">{{ format_number(calculate_subtotal(item)) }}</td>
+              <td class="cell center">
+                <button class="btn remove" type="button" (click)="remove_item(i)">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path
+                      d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path
+                      d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                      stroke="currentColor" stroke-width="1.5"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="row notes">
+              <td class="cell" colspan="10">
+                <input type="text" class="input" placeholder="Notas del item..." maxlength="240"
+                  [ngModel]="item.detail.notes" (ngModelChange)="update_notes(i, $event)" />
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+
+    @if (items().length > 0) {
+    <div class="section totals">
+      <div class="grid">
+        <div class="row">
+          <span class="label">Items :</span>
+          <span class="value items">{{ items_count() }}</span>
+        </div>
+        <div class="row">
+          <span class="label">Total :</span>
+          <span class="value total">{{ format_number(total()) }}</span>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="section actions">
+      <button class="btn secondary" type="button" (click)="on_cancel()" [disabled]="loading()">Limpiar</button>
+      <button class="btn secondary" type="button" (click)="on_preview_draft()" [disabled]="!can_preview_draft()">Ver Borrador</button>
+      <button class="btn secondary wide" type="button" (click)="on_preview_last()" [disabled]="!can_preview_last()">Ver Última Orden</button>
+      <button class="btn primary" type="button" (click)="on_save()" [disabled]="!is_valid_form() || loading()">
+        {{ loading() ? 'Guardando...' : 'Crear Orden' }}
+      </button>
+    </div>
+  </div>
+</div>

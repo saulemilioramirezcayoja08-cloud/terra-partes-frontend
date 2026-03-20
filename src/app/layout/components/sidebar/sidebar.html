@@ -1,0 +1,326 @@
+<aside class="sidebar-component">
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M13.9931 3.43368C12.8564 2.42331 11.1436 2.42331 10.0069 3.43368L2.33565 10.2526C1.92286 10.6195 1.88568 11.2516 2.2526 11.6644C2.61952 12.0771 3.25159 12.1143 3.66437 11.7474L4.00001 11.4491L4.00001 17.0658C3.99996 17.9523 3.99992 18.7161 4.08215 19.3278C4.17028 19.9833 4.36903 20.6117 4.87869 21.1213C5.38835 21.631 6.0167 21.8297 6.67222 21.9179C7.28388 22.0001 8.04769 22 8.93418 22H15.0658C15.9523 22 16.7161 22.0001 17.3278 21.9179C17.9833 21.8297 18.6117 21.631 19.1213 21.1213C19.631 20.6117 19.8297 19.9833 19.9179 19.3278C20.0001 18.7161 20.0001 17.9523 20 17.0659L20 11.4491L20.3356 11.7474C20.7484 12.1143 21.3805 12.0771 21.7474 11.6644C22.1143 11.2516 22.0772 10.6195 21.6644 10.2526L13.9931 3.43368ZM12 16C11.4477 16 11 16.4477 11 17V19C11 19.5523 10.5523 20 10 20C9.44772 20 9 19.5523 9 19V17C9 15.3431 10.3431 14 12 14C13.6569 14 15 15.3431 15 17V19C15 19.5523 14.5523 20 14 20C13.4477 20 13 19.5523 13 19V17C13 16.4477 12.5523 16 12 16Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Dashboard
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/dashboard" routerLinkActive="active" class="link">Vista General</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  @if (permission.can_access('quotations')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M13.5543 4.07616C13.4132 4.01774 13.2422 4.00004 12.3431 4.00004H8C7.44772 4.00004 7 3.55232 7 3.00004C7 2.44775 7.44772 2.00004 8 2.00004H12.3431C12.3898 2.00004 12.436 1.99996 12.482 1.99989C13.1608 1.99885 13.7632 1.99793 14.3196 2.2284C14.876 2.45887 15.3014 2.88551 15.7806 3.36624C15.813 3.39876 15.8457 3.43153 15.8787 3.4645L18.5355 6.12136C18.5685 6.15433 18.6013 6.187 18.6338 6.21942C19.1145 6.69867 19.5412 7.12401 19.7716 7.68041C20.0021 8.23682 20.0012 8.83926 20.0001 9.51807C20.0001 9.56399 20 9.61026 20 9.65689L20 14C20 14.5523 19.5523 15 19 15C18.4477 15 18 14.5523 18 14L18 9.65689C18 8.75779 17.9823 8.58682 17.9239 8.44578C17.8655 8.30474 17.7571 8.17133 17.1213 7.53557L14.4645 4.87872C13.8287 4.24296 13.6953 4.13458 13.5543 4.07616Z"
+                fill="#323232"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M3.70711 2.29289C3.31658 1.90237 2.68342 1.90237 2.29289 2.29289C1.90237 2.68342 1.90237 3.31658 2.29289 3.70711L4 5.41421L4 17.0658C3.99995 17.9523 3.9999 18.7161 4.08214 19.3278C4.17027 19.9833 4.36902 20.6117 4.87868 21.1213C5.38834 21.631 6.01669 21.8297 6.67221 21.9179C7.28387 22.0001 8.0477 22.0001 8.93419 22L17 22C17.9778 22 18.8463 21.5322 19.394 20.8082L20.2929 21.7071C20.6834 22.0976 21.3166 22.0976 21.7071 21.7071C22.0976 21.3166 22.0976 20.6834 21.7071 20.2929L3.70711 2.29289Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Cotizaciones
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/quotations/create" routerLinkActive="active" class="link">Crear Cotización</a></li>
+        <li><a routerLink="/layout/quotations/list" routerLinkActive="active" class="link">Listar Cotizaciones</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('orders')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M4.46785 10.2658C4.47574 10.3372 4.48376 10.4094 4.49187 10.4823L4.61751 11.6131C4.7057 12.4072 4.78218 13.0959 4.91562 13.6455C5.05917 14.2367 5.29582 14.7937 5.78931 15.2354C6.28281 15.6771 6.86251 15.8508 7.46598 15.9281C8.02694 16.0001 8.71985 16 9.51887 16H14.8723C15.4201 16 15.9036 16 16.3073 15.959C16.7448 15.9146 17.1698 15.8162 17.5785 15.5701C17.9872 15.324 18.2731 14.9944 18.5171 14.6286C18.7422 14.291 18.9684 13.8637 19.2246 13.3797L21.7141 8.67734C22.5974 7.00887 21.3879 4.99998 19.5 4.99998L9.39884 4.99998C8.41604 4.99993 7.57525 4.99988 6.90973 5.09287C6.5729 5.13994 6.24284 5.21529 5.93326 5.34375L5.78941 4.04912C5.65979 2.88255 4.67375 2 3.5 2H3C2.44772 2 2 2.44771 2 3C2 3.55228 2.44772 4 3 4H3.5C3.65465 4 3.78456 4.11628 3.80164 4.26998L4.46785 10.2658Z"
+                fill="#323232"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M14 19.5C14 18.1193 15.1193 17 16.5 17C17.8807 17 19 18.1193 19 19.5C19 20.8807 17.8807 22 16.5 22C15.1193 22 14 20.8807 14 19.5Z"
+                fill="#323232"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M5 19.5C5 18.1193 6.11929 17 7.5 17C8.88071 17 10 18.1193 10 19.5C10 20.8807 8.88071 22 7.5 22C6.11929 22 5 20.8807 5 19.5Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Órdenes
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/orders/create" routerLinkActive="active" class="link">Crear Orden</a></li>
+        <li><a routerLink="/layout/orders/list" routerLinkActive="active" class="link">Listar Órdenes</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('purchases')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M9.79606 2.24387C11.6528 1.82605 13 3.42223 13 4.99998V9.99998C13 10.5523 13.4477 11 14 11H19C20.5777 11 22.1739 12.3472 21.7561 14.2039C20.752 18.6661 16.7665 22 12 22C6.47715 22 2 17.5228 2 12C2 7.23347 5.33387 3.248 9.79606 2.24387Z"
+                fill="#323232"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M21.1281 9.07899C20.6041 9.66028 19.8211 9.99995 18.9999 9.99995L16.9999 9.99995C15.3431 9.99995 13.9999 8.6568 13.9999 6.99995L13.9999 4.99995C13.9999 4.17879 14.3396 3.39574 14.9209 2.8718C15.5222 2.32979 16.3885 2.0713 17.2909 2.38373C19.3146 3.08438 20.9155 4.68525 21.6162 6.709C21.9286 7.61139 21.6701 8.47766 21.1281 9.07899Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Compras
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/purchases/create" routerLinkActive="active" class="link">Crear Compra</a></li>
+        <li><a routerLink="/layout/purchases/list" routerLinkActive="active" class="link">Listar Compras</a></li>
+        <li><a routerLink="/layout/purchases/payables" routerLinkActive="active" class="link">Cuentas por Pagar</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('sales')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M22 7.00001L22 6.93418C22.0001 6.04769 22.0001 5.28387 21.9179 4.67221C21.8297 4.0167 21.631 3.38835 21.1213 2.87869C20.6117 2.36902 19.9833 2.17028 19.3278 2.08215C18.7161 1.99991 17.9523 1.99995 17.0658 2L17 2L6.93418 2C6.04769 1.99995 5.28388 1.99991 4.67222 2.08215C4.0167 2.17028 3.38835 2.36902 2.87869 2.87868C2.36902 3.38835 2.17028 4.0167 2.08215 4.67221C1.99991 5.28388 1.99995 6.0477 2 6.9342L2 13.0658C1.99995 13.9523 1.99991 14.7161 2.08215 15.3278C2.17028 15.9833 2.36902 16.6117 2.87869 17.1213C3.38835 17.631 4.0167 17.8297 4.67222 17.9179C5.28387 18.0001 6.04767 18.0001 6.93414 18H6.93417H10L8.20001 20.4C7.86864 20.8418 7.95818 21.4686 8.40001 21.8C8.84184 22.1314 9.46864 22.0418 9.80001 21.6L12 18.6667L14.2 21.6C14.5314 22.0418 15.1582 22.1314 15.6 21.8C16.0418 21.4686 16.1314 20.8418 15.8 20.4L14 18H17.0658C17.9523 18.0001 18.7161 18.0001 19.3278 17.9179C19.9833 17.8297 20.6117 17.631 21.1213 17.1213C21.631 16.6117 21.8297 15.9833 21.9179 15.3278C22.0001 14.7161 22.0001 13.9523 22 13.0658L22 7.00001ZM17.6247 6.21913C18.056 6.56414 18.1259 7.19343 17.7809 7.6247L15.1777 10.8786C14.0696 12.2638 11.8989 12.0338 11.1056 10.4472C10.965 10.1661 10.5804 10.1253 10.384 10.3708L7.78087 13.6247C7.43586 14.056 6.80657 14.1259 6.3753 13.7809C5.94404 13.4359 5.87412 12.8066 6.21913 12.3753L8.82227 9.12138C9.93042 7.73619 12.1011 7.96615 12.8944 9.55279C13.035 9.83393 13.4196 9.87468 13.616 9.62923L16.2191 6.3753C16.5641 5.94404 17.1934 5.87412 17.6247 6.21913Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Ventas
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/sales/list" routerLinkActive="active" class="link">Listar Ventas</a></li>
+        <li><a routerLink="/layout/sales/profit" routerLinkActive="active" class="link">Rentabilidad</a></li>
+        <li><a routerLink="/layout/sales/receivables" routerLinkActive="active" class="link">Cuentas por Cobrar</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('customers')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M7.25007 2.38782C8.54878 2.0992 10.1243 2 12 2C13.8757 2 15.4512 2.0992 16.7499 2.38782C18.06 2.67897 19.1488 3.176 19.9864 4.01358C20.824 4.85116 21.321 5.94002 21.6122 7.25007C21.9008 8.54878 22 10.1243 22 12C22 13.8757 21.9008 15.4512 21.6122 16.7499C21.321 18.06 20.824 19.1488 19.9864 19.9864C19.1488 20.824 18.06 21.321 16.7499 21.6122C15.4512 21.9008 13.8757 22 12 22C10.1243 22 8.54878 21.9008 7.25007 21.6122C5.94002 21.321 4.85116 20.824 4.01358 19.9864C3.176 19.1488 2.67897 18.06 2.38782 16.7499C2.0992 15.4512 2 13.8757 2 12C2 10.1243 2.0992 8.54878 2.38782 7.25007C2.67897 5.94002 3.176 4.85116 4.01358 4.01358C4.85116 3.176 5.94002 2.67897 7.25007 2.38782ZM12 6C9.79086 6 8 7.79086 8 10C8 12.2091 9.79086 14 12 14C14.2091 14 16 12.2091 16 10C16 7.79086 14.2091 6 12 6ZM18.3775 17.2942C18.7303 17.8695 18.6055 18.63 18.0369 18.9935C17.5199 19.3241 16.9158 19.5265 16.3159 19.6598C15.2322 19.9006 13.8299 20 11.9998 20C10.1698 20 8.76744 19.9006 7.68381 19.6598C7.09516 19.529 6.50205 19.3319 5.99131 19.012C5.41247 18.6495 5.28523 17.8786 5.64674 17.2991C6.06303 16.6318 6.63676 16.1075 7.40882 15.7344C8.58022 15.1684 10.1157 15 11.9996 15C13.8771 15 15.4109 15.1548 16.5807 15.7047C17.3727 16.077 17.9572 16.6089 18.3775 17.2942Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Clientes
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/customers/create" routerLinkActive="active" class="link">Crear Cliente</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('suppliers')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path
+                d="M5.67139 4.25705L19.7431 18.3287C21.1538 16.6049 22.0001 14.4013 22.0001 12C22.0001 6.47715 17.523 2 12.0001 2C9.59885 2 7.39526 2.84637 5.67139 4.25705Z"
+                fill="#323232"></path>
+              <path
+                d="M4.25705 5.67126C2.84637 7.39514 2 9.59873 2 12C2 17.5228 6.47715 22 12 22C14.4013 22 16.6049 21.1536 18.3287 19.7429L4.25705 5.67126Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Proveedores
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/suppliers/create" routerLinkActive="active" class="link">Crear Proveedor</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('products')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M7.42237 2.50959C7.90046 2.23354 8.41151 2.03459 9.01156 2.04997C9.61162 2.06534 10.1118 2.2902 10.5751 2.59038C11.0045 2.86853 11.4811 3.26576 12.0271 3.72088L14.0076 5.37123C14.4445 5.73537 14.5392 5.80583 14.6171 5.84493C14.8831 5.97831 15.1947 5.98629 15.4672 5.86672C15.5471 5.83166 15.6452 5.76614 16.1002 5.42485L16.2775 5.29156C16.5959 5.0518 16.9148 4.81172 17.2458 4.58979C17.5453 4.38894 17.8684 4.19785 18.2201 4.10314C19.6886 3.70779 21.2206 4.4738 21.7855 5.8858C21.9208 6.22405 21.9617 6.59713 21.9808 6.95727C22 7.3219 22 7.78387 22 8.34635V15L22.0002 15.1676C22.0017 15.98 22.003 16.7022 21.6833 17.3416C21.3636 17.981 20.785 18.4133 20.1342 18.8996C19.6676 19.2482 19.2018 19.598 18.736 19.9477L18.0857 20.4357L18.0857 20.4357L18.0856 20.4359C17.5169 20.8624 17.0207 21.2346 16.5777 21.4904C16.0996 21.7665 15.5886 21.9654 14.9885 21.95C14.3884 21.9346 13.8883 21.7098 13.4249 21.4096C12.9956 21.1315 12.519 20.7343 11.973 20.2792L11.9729 20.2791L9.9925 18.6288C9.55553 18.2646 9.46091 18.1942 9.38293 18.1551C9.11693 18.0217 8.80535 18.0137 8.53287 18.1333C8.45299 18.1683 8.35489 18.2339 7.89984 18.5751L7.72313 18.708L7.72308 18.7081C7.40448 18.9479 7.08546 19.1882 6.75429 19.4102C6.45474 19.6111 6.13171 19.8021 5.77993 19.8969C4.31144 20.2922 2.77943 19.5262 2.21461 18.1142C2.07931 17.7759 2.03836 17.4029 2.01931 17.0427C2.00002 16.6781 2.00003 16.2162 2.00003 15.6537C2.00003 14.9086 2.00045 14.1634 2.00087 13.4183C2.00174 11.8897 2.0026 10.361 1.99983 8.83239C1.99836 8.01998 1.99705 7.29776 2.31675 6.65835C2.63645 6.01895 3.21502 5.58666 3.86583 5.1004L3.86583 5.1004C4.32252 4.75917 4.77842 4.41689 5.23432 4.07461L5.23437 4.07457L5.8694 3.59797L5.91435 3.56426C6.48303 3.13769 6.97937 2.7654 7.42237 2.50959ZM15 8C15.5523 8 16 8.44772 16 9V19C16 19.5523 15.5523 20 15 20C14.4477 20 14 19.5523 14 19V9C14 8.44772 14.4477 8 15 8ZM10 5C10 4.44772 9.55228 4 9 4C8.44772 4 8 4.44772 8 5V15C8 15.5523 8.44772 16 9 16C9.55228 16 10 15.5523 10 15V5Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Productos
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        @if (permission.can_access_route('products.create')) {
+        <li><a routerLink="/layout/products/create" routerLinkActive="active" class="link">Crear Producto</a></li>
+        }
+        <li><a routerLink="/layout/products/list" routerLinkActive="active" class="link">Listar Productos</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('inventories')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M2 21C2 20.4477 2.44772 20 3 20H21C21.5523 20 22 20.4477 22 21C22 21.5523 21.5523 22 21 22H3C2.44772 22 2 21.5523 2 21Z"
+                fill="#323232"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M21 9.93417C21 9.95604 21 9.97798 21 10L21 14.0658C21 14.9523 21.0001 15.7161 20.9261 16.3278C20.8468 16.9833 20.6679 17.6117 20.2092 18.1213C19.7505 18.631 19.185 18.8297 18.595 18.9179C18.0445 19.0001 17.3571 19 16.5592 19L7.44075 19C6.64292 19 5.95548 19.0001 5.40499 18.9179C4.81503 18.8297 4.24951 18.631 3.79081 18.1213C3.33212 17.6117 3.15325 16.9833 3.07393 16.3278C2.99992 15.7161 2.99996 14.9523 3 14.0658L3 9.93419C2.99996 9.0477 2.99992 8.28388 3.07393 7.67221C3.15325 7.0167 3.33212 6.38835 3.79082 5.87868C4.24951 5.36902 4.81503 5.17028 5.40499 5.08215C5.95549 4.99991 6.64292 4.99995 7.44076 5L16.5 5C16.5198 5 16.5396 5 16.5592 5C17.3571 4.99995 18.0445 4.99991 18.595 5.08215C19.185 5.17028 19.7505 5.36902 20.2092 5.87868C20.6679 6.38835 20.8468 7.0167 20.9261 7.67221C21.0001 8.28387 21 9.04768 21 9.93417Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Inventario
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/inventories/stock" routerLinkActive="active" class="link">Stock</a></li>
+        <li><a routerLink="/layout/inventories/valuation" routerLinkActive="active" class="link">Valoración</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('expenses')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM15.6801 6.33651C16.1114 5.9915 16.1813 5.36221 15.8363 4.93095C15.4913 4.49968 14.862 4.42976 14.4307 4.77477L11.3753 7.21912C10.944 7.56413 10.8741 8.19343 11.2191 8.62469C11.5641 9.05595 12.1934 9.12587 12.6247 8.78086L15.6801 6.33651ZM18.7809 7.5753C19.1259 8.00657 19.056 8.63586 18.6247 8.98087L12.6247 13.7809C12.1934 14.1259 11.5641 14.056 11.2191 13.6247C10.8741 13.1934 10.944 12.5641 11.3753 12.2191L17.3753 7.41913C17.8066 7.07412 18.4359 7.14404 18.7809 7.5753ZM19.6247 13.1809C20.056 12.8359 20.1259 12.2066 19.7809 11.7753C19.4359 11.344 18.8066 11.2741 18.3753 11.6191L11.3753 17.2191C10.944 17.5641 10.8741 18.1934 11.2191 18.6247C11.5641 19.056 12.1934 19.1259 12.6247 18.7809L19.6247 13.1809Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Egresos
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/expenses/create" routerLinkActive="active" class="link">Crear Egreso</a></li>
+        <li><a routerLink="/layout/expenses/concepts/create" routerLinkActive="active" class="link">Crear Concepto</a>
+        </li>
+        <li><a routerLink="/layout/expenses/list" routerLinkActive="active" class="link">Listar Egresos</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+
+  @if (permission.can_access('incomes')) {
+  <div class="section">
+    <div class="header">
+      <h3>
+        <span class="wrapper">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <rect width="24" height="24" fill="none"></rect>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 6C12.5523 6 13 6.44772 13 7L13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16L11 7C11 6.44772 11.4477 6 12 6ZM16 8C16.5523 8 17 8.44772 17 9L17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16L15 9C15 8.44772 15.4477 8 16 8ZM9 11C9 10.4477 8.55229 10 8 10C7.44772 10 7 10.4477 7 11V16C7 16.5523 7.44772 17 8 17C8.55228 17 9 16.5523 9 16L9 11ZM7.25007 2.38782C8.54878 2.0992 10.1243 2 12 2C13.8757 2 15.4512 2.0992 16.7499 2.38782C18.06 2.67897 19.1488 3.176 19.9864 4.01358C20.824 4.85116 21.321 5.94002 21.6122 7.25007C21.9008 8.54878 22 10.1243 22 12C22 13.8757 21.9008 15.4512 21.6122 16.7499C21.321 18.06 20.824 19.1488 19.9864 19.9864C19.1488 20.824 18.06 21.321 16.7499 21.6122C15.4512 21.9008 13.8757 22 12 22C10.1243 22 8.54878 21.9008 7.25007 21.6122C5.94002 21.321 4.85116 20.824 4.01358 19.9864C3.176 19.1488 2.67897 18.06 2.38782 16.7499C2.0992 15.4512 2 13.8757 2 12C2 10.1243 2.0992 8.54878 2.38782 7.25007C2.67897 5.94002 3.176 4.85116 4.01358 4.01358C4.85116 3.176 5.94002 2.67897 7.25007 2.38782Z"
+                fill="#323232"></path>
+            </g>
+          </svg>
+        </span>
+        Ingresos
+      </h3>
+    </div>
+    <nav class="menu">
+      <ul class="list">
+        <li><a routerLink="/layout/incomes/create" routerLinkActive="active" class="link">Crear Ingreso</a></li>
+        <li><a routerLink="/layout/incomes/concepts/create" routerLinkActive="active" class="link">Crear Concepto</a>
+        </li>
+        <li><a routerLink="/layout/incomes/list" routerLinkActive="active" class="link">Listar Ingresos</a></li>
+      </ul>
+    </nav>
+  </div>
+  }
+</aside>

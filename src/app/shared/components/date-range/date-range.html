@@ -1,0 +1,15 @@
+<div class="date-range-component">
+  <div class="field">
+    <label class="label">{{ label_from() }}</label>
+    <input type="date" class="input"
+           [value]="date_from() ?? ''"
+           (change)="on_from_change($event)"/>
+  </div>
+
+  <div class="field">
+    <label class="label">{{ label_to() }}</label>
+    <input type="date" class="input"
+           [value]="date_to() ?? ''"
+           (change)="on_to_change($event)"/>
+  </div>
+</div>

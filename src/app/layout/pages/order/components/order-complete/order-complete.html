@@ -1,0 +1,74 @@
+<div class="order-complete-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="text">Cargando orden...</span>
+    </div>
+  } @else if (has_error()) {
+    <div class="error">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="text">{{ error_message() }}</span>
+      <button class="btn secondary" type="button" (click)="go_back()">Volver</button>
+    </div>
+  } @else if (data(); as info) {
+    <div class="content">
+      <div class="toolbar">
+        <div class="left">
+          <button class="btn back" type="button" (click)="go_back()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <span class="title">Orden {{ info.order.number }}</span>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-left">
+          <span class="detail">
+            <span class="label">Cliente:</span>
+            <span class="value">{{ info.customer.name }}</span>
+          </span>
+          <span class="divider">&middot;</span>
+          <span class="detail">
+            <span class="label">Estado:</span>
+            <span class="value badge" [class]="status_class()">{{ status_label() }}</span>
+          </span>
+          <span class="divider">&middot;</span>
+          <span class="detail">
+            <span class="label">Moneda:</span>
+            <span class="value">{{ info.order.currency }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section notice">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="message">
+            <span class="title">Al completar esta orden se generará una venta pendiente</span>
+            <span class="description">Los productos y pagos registrados serán copiados a la nueva venta. Esta acción no puede deshacerse.</span>
+          </div>
+        </div>
+
+        <div class="section actions">
+          <button class="btn secondary" type="button" (click)="go_back()">Cancelar</button>
+          <button class="btn primary" type="button" (click)="complete_order()" [disabled]="!can_complete()">
+            {{ completing() ? 'Completando...' : 'Completar Orden' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,180 @@
+<div class="sale-receivables-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Cliente</label>
+        <div class="dropdown" [class.open]="open_customer_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_customer_dropdown()">
+            <span class="text">{{ selected_customer_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item simple" (click)="on_customer_select(null)">Todos</div>
+            @for (customer of customers(); track customer.id) {
+            <div class="item simple" (click)="on_customer_select(customer.id)">{{ customer.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Método de Pago</label>
+        <div class="dropdown" [class.open]="open_payment_method_dropdown()">
+          <button class="trigger" type="button" (click)="toggle_payment_method_dropdown()">
+            <span class="text">{{ selected_payment_method_name() }}</span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="menu">
+            <div class="item simple" (click)="on_payment_method_select(null)">Todos</div>
+            @for (pm of payment_methods(); track pm.id) {
+            <div class="item simple" (click)="on_payment_method_select(pm.id)">{{ pm.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-date-range [label_from]="'Fecha Desde'" [label_to]="'Fecha Hasta'"
+      (range_change)="on_date_range_change($event)">
+    </app-date-range>
+
+    <div class="controls">
+      <app-paginator [current_page]="current_page()" [page_size]="page_size()" [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="center"></th>
+            <th class="left">CLIENTE</th>
+            <th class="left">ALMACÉN</th>
+            <th class="center">MONEDA</th>
+            <th class="right">TOTAL</th>
+            <th class="right">PAGADO</th>
+            <th class="right">SALDO</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.sale.id) {
+          <tr class="row meta">
+            <td class="cell" colspan="7">
+              <div class="metacontent">
+                <div class="metaleft">
+                  <span class="detail">
+                    <span class="label">Nº :</span>
+                    <span class="value number link" (click)="on_sale_click(item.sale.id)">{{ item.sale.number }}</span>
+                  </span>
+                  <span class="divider">·</span>
+                  <span class="detail">
+                    <span class="label">Fecha:</span>
+                    <span class="value">{{ item.sale.created_at | date:'dd-MM-yyyy HH:mm' }}</span>
+                  </span>
+                  <span class="divider">·</span>
+                  <span class="detail">
+                    <span class="label">Método:</span>
+                    <span class="value">{{ item.payment_method.name }}</span>
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="row data" (click)="toggle_expand(item.sale.id)">
+            <td class="cell center">
+              @if (is_expanded(item.sale.id)) {
+              <svg class="expand icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M12 4.5L7 9.5M12 4.5L17 9.5M12 4.5L12 11M12 14.5C12 16.1667 13 19.5 17 19.5" stroke="#1C274C"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+              </svg>
+              } @else {
+              <svg class="expand icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M12 19.5L17 14.5M12 19.5L7 14.5M12 19.5L12 13M12 9.5C12 7.83333 11 4.5 7 4.5"
+                    stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+              </svg>
+              }
+            </td>
+            <td class="cell left mono italic">{{ item.customer.name }}</td>
+            <td class="cell left mono italic">{{ item.warehouse.name }}</td>
+            <td class="cell center bold">{{ item.sale.currency }}</td>
+            <td class="cell right mono">{{ format_number(item.total) }}</td>
+            <td class="cell right mono">{{ format_number(item.paid) }}</td>
+            <td class="cell right mono">{{ format_number(item.balance) }}</td>
+          </tr>
+
+          @if (is_expanded(item.sale.id)) {
+          @if (item.payments.length > 0) {
+          <tr class="row items header">
+            <td class="cell" colspan="7">
+              <div class="items wrapper">
+                <table class="subtable">
+                  <thead>
+                    <tr>
+                      <th class="left">ID</th>
+                      <th class="left">FECHA</th>
+                      <th class="right">MONTO</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (payment of item.payments; track payment.id) {
+                    <tr class="subrow">
+                      <td class="subcell left mono bold">{{ payment.id }}</td>
+                      <td class="subcell left mono italic">{{ payment.created_at | date:'dd-MM-yyyy HH:mm' }}</td>
+                      <td class="subcell right mono">{{ format_number(payment.amount) }}</td>
+                    </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="subrow total">
+                      <td class="subcell left" colspan="2">TOTAL</td>
+                      <td class="subcell right bold">{{ format_number(item.paid) }}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </td>
+          </tr>
+          } @else {
+          <tr class="row items empty">
+            <td class="cell center muted" colspan="7">Sin pagos registrados</td>
+          </tr>
+          }
+          }
+
+          <tr class="row spacer">
+            <td colspan="7"></td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="7">No hay cuentas por cobrar disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
