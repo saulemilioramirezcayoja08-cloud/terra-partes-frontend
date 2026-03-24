@@ -13,6 +13,7 @@ interface editable_fields {
   };
   customer: {
     name: string;
+    phone: string;
   };
   user: {
     name: string;
@@ -98,7 +99,7 @@ export class OrderPreview implements OnInit {
   // retorna campos editables con fallback seguro
   protected editable_safe = computed(() => this.editable() ?? {
     order: { number: '—', date: '—' },
-    customer: { name: '—' },
+    customer: { name: '—', phone: '—' },
     user: { name: '—' },
     warehouse: { name: '—' },
     payment_method: { name: '—' },
@@ -118,7 +119,7 @@ export class OrderPreview implements OnInit {
         number: data.order.number,
         date: this.format_date(data.order.created_at)
       },
-      customer: { name: data.customer.name },
+      customer: { name: data.customer.name, phone: data.customer.phone },
       user: { name: data.user.name },
       warehouse: { name: data.warehouse.name },
       payment_method: { name: data.payment_method.name },
@@ -153,7 +154,14 @@ export class OrderPreview implements OnInit {
   protected update_customer_name(event: Event): void {
     const value = (event.target as HTMLElement).innerText.trim();
     const current = this.editable();
-    if (current) this.editable.set({ ...current, customer: { name: value || '—' } });
+    if (current) this.editable.set({ ...current, customer: { ...current.customer, name: value || '—' } });
+  }
+
+  // actualiza telefono del cliente
+  protected update_customer_phone(event: Event): void {
+    const value = (event.target as HTMLElement).innerText.trim();
+    const current = this.editable();
+    if (current) this.editable.set({ ...current, customer: { ...current.customer, phone: value || '—' } });
   }
 
   // actualiza nombre del usuario
@@ -304,7 +312,7 @@ export class OrderPreview implements OnInit {
         created_at: new Date().toISOString()
       },
       user: { id: 0, name: '—' },
-      customer: { id: 0, name: '—' },
+      customer: { id: 0, name: '—', phone: '—' },
       warehouse: { id: 0, name: '—' },
       payment_method: { id: 0, name: '—' },
       items: data.items.map(item => ({

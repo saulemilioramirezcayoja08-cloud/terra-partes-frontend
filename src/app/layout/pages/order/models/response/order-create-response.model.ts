@@ -14,6 +14,7 @@ export interface order_create_response {
   customer: {
     id: number;
     name: string;
+    phone: string;
   };
   warehouse: {
     id: number;

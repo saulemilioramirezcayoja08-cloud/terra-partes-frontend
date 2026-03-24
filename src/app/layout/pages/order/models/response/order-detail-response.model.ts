@@ -15,6 +15,7 @@ export interface order_detail_response {
   customer: {
     id: number;
     name: string;
+    phone: string;
   };
   warehouse: {
     id: number;

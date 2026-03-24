@@ -15,6 +15,7 @@ export interface purchase_create_response {
   supplier: {
     id: number;
     name: string;
+    phone: string;
   };
   warehouse: {
     id: number;

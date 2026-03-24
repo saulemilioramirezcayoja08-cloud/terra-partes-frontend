@@ -11,6 +11,7 @@ export class OriginService {
     { code: 'JPN', label: 'Japonés' },
     { code: 'KOR', label: 'Coreano' },
     { code: 'CHN', label: 'Chino' },
+    { code: 'TWN', label: 'Taiwanés' },
     { code: 'ALT', label: 'Alternativo' },
   ];
   // obtiene lista de origenes

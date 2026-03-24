@@ -14,6 +14,7 @@ interface editable_fields {
   };
   customer: {
     name: string;
+    phone: string;
   };
   user: {
     name: string;
@@ -97,7 +98,7 @@ export class QuotationPreview implements OnInit {
   // retorna los campos editables con fallback seguro
   protected editable_safe = computed(() => this.editable() ?? {
     quotation: { number: '—', date: '—' },
-    customer: { name: '—' },
+    customer: { name: '—', phone: '—' },
     user: { name: '—' },
     warehouse: { name: '—' },
     items: []
@@ -116,7 +117,7 @@ export class QuotationPreview implements OnInit {
         number: data.quotation.number,
         date: this.format_date(data.quotation.created_at)
       },
-      customer: { name: data.customer.name },
+      customer: { name: data.customer.name, phone: data.customer.phone },
       user: { name: data.user.name },
       warehouse: { name: data.warehouse.name },
       items: data.items.map(item => ({
@@ -150,7 +151,14 @@ export class QuotationPreview implements OnInit {
   protected update_customer_name(event: Event): void {
     const value = (event.target as HTMLElement).innerText.trim();
     const current = this.editable();
-    if (current) this.editable.set({ ...current, customer: { name: value || '—' } });
+    if (current) this.editable.set({ ...current, customer: { ...current.customer, name: value || '—' } });
+  }
+
+  // actualiza el telefono del cliente
+  protected update_customer_phone(event: Event): void {
+    const value = (event.target as HTMLElement).innerText.trim();
+    const current = this.editable();
+    if (current) this.editable.set({ ...current, customer: { ...current.customer, phone: value || '—' } });
   }
 
   // actualiza el nombre del usuario
@@ -287,7 +295,7 @@ export class QuotationPreview implements OnInit {
         created_at: new Date().toISOString()
       },
       user: { id: 0, name: '—' },
-      customer: { id: 0, name: '—' },
+      customer: { id: 0, name: '—', phone: '—' },
       warehouse: { id: 0, name: '—' },
       items: data.items.map(item => ({
         id: 0,

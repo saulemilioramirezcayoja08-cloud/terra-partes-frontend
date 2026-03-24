@@ -135,6 +135,7 @@
               <th class="left">PRODUCTO</th>
               <th class="left">CATEGORÍA</th>
               <th class="center">UOM</th>
+              <th class="center">PROC.</th>
               <th class="right">DISPONIBLE</th>
               <th class="center">CANTIDAD</th>
               <th class="right">PRECIO</th>
@@ -150,6 +151,7 @@
               <td class="cell left">{{ item.product.name }}</td>
               <td class="cell left muted">{{ item.category?.name ?? 'Sin categoría' }}</td>
               <td class="cell center bold">{{ item.product.uom }}</td>
+              <td class="cell center bold">{{ item.product.origin }}</td>
               <td class="cell right bold success">{{ item.stock.available }}</td>
               <td class="cell center">
                 <input type="number" class="input" min="1" step="1" [ngModel]="item.detail.quantity"
@@ -175,7 +177,7 @@
               </td>
             </tr>
             <tr class="row notes">
-              <td class="cell" colspan="10">
+              <td class="cell" colspan="11">
                 <input type="text" class="input" placeholder="Notas del item..." maxlength="240"
                   [ngModel]="item.detail.notes" (ngModelChange)="update_notes(i, $event)" />
               </td>

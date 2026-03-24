@@ -346,7 +346,7 @@
 /* Table */
 .table {
   width: 100%;
-  min-width: 900px;
+  min-width: 980px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -383,7 +383,7 @@
 }
 
 .table th:nth-child(6) {
-  width: 90px;
+  width: 60px;
 }
 
 .table th:nth-child(7) {
@@ -391,7 +391,7 @@
 }
 
 .table th:nth-child(8) {
-  width: 100px;
+  width: 90px;
 }
 
 .table th:nth-child(9) {
@@ -399,6 +399,10 @@
 }
 
 .table th:nth-child(10) {
+  width: 100px;
+}
+
+.table th:nth-child(11) {
   width: 50px;
 }
 
