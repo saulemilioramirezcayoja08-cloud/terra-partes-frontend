@@ -5,6 +5,7 @@ import { ContextFormService } from '../../../../../shared/services/context-form-
 import { OrderService } from '../../services/order-service';
 import { isPlatformBrowser } from '@angular/common';
 import { order_detail_response } from '../../models/response/order-detail-response.model';
+import { order_void_request } from '../../models/request/order-void.request';
 
 interface editable_fields {
   order: {
@@ -70,6 +71,8 @@ export class OrderPreview implements OnInit {
   protected order_id = computed(() => this.order()?.order.id ?? null);
 
   protected is_pending = computed(() => this.order()?.order.status === 'PENDING');
+
+  protected can_void = computed(() => this.is_pending() && this.has_id());
 
   protected status_class = computed(() => {
     const status = this.order()?.order.status?.toLowerCase();
@@ -215,6 +218,41 @@ export class OrderPreview implements OnInit {
     if (id) {
       window.open(`/print/orders/${id}`, '_blank');
     }
+  }
+
+  // anula la orden usando prompt para el motivo
+  protected void_order(): void {
+    const id = this.order_id();
+    if (!id) return;
+
+    const notes = prompt('Motivo de anulación (opcional):');
+
+    // si el usuario cancela el prompt, notes es null
+    if (notes === null) return;
+
+    const request: order_void_request = {
+      notes: notes.trim() || null
+    };
+
+    this.order_service.void_order(id, request).subscribe({
+      next: (response) => {
+        const current = this.order();
+        if (current) {
+          this.order.set({
+            ...current,
+            order: {
+              ...current.order,
+              status: response.order.status,
+              notes: response.order.notes
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error(err.error);
+        this.error_message.set(err.error?.message ?? 'Error al anular la orden');
+      }
+    });
   }
 
   // carga orden desde api o desde servicio

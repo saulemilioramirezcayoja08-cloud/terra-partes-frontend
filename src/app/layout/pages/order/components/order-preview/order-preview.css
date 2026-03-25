@@ -185,6 +185,16 @@
   background-color: #047857;
 }
 
+.btn.action.danger {
+  background-color: white;
+  color: #dc2626;
+  box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+}
+
+.btn.action.danger:hover:not(:disabled) {
+  background-color: #fef2f2;
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;

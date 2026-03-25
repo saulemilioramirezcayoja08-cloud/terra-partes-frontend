@@ -1,16 +1,18 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {environment} from '../../../../environments/environment';
-import {order_create_request} from '../models/request/order-create.request';
-import {map, Observable} from 'rxjs';
-import {api_response, page_response} from '../../../../shared/models/common/response.model';
-import {order_create_response} from '../models/response/order-create-response.model';
-import {order_list_response} from '../models/response/order-list-response.model';
-import {order_complete_response} from '../models/response/order-complete-response.model';
-import {order_payment_list_response} from '../models/response/order-payment-list-response.model';
-import {order_payment_response} from '../models/response/order-payment-response.model';
-import {order_payment_request} from '../models/request/order-payment.request';
-import {order_detail_response} from '../models/response/order-detail-response.model';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import { order_create_request } from '../models/request/order-create.request';
+import { map, Observable } from 'rxjs';
+import { api_response, page_response } from '../../../../shared/models/common/response.model';
+import { order_create_response } from '../models/response/order-create-response.model';
+import { order_list_response } from '../models/response/order-list-response.model';
+import { order_complete_response } from '../models/response/order-complete-response.model';
+import { order_payment_list_response } from '../models/response/order-payment-list-response.model';
+import { order_payment_response } from '../models/response/order-payment-response.model';
+import { order_payment_request } from '../models/request/order-payment.request';
+import { order_detail_response } from '../models/response/order-detail-response.model';
+import { order_void_request } from '../models/request/order-void.request';
+import { order_void_response } from '../models/response/order-void-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +50,7 @@ export class OrderService {
     if (created_after) params = params.set('createdAfter', created_after);
     if (created_before) params = params.set('createdBefore', created_before);
 
-    return this.http.get<api_response<page_response<order_list_response>>>(this.api_url, {params}).pipe(
+    return this.http.get<api_response<page_response<order_list_response>>>(this.api_url, { params }).pipe(
       map(response => response.data)
     );
   }
@@ -84,6 +86,13 @@ export class OrderService {
   // agrega pago a una orden
   add_payment(order_id: number, request: order_payment_request): Observable<order_payment_response> {
     return this.http.post<api_response<order_payment_response>>(`${this.api_url}/${order_id}/payments`, request).pipe(
+      map(response => response.data)
+    );
+  }
+
+  // anula una orden
+  void_order(id: number, request: order_void_request = {}): Observable<order_void_response> {
+    return this.http.patch<api_response<order_void_response>>(`${this.api_url}/${id}/void`, request).pipe(
       map(response => response.data)
     );
   }
