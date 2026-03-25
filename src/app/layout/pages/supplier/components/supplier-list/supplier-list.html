@@ -1,0 +1,77 @@
+<div class="supplier-list-component">
+  <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
+
+  <div class="container">
+    <div class="filters">
+      <div class="field">
+        <label class="label">Nombre</label>
+        <input type="text" class="input" placeholder="Buscar por nombre..."
+               [ngModel]="filter_name()"
+               (ngModelChange)="filter_name.set($event)"
+               (input)="on_filter_change()" />
+      </div>
+      <div class="field">
+        <label class="label">Email</label>
+        <input type="text" class="input" placeholder="Buscar por email..."
+               [ngModel]="filter_email()"
+               (ngModelChange)="filter_email.set($event)"
+               (input)="on_filter_change()" />
+      </div>
+      <div class="field">
+        <label class="label">NIT / CI</label>
+        <input type="text" class="input" placeholder="Buscar por NIT/CI..."
+               [ngModel]="filter_tax_id()"
+               (ngModelChange)="filter_tax_id.set($event)"
+               (input)="on_filter_change()" />
+      </div>
+    </div>
+
+    <div class="controls">
+      <app-paginator
+        [current_page]="current_page()"
+        [page_size]="page_size()"
+        [total_items]="total_items()"
+        (page_change)="on_page_change($event)">
+      </app-paginator>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="left">NIT / CI</th>
+            <th class="left">NOMBRE</th>
+            <th class="left">TELÉFONO</th>
+            <th class="left">EMAIL</th>
+            <th class="left">DIRECCIÓN</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.id) {
+          <tr class="row data">
+            <td class="cell left mono bold">{{ item.tax_id ?? '—' }}</td>
+            <td class="cell left mono italic">
+              <span class="link" (click)="on_supplier_click(item.id)">{{ item.name }}</span>
+            </td>
+            <td class="cell left mono">{{ item.phone ?? '—' }}</td>
+            <td class="cell left mono italic">{{ item.email ?? '—' }}</td>
+            <td class="cell left mono italic">{{ item.address ?? '—' }}</td>
+          </tr>
+          }
+
+          @if (data().length === 0 && !loading()) {
+          <tr class="row empty">
+            <td class="cell center" colspan="5">No hay proveedores disponibles</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+      <div class="overlay">
+        <div class="spinner"></div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

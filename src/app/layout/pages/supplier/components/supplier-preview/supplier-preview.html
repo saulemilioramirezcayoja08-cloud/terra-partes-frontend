@@ -1,7 +1,22 @@
 <div class="supplier-preview-component">
   <app-breadcrumb [items]="breadcrumb_items()"></app-breadcrumb>
 
-  @if (supplier(); as data) {
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span class="text">Cargando proveedor...</span>
+    </div>
+  } @else if (has_error()) {
+    <div class="error">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="text">{{ error_message() }}</span>
+      <button class="btn secondary" type="button" (click)="go_back()">Volver</button>
+    </div>
+  } @else if (supplier(); as data) {
     <div class="content">
       <div class="toolbar">
         <div class="left">
@@ -12,6 +27,16 @@
             </svg>
           </button>
         </div>
+        @if (has_id()) {
+          <div class="right">
+            <button class="btn secondary" type="button" (click)="on_discard()" [disabled]="!has_changes() || saving()">
+              Descartar
+            </button>
+            <button class="btn primary" type="button" (click)="on_save()" [disabled]="!can_save()">
+              {{ saving() ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+          </div>
+        }
       </div>
 
       <div class="card">
@@ -23,11 +48,23 @@
             </div>
             <div class="field">
               <label class="label">NIT / CI</label>
-              <span class="value display mono">{{ data.supplier.tax_id ?? 'N/A' }}</span>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="NIT o CI..." maxlength="40"
+                       [ngModel]="tax_id()"
+                       (ngModelChange)="tax_id.set($event)"/>
+              } @else {
+                <span class="value display mono">{{ data.supplier.tax_id ?? 'N/A' }}</span>
+              }
             </div>
             <div class="field span-2">
-              <label class="label">Nombre</label>
-              <span class="value display">{{ data.supplier.name }}</span>
+              <label class="label">Nombre @if (has_id()) { <span class="required">*</span> }</label>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="Nombre del proveedor..." maxlength="200"
+                       [ngModel]="name()"
+                       (ngModelChange)="name.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.supplier.name }}</span>
+              }
             </div>
           </div>
         </div>
@@ -36,15 +73,33 @@
           <div class="group">
             <div class="field">
               <label class="label">Teléfono</label>
-              <span class="value display">{{ data.supplier.phone ?? 'N/A' }}</span>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="Teléfono..." maxlength="40"
+                       [ngModel]="phone()"
+                       (ngModelChange)="phone.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.supplier.phone ?? 'N/A' }}</span>
+              }
             </div>
             <div class="field">
               <label class="label">Email</label>
-              <span class="value display">{{ data.supplier.email ?? 'N/A' }}</span>
+              @if (has_id()) {
+                <input type="email" class="input" placeholder="Email..." maxlength="160"
+                       [ngModel]="email()"
+                       (ngModelChange)="email.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.supplier.email ?? 'N/A' }}</span>
+              }
             </div>
             <div class="field span-2">
               <label class="label">Dirección</label>
-              <span class="value display">{{ data.supplier.address ?? 'N/A' }}</span>
+              @if (has_id()) {
+                <input type="text" class="input" placeholder="Dirección..." maxlength="240"
+                       [ngModel]="address()"
+                       (ngModelChange)="address.set($event)"/>
+              } @else {
+                <span class="value display">{{ data.supplier.address ?? 'N/A' }}</span>
+              }
             </div>
           </div>
         </div>

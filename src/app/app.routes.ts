@@ -165,7 +165,15 @@ export const routes: Routes = [
           {
             path: 'preview',
             loadComponent: () => import('./layout/pages/customer/components/customer-preview/customer-preview').then(m => m.CustomerPreview)
-          }
+          },
+          {
+            path: 'preview/:id',
+            loadComponent: () => import('./layout/pages/customer/components/customer-preview/customer-preview').then(m => m.CustomerPreview)
+          },
+          {
+            path: 'list',
+            loadComponent: () => import('./layout/pages/customer/components/customer-list/customer-list').then(m => m.CustomerList)
+          },
         ]
       },
 
@@ -258,11 +266,19 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'list', pathMatch: 'full' },
           {
+            path: 'list',
+            loadComponent: () => import('./layout/pages/supplier/components/supplier-list/supplier-list').then(m => m.SupplierList)
+          },
+          {
             path: 'create',
             loadComponent: () => import('./layout/pages/supplier/components/supplier-create/supplier-create').then(m => m.SupplierCreate)
           },
           {
             path: 'preview',
+            loadComponent: () => import('./layout/pages/supplier/components/supplier-preview/supplier-preview').then(m => m.SupplierPreview)
+          },
+          {
+            path: 'preview/:id',
             loadComponent: () => import('./layout/pages/supplier/components/supplier-preview/supplier-preview').then(m => m.SupplierPreview)
           }
         ]
