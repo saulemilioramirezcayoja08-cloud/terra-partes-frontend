@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  api_url: 'http://localhost:8080/api'
+  api_url: 'https://09b5-186-121-239-114.ngrok-free.app/api'
 };
